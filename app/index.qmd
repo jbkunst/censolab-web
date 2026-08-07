@@ -1,0 +1,13 @@
+---
+title: false
+page-layout: full
+body-classes: app-page
+---
+
+<iframe
+  class="app-frame"
+  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/"
+  title="CensoLab"
+  loading="eager"
+  allow="clipboard-read; clipboard-write"
+></iframe>

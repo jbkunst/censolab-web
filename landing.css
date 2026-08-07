@@ -11,17 +11,23 @@
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  width: min(100%, var(--cl-story-max));
+  width: 100%;
   margin-inline: auto;
   background:
-    radial-gradient(circle at 84% 8%, rgba(63, 113, 128, 0.11), transparent 22rem),
-    linear-gradient(180deg, rgba(14, 79, 90, 0.035), transparent 34rem);
+    radial-gradient(circle at 84% 8%, rgba(255, 255, 255, 0.10), transparent 22rem),
+    linear-gradient(
+      180deg,
+      var(--censolab-primary, #0E4F5A) 0,
+      var(--censolab-primary, #0E4F5A) 46rem,
+      var(--censolab-bg, #F7F8F8) 46rem,
+      var(--censolab-bg, #F7F8F8) 100%
+    );
 }
 
 .cl-story-copy {
   position: relative;
   z-index: 2;
-  padding-inline: clamp(1.5rem, 5vw, 5rem) clamp(1.5rem, 4vw, 4rem);
+  padding-inline: clamp(1.5rem, 5vw, 5rem) clamp(0.5rem, 1.2vw, 1.4rem);
 }
 
 .cl-story-step {
@@ -69,6 +75,19 @@
   letter-spacing: -0.045em;
   line-height: 1.02;
   text-wrap: balance;
+}
+
+.cl-story-intro .cl-kicker {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.cl-story-intro h1,
+.cl-story-intro h2 {
+  color: #fff;
+}
+
+.cl-story-intro > p {
+  color: rgba(255, 255, 255, 0.74);
 }
 
 .cl-story-step h2 {
@@ -130,6 +149,18 @@
   color: var(--censolab-primary, #0E4F5A) !important;
 }
 
+.cl-story-intro .cl-story-cta {
+  border-color: #fff;
+  background: #fff;
+  color: var(--censolab-primary, #0E4F5A) !important;
+}
+
+.cl-story-intro .cl-story-link {
+  border-color: rgba(255, 255, 255, 0.38);
+  background: rgba(0, 0, 0, 0.08);
+  color: #fff !important;
+}
+
 .cl-story-cta:hover,
 .cl-story-link:hover {
   transform: translateY(-1px);
@@ -140,11 +171,20 @@
   background: #fff;
 }
 
+.cl-story-intro .cl-story-link:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
 .cl-story-note {
   margin-top: 1.4rem !important;
   color: rgba(98, 103, 108, 0.82) !important;
   font-size: 0.78rem !important;
   line-height: 1.45 !important;
+}
+
+.cl-story-intro .cl-story-note {
+  color: rgba(255, 255, 255, 0.56) !important;
 }
 
 .cl-query-parts {
@@ -198,9 +238,8 @@
   position: relative;
   min-width: 0;
   overflow: visible;
-  border-left: 1px solid rgba(14, 79, 90, 0.08);
-  background:
-    linear-gradient(90deg, rgba(247, 248, 248, 0), rgba(63, 113, 128, 0.035) 48%, rgba(14, 79, 90, 0.07));
+  border-left: 1px solid rgba(255, 255, 255, 0.10);
+  background: transparent;
 }
 
 .cl-map-intro {
@@ -222,7 +261,7 @@
 
 .cl-map-intro strong {
   display: block;
-  color: var(--censolab-primary, #0E4F5A);
+  color: rgba(255, 255, 255, 0.88);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.07em;
@@ -232,26 +271,27 @@
 .cl-map-intro span {
   display: block;
   margin-top: 0.35rem;
-  color: var(--censolab-muted, #62676C);
+  color: rgba(255, 255, 255, 0.60);
   font-size: 0.76rem;
   line-height: 1.4;
 }
 
 .cl-map-source {
-  color: rgba(98, 103, 108, 0.76) !important;
+  color: rgba(255, 255, 255, 0.62) !important;
   font-size: 0.68rem !important;
   text-decoration: none !important;
   pointer-events: auto;
 }
 
 .cl-map-source:hover {
-  color: var(--censolab-primary, #0E4F5A) !important;
+  color: #fff !important;
 }
 
 #cl-chile-map {
-  width: 100%;
+  width: 112%;
   height: 100%;
   min-height: 3300px;
+  margin-left: -12%;
 }
 
 .cl-map-tooltip {
@@ -370,6 +410,8 @@
 @media (max-width: 899.98px) {
   .cl-story {
     grid-template-columns: 1fr;
+    background:
+      var(--censolab-bg, #F7F8F8);
   }
 
   .cl-story-copy {
@@ -383,6 +425,12 @@
     padding-block: 4rem;
   }
 
+  .cl-story-intro {
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
+    background: var(--censolab-primary, #0E4F5A);
+  }
+
   .cl-story h1 {
     font-size: clamp(4.3rem, 20vw, 6.4rem);
   }
@@ -390,10 +438,22 @@
   .cl-map-column {
     border-top: 1px solid rgba(14, 79, 90, 0.08);
     border-left: 0;
+    background: var(--censolab-bg, #F7F8F8);
+  }
+
+  .cl-map-intro strong {
+    color: var(--censolab-primary, #0E4F5A);
+  }
+
+  .cl-map-intro span,
+  .cl-map-source {
+    color: var(--censolab-muted, #62676C) !important;
   }
 
   #cl-chile-map {
+    width: 100%;
     min-height: 1900px;
+    margin-left: 0;
   }
 }
 

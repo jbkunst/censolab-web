@@ -2,32 +2,108 @@
 page-layout: full
 ---
 
-::: {.hero}
+::: {.landing-hero}
+::: {.landing-hero-inner}
+<span class="landing-eyebrow">CENSO 2024 · CHILE</span>
+
 # CensoLab
 
-## Entiende Chile a través de sus datos.
+## Explora el territorio como si tuvieras un laboratorio de datos propio.
 
-Explora información censal, compara territorios y descubre patrones de forma simple e interactiva.
+Consulta información censal usando lenguaje natural, compara territorios y recorre los datos desde la escala nacional hasta manzanas y entidades rurales.
 
-[Explorar el Censo](app/){.btn .btn-primary .btn-lg}
+[Explorar CensoLab →](app/){.landing-cta}
+
+::: {.landing-capabilities}
+::: {.landing-capability}
+<span>01</span>
+### Explora
+Mapas, indicadores e informes territoriales.
 :::
-
-::: {.home-grid}
-::: {.home-card}
-### Explora territorios
-
-Navega por mapas e indicadores para conocer mejor cada territorio.
-:::
-
-::: {.home-card}
+::: {.landing-capability}
+<span>02</span>
 ### Compara
-
-Contrasta territorios y observa sus principales diferencias.
+Contrasta magnitud, posición relativa y perfiles censales.
+:::
+::: {.landing-capability}
+<span>03</span>
+### Pregunta
+CensoBot interpreta tu consulta y nuestras herramientas ejecutan el trabajo con los datos.
+:::
+:::
+:::
 :::
 
-::: {.home-card}
-### Pregunta
+::: {#como-usar .information-page .landing-information}
+::: {.information-intro}
+::: {.information-intro-copy}
+<span class="information-eyebrow">Guía de consulta</span>
 
-Usa CensoBot para explorar los datos mediante lenguaje natural.
+## Cómo usar CensoLab
+
+CensoLab permite consultar información censal usando lenguaje natural. No es necesario conocer los nombres técnicos de las tablas o variables, pero una consulta bien estructurada produce resultados más precisos.
+:::
+:::
+
+::: {.information-content}
+### Una buena consulta reúne cuatro elementos
+
+::: {.query-grid}
+::: {.query-part}
+<span>Formato del resultado</span>
+**¿Cómo quiero verlo?**
+
+Mapa, tabla, gráfico o respuesta directa.
+:::
+::: {.query-part}
+<span>Unidad geográfica</span>
+**¿Dónde?**
+
+Región, provincia, comuna, distrito, zona, localidad, entidad, aldea o manzana.
+:::
+::: {.query-part}
+<span>Indicador y cálculo</span>
+**¿Qué quiero saber?**
+
+Población, edad, educación u otro indicador expresado como total, porcentaje, promedio o distribución.
+:::
+::: {.query-part}
+<span>Universo</span>
+**¿Sobre quién o qué?**
+
+Personas, hogares, viviendas o un grupo específico dentro de esos universos.
+:::
+:::
+
+<div class="query-formula">
+<span>Formato</span><b>+</b><span>Territorio</span><b>+</b><span>Indicador</span><b>+</b><span>Universo</span>
+</div>
+
+### Prueba con algo como esto
+
+::: {.prompt-grid}
+::: {.prompt-card}
+<span>Mapa</span>
+> “Muéstrame el porcentaje de viviendas desocupadas por manzana en Estación Central.”
+:::
+::: {.prompt-card}
+<span>Pregunta directa</span>
+> “¿Qué comuna de la Región Metropolitana tiene el mayor porcentaje de personas de 65 años o más?”
+:::
+:::
+:::
+:::
+
+::: {#acerca-de .landing-about}
+::: {.landing-about-inner}
+<span class="information-eyebrow">El proyecto</span>
+
+## Acerca de CensoLab
+
+CensoLab busca que la experiencia de consultar datos sea tan fluida como formular una pregunta. Integra lenguaje natural con herramientas desarrolladas a medida para extraer, calcular y visualizar información censal sobre bases previamente preparadas y estructuradas.
+
+Los resultados provienen de cálculos ejecutados sobre información del Censo 2024. El modelo entiende la pregunta; el entorno de procesamiento ejecuta el trabajo con los datos.
+
+[Entrar a la aplicación →](app/){.landing-text-link}
 :::
 :::

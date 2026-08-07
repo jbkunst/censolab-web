@@ -34,22 +34,6 @@ CensoBot interpreta tu requerimiento y las herramientas de CensoLab ejecutan el 
 :::
 :::
 
-::: {.landing-capabilities}
-::: {.landing-capability}
-<span>GUÍA</span>
-### Aprende a consultar
-Una buena pregunta combina formato, territorio, indicador y universo. Revisa ejemplos reales de mapas, gráficos, tablas y respuestas directas.
-
-[Ver cómo usar CensoLab →](como-usar/){.landing-text-link}
-:::
-
-::: {.landing-capability}
-<span>PROYECTO</span>
-### Entiende cómo funciona
-Conoce la idea detrás de CensoLab, quiénes lo construyen y las tecnologías que permiten consultar y visualizar el Censo 2024.
-
-[Acerca de CensoLab →](acerca-de/){.landing-text-link}
-:::
-:::
+[Cómo usar CensoLab →](como-usar/){.landing-text-link}    [Acerca del proyecto →](acerca-de/){.landing-text-link}
 :::
 :::

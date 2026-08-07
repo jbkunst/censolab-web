@@ -185,21 +185,30 @@ body {
   font-size: 0.82rem;
 }
 
-.app-page main.content {
-  max-width: none;
-  padding: 0;
+.app-page {
+  overflow: hidden;
 }
 
+.app-page .navbar,
+.app-page .page-footer {
+  display: none !important;
+}
+
+.app-page main.content,
 .app-page .page-columns,
 .app-page #quarto-content {
+  max-width: none;
   margin: 0;
   padding: 0;
 }
 
 .app-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
   display: block;
-  width: 100%;
-  height: calc(100vh - 58px);
+  width: 100vw;
+  height: 100vh;
   border: 0;
   background: white;
 }

@@ -3,6 +3,8 @@ project:
   output-dir: _site
   resources:
     - CNAME
+    - landing.css
+    - assets/**
 
 website:
   title: "CensoLab"

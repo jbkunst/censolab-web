@@ -5,7 +5,6 @@ toc: false
 ---
 
 <link rel="stylesheet" href="landing.css">
-<link rel="stylesheet" href="landing-layout-fix.css">
 
 ```{=html}
 <section class="cl-story">

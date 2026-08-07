@@ -4,7 +4,7 @@ section-divs: false
 toc: false
 ---
 
-<link rel="stylesheet" href="landing.css">
+<link rel="stylesheet" href="landing.css?v=20260807-4">
 
 ```{=html}
 <section class="cl-story">
@@ -116,5 +116,5 @@ toc: false
 
 <script src="https://code.highcharts.com/maps/highmaps.js"></script>
 <script src="https://code.highcharts.com/mapdata/countries/cl/cl-all.js"></script>
-<script src="assets/chile-story.js"></script>
+<script src="assets/chile-story.js?v=20260807-4"></script>
 ```

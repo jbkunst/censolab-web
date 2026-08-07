@@ -2,13 +2,20 @@
 
 :root {
   --censolab-primary: #0E4F5A;
+  --censolab-info: #3F7180;
   --censolab-primary-dark: #0A3D46;
   --censolab-bg: #F7F8F8;
   --censolab-surface: #FFFFFF;
   --censolab-text: #202326;
   --censolab-muted: #62676C;
-  --censolab-border: rgba(32, 35, 38, 0.10);
-  --censolab-primary-soft: color-mix(in srgb, var(--censolab-primary) 5%, var(--censolab-bg));
+  --censolab-border: rgba(32, 35, 38, 0.12);
+  --censolab-shadow: 0 1rem 3rem rgb(0 0 0 / 7%);
+  --bs-primary: #0E4F5A;
+  --bs-primary-rgb: 14, 79, 90;
+  --bs-body-bg: #F7F8F8;
+  --bs-body-color: #202326;
+  --bs-secondary-color: #62676C;
+  --bs-body-font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 html {
@@ -16,13 +23,14 @@ html {
 }
 
 body {
+  margin: 0;
   background: var(--censolab-bg);
   color: var(--censolab-text);
-  font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--bs-body-font-family);
   -webkit-font-smoothing: antialiased;
 }
 
-/* La web replica la navbar primaria de la aplicación. */
+/* La navbar conserva el mismo gesto que page_navbar(bg-primary) de la app. */
 .navbar {
   border-bottom: 0 !important;
   background: var(--censolab-primary) !important;
@@ -60,29 +68,41 @@ body {
   filter: invert(1) grayscale(1) brightness(2);
 }
 
-/* Hero inspirado directamente en la portada del informe territorial. */
+/* Portada: el primary avanza horizontalmente hacia el info del brand. */
 .landing-hero {
   position: relative;
   isolation: isolate;
   display: flex;
   min-height: max(42rem, calc(100svh - 3.5rem));
   overflow: hidden;
-  background:
-    radial-gradient(circle at 83% 27%, rgb(255 255 255 / 9%) 0 0.16rem, transparent 0.17rem) 0 0 / 1.15rem 1.15rem,
-    linear-gradient(120deg, rgb(0 0 0 / 18%), transparent 58%),
-    var(--censolab-primary);
+  background: linear-gradient(
+    90deg,
+    var(--censolab-primary) 0%,
+    #165B67 48%,
+    var(--censolab-info) 100%
+  );
   color: #fff;
 }
 
-.landing-hero::before {
+.landing-hero::before,
+.landing-hero::after {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(circle at 78% 42%, rgb(255 255 255 / 10%), transparent 22rem),
-    linear-gradient(180deg, transparent 45%, rgb(0 0 0 / 15%) 100%);
   content: "";
   pointer-events: none;
+}
+
+.landing-hero::before {
+  background:
+    linear-gradient(90deg, rgb(0 0 0 / 18%), transparent 58%),
+    linear-gradient(180deg, transparent 52%, rgb(0 0 0 / 13%) 100%);
+}
+
+.landing-hero::after {
+  left: auto;
+  width: min(52vw, 48rem);
+  background: radial-gradient(circle at 58% 43%, rgb(255 255 255 / 14%), transparent 62%);
 }
 
 .landing-hero-inner {
@@ -108,27 +128,27 @@ body {
   max-width: 62rem;
   margin: 0.65rem 0 0;
   color: #fff;
-  font-size: clamp(4.5rem, 10vw, 8.5rem);
+  font-size: clamp(4.7rem, 10vw, 8.7rem);
   font-weight: 200;
   letter-spacing: -0.06em;
   line-height: 0.86;
 }
 
 .landing-hero h2 {
-  max-width: 58rem;
+  max-width: 62rem;
   margin: 1.5rem 0 0;
   color: #fff;
-  font-size: clamp(1.65rem, 3.2vw, 3rem);
+  font-size: clamp(1.7rem, 3.3vw, 3.15rem);
   font-weight: 200;
-  letter-spacing: -0.04em;
-  line-height: 1.05;
+  letter-spacing: -0.045em;
+  line-height: 1.03;
   text-wrap: balance;
 }
 
 .landing-hero-inner > p {
-  max-width: 43rem;
+  max-width: 46rem;
   margin: 1.2rem 0 0;
-  color: rgb(255 255 255 / 72%);
+  color: rgb(255 255 255 / 74%);
   font-size: 1rem;
   line-height: 1.65;
 }
@@ -186,14 +206,14 @@ body {
 }
 
 .landing-capability p {
-  max-width: 20rem;
+  max-width: 21rem;
   margin: 0.45rem 0 0;
-  color: rgb(255 255 255 / 64%);
+  color: rgb(255 255 255 / 65%);
   font-size: 0.82rem;
   line-height: 1.45;
 }
 
-/* Misma banda editorial usada por Cómo usar y Acerca de en la app. */
+/* Banda editorial tomada de las páginas informativas de CensoLab. */
 .information-page {
   background: var(--censolab-bg);
 }
@@ -204,6 +224,11 @@ body {
     linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 7%) 100%),
     var(--censolab-primary);
   color: #fff;
+}
+
+.information-intro-about {
+  background:
+    linear-gradient(90deg, var(--censolab-primary) 0%, var(--censolab-info) 100%);
 }
 
 .information-intro-copy {
@@ -223,7 +248,7 @@ body {
 .information-intro p {
   max-width: 44rem;
   margin: 0.9rem 0 0;
-  color: rgb(255 255 255 / 72%);
+  color: rgb(255 255 255 / 74%);
   font-size: 0.98rem;
   line-height: 1.6;
 }
@@ -239,147 +264,216 @@ body {
   border: 1px solid var(--censolab-border);
   border-radius: 1rem;
   background: var(--censolab-surface);
-  box-shadow: 0 1rem 3rem rgb(0 0 0 / 7%);
+  box-shadow: var(--censolab-shadow);
 }
 
-.information-content h3 {
-  margin: 0 0 1.4rem;
+.information-content > :first-child,
+.about-section > :first-child {
+  margin-top: 0;
+}
+
+.information-content h3,
+.about-section h3 {
+  color: var(--censolab-text);
   font-size: 1.25rem;
   font-weight: 500;
   letter-spacing: -0.025em;
 }
 
-.query-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
-  overflow: hidden;
-  border: 1px solid var(--censolab-border);
-  border-radius: 0.65rem;
+.information-content > p,
+.about-section p,
+.about-section li {
+  color: var(--censolab-muted);
+  line-height: 1.65;
 }
 
-.query-part {
-  min-height: 10.5rem;
-  padding: 1.35rem;
+/* Anatomía de la consulta: mismas clases y proporciones de helper_ui.R. */
+.how-to-use-structure {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+}
+
+.how-to-use-structure-item {
+  padding: 0.9rem;
+  border: 1px solid var(--censolab-border);
+  border-radius: 0.45rem;
   background: var(--censolab-bg);
 }
 
-.query-part:nth-child(odd) {
-  border-right: 1px solid var(--censolab-border);
-}
-
-.query-part:nth-child(-n + 2) {
-  border-bottom: 1px solid var(--censolab-border);
-}
-
-.query-part > span,
-.prompt-card > span {
+.how-to-use-structure-item strong {
   display: block;
-  margin-bottom: 0.55rem;
-  color: color-mix(in srgb, var(--censolab-primary) 72%, var(--censolab-muted));
-  font-size: 0.64rem;
+  margin-bottom: 0.35rem;
+  color: var(--censolab-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.how-to-use-structure-item p {
+  margin: 0;
+  color: var(--censolab-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.how-to-use-formula-intro {
+  margin: 1.25rem 0 0.5rem !important;
+  font-size: 0.9rem;
+}
+
+.how-to-use-formula {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.how-to-use-formula-part {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 135px;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.85rem;
+  border: 1px solid var(--censolab-border);
+  border-radius: 0.45rem;
+  background: var(--censolab-bg);
+}
+
+.how-to-use-formula-label {
+  color: var(--censolab-muted);
+  font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.05em;
+  line-height: 1.25;
+  text-align: center;
   text-transform: uppercase;
 }
 
-.query-part strong {
-  display: block;
-  margin-bottom: 0.35rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-.query-part p {
-  margin: 0;
+.how-to-use-formula-plus {
   color: var(--censolab-muted);
-  font-size: 0.83rem;
-  line-height: 1.5;
+  font-weight: 600;
 }
 
-.query-formula {
-  display: flex;
-  gap: 0.7rem;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem 0 3.5rem;
-  padding: 1rem;
-  overflow-x: auto;
-  border-radius: 0.65rem;
-  background: var(--censolab-primary-soft);
-  color: var(--censolab-primary);
-  font-size: 0.78rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.query-formula b {
-  color: color-mix(in srgb, var(--censolab-primary) 40%, transparent);
-  font-weight: 300;
-}
-
-.prompt-grid {
+/* Los previews son los mismos cuatro outputs estáticos usados por la app. */
+.how-to-use-examples {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.prompt-card {
-  padding: 1.25rem 1.35rem;
-  border: 1px solid var(--censolab-border);
-  border-radius: 0.65rem;
+.how-to-use-example {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--censolab-border) !important;
+  border-radius: 0.55rem !important;
+  background: #fff;
+  box-shadow: none !important;
+}
+
+.how-to-use-example > .card-header {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--censolab-border);
+  background: #fff;
+  color: var(--censolab-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.how-to-use-example blockquote {
+  min-height: 7.2rem;
+  margin: 1rem;
+  padding: 0;
+  border: 0;
+  color: var(--censolab-muted);
+  font-size: 0.9rem;
+  font-style: normal;
+  line-height: 1.45;
+}
+
+.how-to-use-example blockquote p {
+  margin: 0;
+}
+
+.how-to-use-prompt-text {
+  color: inherit;
+}
+
+.how-to-use-preview {
+  display: block;
+  width: 100%;
+  height: 285px;
+  border: 0;
+  border-top: 1px solid var(--censolab-border);
   background: var(--censolab-bg);
 }
 
-.prompt-card blockquote {
-  margin: 0;
-  padding: 0;
-  border: 0;
+.how-to-use-preview-map {
+  height: 320px;
+}
+
+.how-to-use-preview-table {
+  height: 235px;
+}
+
+.how-to-use-preview-answer {
+  height: 145px;
+}
+
+/* Acerca de reutiliza el contenido completo del about_ui() de la aplicación. */
+.about-content > hr {
+  margin: 2rem 0;
+  border-color: var(--censolab-border);
+  opacity: 1;
+}
+
+.about-section a {
+  color: var(--censolab-primary);
+  text-decoration-color: color-mix(in srgb, var(--censolab-primary) 35%, transparent);
+  text-underline-offset: 0.18em;
+}
+
+.about-people {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.about-person {
+  padding: 1.25rem;
+  border: 1px solid var(--censolab-border);
+  border-radius: 0.55rem;
+  background: var(--censolab-bg);
+}
+
+.about-person h4 {
+  margin: 0 0 0.7rem;
   color: var(--censolab-text);
-  font-size: 0.9rem;
-  font-style: normal;
-  line-height: 1.55;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
-.prompt-card blockquote p {
-  margin: 0;
+.about-person p {
+  margin-bottom: 0.8rem;
+  font-size: 0.88rem;
 }
 
-/* Acerca de mantiene el mismo gesto editorial pero sin crear otra página. */
-.landing-about {
-  padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 5vw, 5rem);
-  background: color-mix(in srgb, var(--censolab-primary) 96%, #000);
-  color: #fff;
-}
-
-.landing-about-inner {
-  width: min(900px, 100%);
-  margin-inline: auto;
-}
-
-.landing-about h2 {
-  margin: 0.45rem 0 1.5rem;
-  color: #fff;
-  font-size: clamp(2.5rem, 5vw, 4.7rem);
-  font-weight: 200;
-  letter-spacing: -0.055em;
-  line-height: 0.95;
-}
-
-.landing-about p {
-  max-width: 46rem;
-  color: rgb(255 255 255 / 72%);
-  font-size: 0.98rem;
-  line-height: 1.7;
+.about-person p:last-child {
+  margin-bottom: 0;
+  font-size: 0.8rem;
 }
 
 .landing-text-link {
   display: inline-block;
   margin-top: 1rem;
-  color: #fff !important;
+  color: var(--censolab-primary) !important;
   font-size: 0.9rem;
   font-weight: 500;
-  text-decoration-color: rgb(255 255 255 / 40%);
+  text-decoration-color: color-mix(in srgb, var(--censolab-primary) 35%, transparent);
   text-underline-offset: 0.25em;
 }
 
@@ -390,7 +484,7 @@ body {
   font-size: 0.75rem;
 }
 
-/* /app conserva la aplicación como una experiencia completamente independiente. */
+/* /app conserva la aplicación como experiencia completamente independiente. */
 .app-page {
   overflow: hidden;
 }
@@ -420,6 +514,10 @@ body {
 }
 
 @media (max-width: 767.98px) {
+  .landing-hero {
+    background: linear-gradient(145deg, var(--censolab-primary) 0%, var(--censolab-info) 100%);
+  }
+
   .landing-hero-inner {
     padding-inline: 1.25rem;
   }
@@ -428,8 +526,14 @@ body {
     font-size: clamp(4rem, 20vw, 6rem);
   }
 
-  .landing-capabilities {
+  .landing-capabilities,
+  .how-to-use-structure,
+  .how-to-use-examples,
+  .about-people {
     grid-template-columns: 1fr;
+  }
+
+  .landing-capabilities {
     gap: 1.25rem;
   }
 
@@ -446,18 +550,12 @@ body {
     width: calc(100% - 2rem);
   }
 
-  .query-grid,
-  .prompt-grid {
-    grid-template-columns: 1fr;
+  .how-to-use-example blockquote {
+    min-height: 0;
   }
 
-  .query-part:nth-child(n) {
-    border-right: 0;
-    border-bottom: 1px solid var(--censolab-border);
-  }
-
-  .query-part:last-child {
-    border-bottom: 0;
+  .how-to-use-formula-plus {
+    display: none;
   }
 }
 

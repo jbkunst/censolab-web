@@ -12,9 +12,9 @@ website:
       - text: Explorar
         href: app/
       - text: Cómo usar
-        href: index.qmd#como-usar
+        href: como-usar/
       - text: Acerca de
-        href: index.qmd#acerca-de
+        href: acerca-de/
   page-footer:
     center: "CensoLab · Censo 2024"
 

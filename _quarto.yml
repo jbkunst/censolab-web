@@ -7,10 +7,12 @@ project:
 website:
   title: "CensoLab"
   site-url: https://censolab.cl
+  search: false
   navbar:
     left:
       - text: Explorar
         href: app/
+    right:
       - text: Cómo usar
         href: como-usar/
       - text: Acerca de

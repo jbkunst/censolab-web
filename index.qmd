@@ -33,191 +33,23 @@ Contrasta magnitud, posición relativa y similitud entre perfiles censales de di
 CensoBot interpreta tu requerimiento y las herramientas de CensoLab ejecutan el trabajo con los datos.
 :::
 :::
-:::
-:::
 
-::: {#como-usar .information-page .landing-information}
-::: {.information-intro}
-::: {.information-intro-copy}
-<span class="information-eyebrow">Guía de consulta</span>
+::: {.landing-capabilities}
+::: {.landing-capability}
+<span>GUÍA</span>
+### Aprende a consultar
+Una buena pregunta combina formato, territorio, indicador y universo. Revisa ejemplos reales de mapas, gráficos, tablas y respuestas directas.
 
-## Cómo usar CensoLab
-
-CensoLab permite consultar información censal usando lenguaje natural. No es necesario conocer los nombres técnicos de las tablas o variables, pero una consulta bien estructurada produce resultados más precisos.
-:::
+[Ver cómo usar CensoLab →](como-usar/){.landing-text-link}
 :::
 
-::: {.information-content}
-### Estructura básica
+::: {.landing-capability}
+<span>PROYECTO</span>
+### Entiende cómo funciona
+Conoce la idea detrás de CensoLab, quiénes lo construyen y las tecnologías que permiten consultar y visualizar el Censo 2024.
 
-Una buena consulta reúne cuatro elementos:
-
-::: {.how-to-use-structure}
-::: {.how-to-use-structure-item}
-**¿Cómo quiero verlo?**
-
-Mapa, tabla, gráfico o respuesta directa.
-:::
-
-::: {.how-to-use-structure-item}
-**¿Dónde?**
-
-Región, provincia, comuna, distrito, zona, localidad, entidad, aldea, manzana urbana o manzana de aldea.
-:::
-
-::: {.how-to-use-structure-item}
-**¿Qué quiero saber?**
-
-Población, edad, educación u otro indicador, expresado como total, porcentaje, promedio o distribución.
-:::
-
-::: {.how-to-use-structure-item}
-**¿Sobre quién o qué?**
-
-Personas, hogares, viviendas o un grupo específico dentro de esos universos.
+[Acerca de CensoLab →](acerca-de/){.landing-text-link}
 :::
 :::
-
-<p class="how-to-use-formula-intro">La fórmula general es:</p>
-
-<div class="how-to-use-formula">
-  <div class="how-to-use-formula-part"><span class="how-to-use-formula-label">Formato del resultado</span></div>
-  <span class="how-to-use-formula-plus">+</span>
-  <div class="how-to-use-formula-part"><span class="how-to-use-formula-label">Unidad geográfica</span></div>
-  <span class="how-to-use-formula-plus">+</span>
-  <div class="how-to-use-formula-part"><span class="how-to-use-formula-label">Indicador y cálculo</span></div>
-  <span class="how-to-use-formula-plus">+</span>
-  <div class="how-to-use-formula-part"><span class="how-to-use-formula-label">Universo</span></div>
-</div>
-
-### Ejemplos
-
-::: {.how-to-use-examples}
-::: {.how-to-use-example .card}
-<div class="card-header">Mostrar información en un mapa</div>
-
-> [“Muéstrame el porcentaje de viviendas desocupadas por manzana en Estación Central.”]{.how-to-use-prompt-text}
-
-<iframe
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/map.html"
-  title="Resultado del ejemplo: Mostrar información en un mapa"
-  loading="lazy"
-  class="how-to-use-preview how-to-use-preview-map"></iframe>
-:::
-
-::: {.how-to-use-example .card}
-<div class="card-header">Crear un gráfico estadístico</div>
-
-> [“Haz un gráfico de columnas con la población de la Región de Valparaíso en los tramos 0–14, 15–29, 30–44, 45–59 y 60 años o más.”]{.how-to-use-prompt-text}
-
-<iframe
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/chart.html"
-  title="Resultado del ejemplo: Crear un gráfico estadístico"
-  loading="lazy"
-  class="how-to-use-preview"></iframe>
-:::
-
-::: {.how-to-use-example .card}
-<div class="card-header">Construir una tabla con un cálculo</div>
-
-> [“Muéstrame en una tabla las tres comunas más pobladas de la Región de Valparaíso y qué porcentaje representan del total regional.”]{.how-to-use-prompt-text}
-
-<iframe
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/table.html"
-  title="Resultado del ejemplo: Construir una tabla con un cálculo"
-  loading="lazy"
-  class="how-to-use-preview how-to-use-preview-table"></iframe>
-:::
-
-::: {.how-to-use-example .card}
-<div class="card-header">Responder una pregunta directa</div>
-
-> [“¿Qué comuna de la Región Metropolitana tiene el mayor porcentaje de personas de 65 años o más?”]{.how-to-use-prompt-text}
-
-<iframe
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/answer.html"
-  title="Resultado del ejemplo: Responder una pregunta directa"
-  loading="lazy"
-  class="how-to-use-preview how-to-use-preview-answer"></iframe>
-:::
-:::
-:::
-:::
-
-::: {#acerca-de .information-page .landing-about-page}
-::: {.information-intro .information-intro-about}
-::: {.information-intro-copy}
-<span class="information-eyebrow">El proyecto</span>
-
-## Acerca de CensoLab
-
-CensoLab busca que la experiencia de consultar datos sea tan fluida como formular una pregunta.
-:::
-:::
-
-::: {.information-content .about-content}
-::: {.about-section}
-### ¿Qué es CensoLab?
-
-CensoLab es la experiencia de explorar la información de tu entorno como si tuvieras un laboratorio de datos propio. Es un espacio donde tu curiosidad encuentra cauce en un conjunto de servicios especializados que se encargan del trabajo pesado: entender qué cifras necesitas, dónde encontrarlas, cómo cruzarlas y cómo programar las consultas necesarias para obtener los resultados.
-:::
-
----
-
-::: {.about-section}
-### ¿Cómo funciona?
-
-CensoLab integra la capacidad de entender lenguaje natural con una arquitectura de herramientas desarrolladas a medida para procesar información censal. En este esquema, el bot actúa como interfaz para interpretar tus requerimientos, mientras que la extracción, el cálculo y la visualización los ejecutan nuestras propias herramientas sobre bases de datos previamente preparadas y estructuradas. El modelo entiende la pregunta y nuestro entorno de procesamiento ejecuta el trabajo con los datos.
-
-Esto permite realizar consultas sobre **toda la información censal disponible, sin reducciones**, desde la escala nacional hasta manzanas y entidades rurales, pasando por niveles territoriales intermedios.
-
-**Los resultados provienen estrictamente de cálculos ejecutados en tiempo real sobre los microdatos de personas, hogares y viviendas del Censo 2024.**
-
-Esto permite responder inquietudes como:
-
-- Calcular el promedio de años de escolaridad de las personas de 18 años o más en las distintas zonas de tu comuna.
-- Mapear la tasa de desocupación por manzana y destacar aquellas que superan el promedio nacional.
-- Identificar las manzanas donde predomina la conexión a internet fija.
-:::
-
----
-
-::: {.about-section}
-### ¿Quiénes somos?
-
-::: {.about-people}
-::: {.about-person}
-#### Joshua Kunst
-
-Estadístico y Risk Specialist. Entusiasta del desarrollo de herramientas para explorar y visualizar datos, además de excéntrico coleccionista de autos a escala.
-
-[GitHub](https://github.com/jbkunst){target="_blank"} · [Sitio web](http://jkunst.com/blog/){target="_blank"} · [LinkedIn](https://www.linkedin.com/in/joshuakunst/){target="_blank"}
-:::
-
-::: {.about-person}
-#### Matías Parra
-
-Antropólogo y programador. Obsesionado con el uso de datos para problematizar la realidad. Disfruta de leer y caminar y todavía juega de delantero.
-
-[GitHub](https://github.com/MIParra){target="_blank"} · [LinkedIn](https://www.linkedin.com/in/matias-parra-rojas){target="_blank"}
-:::
-:::
-
-CensoLab combina nuestras experiencias en estadística, ciencias sociales, análisis territorial, visualización de datos y desarrollo de software. El proyecto nace del interés común por ampliar las formas de acceso a la información pública y conectar la solidez del procesamiento estadístico con una experiencia de exploración más intuitiva.
-:::
-
----
-
-::: {.about-section}
-### ¿Cómo está construido?
-
-CensoLab está desarrollado principalmente en [R](https://www.r-project.org/){target="_blank"} y utiliza [Shiny](https://shiny.posit.co/){target="_blank"} para construir la aplicación web.
-
-El agente de consulta utiliza herramientas de inteligencia artificial de código abierto desarrolladas por [Posit](https://posit.co/solutions/ai){target="_blank"}, principalmente [shinychat](https://posit-dev.github.io/shinychat/){target="_blank"} y [ellmer](https://ellmer.tidyverse.org/){target="_blank"}, para conectar modelos de lenguaje con herramientas especializadas de consulta, navegación y visualización.
-
-Los datos se procesan mediante [DuckDB](https://duckdb.org/){target="_blank"}, con soporte para conexión remota a [MotherDuck](https://motherduck.com/){target="_blank"}. La exploración geográfica combina [MapLibre](https://maplibre.org/){target="_blank"} y [mapgl](https://walker-data.com/mapgl/){target="_blank"}; los gráficos utilizan [Highcharts](https://www.highcharts.com/){target="_blank"} y [highcharter](https://jkunst.com/highcharter/){target="_blank"}, y las tablas interactivas se construyen con [reactable](https://glin.github.io/reactable/){target="_blank"}.
-:::
-
-[Entrar a CensoLab →](app/){.landing-text-link}
 :::
 :::

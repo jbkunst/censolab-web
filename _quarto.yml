@@ -1,0 +1,27 @@
+project:
+  type: website
+  output-dir: _site
+  resources:
+    - CNAME
+
+website:
+  title: "CensoLab"
+  site-url: https://censolab.cl
+  navbar:
+    left:
+      - text: Explorar
+        href: app/
+      - text: Datos
+        href: datos/
+      - text: Metodología
+        href: metodologia/
+      - text: Proyecto
+        href: proyecto/
+  page-footer:
+    center: "CensoLab"
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: false

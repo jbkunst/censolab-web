@@ -1,4 +1,4 @@
-/* Home experimental: relato largo + Chile a escala vertical. */
+/* Home: relato editorial 8/12 + Chile 4/12. */
 .page-layout-custom main,
 .page-layout-custom #quarto-content {
   max-width: none;
@@ -7,14 +7,18 @@
 }
 
 .cl-story {
-  --cl-story-max: 92rem;
-  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 46%) minmax(0, 54%);
+  grid-template-columns: minmax(0, 8fr) minmax(18rem, 4fr);
   width: 100%;
-  margin-inline: auto;
+  margin: 0;
+  background: var(--censolab-bg, #F7F8F8);
+}
+
+.cl-story-copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
   background:
-    radial-gradient(circle at 84% 8%, rgba(255, 255, 255, 0.10), transparent 22rem),
     linear-gradient(
       180deg,
       var(--censolab-primary, #0E4F5A) 0,
@@ -24,19 +28,14 @@
     );
 }
 
-.cl-story-copy {
-  position: relative;
-  z-index: 2;
-  padding-inline: clamp(3rem, 7vw, 8rem) clamp(0.5rem, 1vw, 1rem);
-}
-
 .cl-story-step {
   display: flex;
-  min-height: 26rem;
-  max-width: 34rem;
+  width: min(calc(100% - clamp(3rem, 8vw, 8rem)), 58rem);
+  min-height: 25rem;
+  margin-inline: auto;
   flex-direction: column;
   justify-content: center;
-  padding-block: clamp(2.4rem, 5vh, 4rem);
+  padding-block: clamp(2.5rem, 5vh, 4rem);
 }
 
 .cl-story-step + .cl-story-step {
@@ -45,7 +44,6 @@
 
 .cl-story-intro {
   min-height: 42rem;
-  justify-content: center;
 }
 
 .cl-kicker {
@@ -59,7 +57,7 @@
 
 .cl-story h1 {
   margin: 0;
-  color: var(--censolab-primary, #0E4F5A);
+  color: #fff;
   font-size: clamp(4.8rem, 8vw, 8.2rem);
   font-weight: 200;
   letter-spacing: -0.065em;
@@ -67,9 +65,10 @@
 }
 
 .cl-story-intro h2 {
-  max-width: 35rem;
+  max-width: 46rem;
   margin: 1.5rem 0 0;
-  color: var(--censolab-text, #202326);
+  border-bottom: 0;
+  color: #fff;
   font-size: clamp(1.8rem, 3.2vw, 3.35rem);
   font-weight: 200;
   letter-spacing: -0.045em;
@@ -81,16 +80,13 @@
   color: rgba(255, 255, 255, 0.58);
 }
 
-.cl-story-intro h1,
-.cl-story-intro h2 {
-  color: #fff;
-}
-
 .cl-story-intro > p {
+  max-width: 44rem;
   color: rgba(255, 255, 255, 0.74);
 }
 
 .cl-story-step h2 {
+  max-width: 48rem;
   margin: 0 0 1rem;
   border-bottom: 0;
   color: var(--censolab-text, #202326);
@@ -102,7 +98,7 @@
 }
 
 .cl-story-step p {
-  max-width: 34rem;
+  max-width: 46rem;
   margin: 0;
   color: var(--censolab-muted, #62676C);
   font-size: clamp(0.98rem, 1.15vw, 1.08rem);
@@ -192,6 +188,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
+  max-width: 48rem;
   margin-top: 1.4rem;
 }
 
@@ -222,6 +219,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  max-width: 48rem;
   margin-top: 1.35rem;
 }
 
@@ -239,15 +237,17 @@
   position: relative;
   min-width: 0;
   overflow: visible;
-  border-left: 1px solid rgba(255, 255, 255, 0.10);
-  background: transparent;
+  border-left: 1px solid rgba(14, 79, 90, 0.08);
+  background:
+    linear-gradient(180deg, rgba(63, 113, 128, 0.055), transparent 34rem),
+    var(--censolab-bg, #F7F8F8);
 }
 
 .cl-map-intro {
   position: absolute;
-  top: 3rem;
-  right: clamp(1.25rem, 3vw, 3rem);
-  left: clamp(1.25rem, 3vw, 3rem);
+  top: 2rem;
+  right: 1.5rem;
+  left: 1.5rem;
   z-index: 4;
   display: flex;
   align-items: flex-start;
@@ -257,12 +257,12 @@
 }
 
 .cl-map-intro-copy {
-  max-width: 18rem;
+  max-width: 15rem;
 }
 
 .cl-map-intro strong {
   display: block;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--censolab-primary, #0E4F5A);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.07em;
@@ -272,27 +272,27 @@
 .cl-map-intro span {
   display: block;
   margin-top: 0.35rem;
-  color: rgba(255, 255, 255, 0.60);
+  color: var(--censolab-muted, #62676C);
   font-size: 0.76rem;
   line-height: 1.4;
 }
 
 .cl-map-source {
-  color: rgba(255, 255, 255, 0.62) !important;
+  color: rgba(98, 103, 108, 0.76) !important;
   font-size: 0.68rem !important;
   text-decoration: none !important;
   pointer-events: auto;
 }
 
 .cl-map-source:hover {
-  color: #fff !important;
+  color: var(--censolab-primary, #0E4F5A) !important;
 }
 
 #cl-chile-map {
-  width: 124%;
+  width: 100%;
   height: 100%;
-  min-height: 3160px;
-  margin-left: -24%;
+  min-height: 3070px;
+  margin: 0;
 }
 
 .cl-map-tooltip {
@@ -355,8 +355,7 @@
   position: relative;
   overflow: hidden;
   padding: clamp(5rem, 10vh, 8rem) 1.5rem;
-  background:
-    linear-gradient(90deg, #0A3D46 0%, #0E4F5A 55%, #3F7180 100%);
+  background: linear-gradient(90deg, #0A3D46 0%, #0E4F5A 55%, #3F7180 100%);
   color: #fff;
 }
 
@@ -411,23 +410,21 @@
 @media (max-width: 899.98px) {
   .cl-story {
     grid-template-columns: 1fr;
-    background:
-      var(--censolab-bg, #F7F8F8);
   }
 
   .cl-story-copy {
-    padding-inline: 1.25rem;
+    background: var(--censolab-bg, #F7F8F8);
   }
 
   .cl-story-step,
   .cl-story-intro {
+    width: min(calc(100% - 2.5rem), 48rem);
     min-height: auto;
-    max-width: none;
     padding-block: 4rem;
   }
 
   .cl-story-intro {
-    margin-inline: -1.25rem;
+    width: 100%;
     padding-inline: 1.25rem;
     background: var(--censolab-primary, #0E4F5A);
   }
@@ -439,22 +436,10 @@
   .cl-map-column {
     border-top: 1px solid rgba(14, 79, 90, 0.08);
     border-left: 0;
-    background: var(--censolab-bg, #F7F8F8);
-  }
-
-  .cl-map-intro strong {
-    color: var(--censolab-primary, #0E4F5A);
-  }
-
-  .cl-map-intro span,
-  .cl-map-source {
-    color: var(--censolab-muted, #62676C) !important;
   }
 
   #cl-chile-map {
-    width: 100%;
     min-height: 1900px;
-    margin-left: 0;
   }
 }
 

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;1,400&display=swap");
 
 :root {
   --censolab-primary: #0E4F5A;
@@ -8,7 +8,7 @@
   --censolab-text: #202326;
   --censolab-muted: #62676C;
   --censolab-border: rgba(32, 35, 38, 0.10);
-  --censolab-primary-soft: rgba(14, 79, 90, 0.08);
+  --censolab-primary-soft: color-mix(in srgb, var(--censolab-primary) 5%, var(--censolab-bg));
 }
 
 html {
@@ -22,169 +22,375 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* La web replica la navbar primaria de la aplicación. */
 .navbar {
-  background: rgba(247, 248, 248, 0.92) !important;
-  border-bottom: 1px solid var(--censolab-border);
-  backdrop-filter: blur(14px);
+  border-bottom: 0 !important;
+  background: var(--censolab-primary) !important;
+  box-shadow: none !important;
 }
 
 .navbar-brand,
 .navbar-nav .nav-link {
-  color: var(--censolab-text) !important;
+  color: #fff !important;
 }
 
 .navbar-brand {
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-size: 1.15rem;
+  font-weight: 200;
+  letter-spacing: 0.01em;
 }
 
 .navbar-nav .nav-link {
-  font-size: 0.9rem;
+  color: rgb(255 255 255 / 76%) !important;
+  font-size: 0.88rem;
   font-weight: 400;
 }
 
 .navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus,
 .navbar-nav .nav-link.active {
-  color: var(--censolab-primary) !important;
+  color: #fff !important;
 }
 
-.hero {
+.navbar-toggler {
+  border-color: rgb(255 255 255 / 30%);
+}
+
+.navbar-toggler-icon {
+  filter: invert(1) grayscale(1) brightness(2);
+}
+
+/* Hero inspirado directamente en la portada del informe territorial. */
+.landing-hero {
   position: relative;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 8.5rem 2rem 6.5rem;
+  isolation: isolate;
+  display: flex;
+  min-height: max(42rem, calc(100svh - 3.5rem));
   overflow: hidden;
+  background:
+    radial-gradient(circle at 83% 27%, rgb(255 255 255 / 9%) 0 0.16rem, transparent 0.17rem) 0 0 / 1.15rem 1.15rem,
+    linear-gradient(120deg, rgb(0 0 0 / 18%), transparent 58%),
+    var(--censolab-primary);
+  color: #fff;
 }
 
-.hero::before {
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: 2.25rem;
-  padding: 0.38rem 0.65rem;
-  border: 1px solid rgba(14, 79, 90, 0.16);
-  border-radius: 999px;
-  background: var(--censolab-primary-soft);
-  color: var(--censolab-primary);
-  content: "CENSO 2024 · CHILE";
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-}
-
-.hero::after {
+.landing-hero::before {
   position: absolute;
-  top: 2rem;
-  right: -9rem;
+  inset: 0;
   z-index: -1;
-  width: 34rem;
-  height: 34rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(14, 79, 90, 0.12) 0%, rgba(14, 79, 90, 0) 70%);
+  background:
+    radial-gradient(circle at 78% 42%, rgb(255 255 255 / 10%), transparent 22rem),
+    linear-gradient(180deg, transparent 45%, rgb(0 0 0 / 15%) 100%);
   content: "";
   pointer-events: none;
 }
 
-.hero h1 {
-  margin: 0 0 1.4rem;
-  color: var(--censolab-primary);
-  font-size: clamp(3.8rem, 9vw, 7.4rem);
-  font-weight: 300;
-  line-height: 0.88;
-  letter-spacing: -0.065em;
+.landing-hero-inner {
+  display: flex;
+  width: min(100%, 92rem);
+  margin-inline: auto;
+  padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 5vw, 5rem) clamp(2.5rem, 5vh, 4rem);
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
-.hero h2 {
-  max-width: 800px;
-  margin: 0;
-  color: var(--censolab-text);
-  font-size: clamp(1.8rem, 3.4vw, 3rem);
-  font-weight: 300;
-  line-height: 1.08;
-  letter-spacing: -0.035em;
+.landing-eyebrow,
+.information-eyebrow {
+  display: block;
+  color: rgb(255 255 255 / 58%);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.hero p {
-  max-width: 660px;
-  margin: 1.8rem 0 2.2rem;
-  color: var(--censolab-muted);
-  font-size: 1.08rem;
-  line-height: 1.7;
+.landing-hero h1 {
+  max-width: 62rem;
+  margin: 0.65rem 0 0;
+  color: #fff;
+  font-size: clamp(4.5rem, 10vw, 8.5rem);
+  font-weight: 200;
+  letter-spacing: -0.06em;
+  line-height: 0.86;
 }
 
-.btn-primary {
-  padding: 0.78rem 1.15rem;
-  border-color: var(--censolab-primary);
-  border-radius: 0.55rem;
-  background: var(--censolab-primary);
-  box-shadow: none;
-  font-size: 0.95rem;
-  font-weight: 500;
+.landing-hero h2 {
+  max-width: 58rem;
+  margin: 1.5rem 0 0;
+  color: #fff;
+  font-size: clamp(1.65rem, 3.2vw, 3rem);
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-wrap: balance;
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
-  border-color: var(--censolab-primary-dark);
-  background: var(--censolab-primary-dark);
-}
-
-.home-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  max-width: 1180px;
-  margin: 0 auto 7rem;
-  padding: 0 2rem;
-}
-
-.home-card {
-  position: relative;
-  min-height: 220px;
-  padding: 2rem;
-  overflow: hidden;
-  border: 1px solid var(--censolab-border);
-  border-radius: 0.85rem;
-  background: rgba(255, 255, 255, 0.72);
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
-}
-
-.home-card::before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--censolab-primary);
-  content: "";
-  opacity: 0.78;
-}
-
-.home-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(14, 79, 90, 0.24);
-  background: var(--censolab-surface);
-}
-
-.home-card h3 {
-  margin-bottom: 0.85rem;
-  color: var(--censolab-text);
-  font-size: 1.15rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-}
-
-.home-card p {
-  margin-bottom: 0;
-  color: var(--censolab-muted);
-  font-size: 0.95rem;
+.landing-hero-inner > p {
+  max-width: 43rem;
+  margin: 1.2rem 0 0;
+  color: rgb(255 255 255 / 72%);
+  font-size: 1rem;
   line-height: 1.65;
 }
 
-.page-footer {
-  border-top: 1px solid var(--censolab-border);
-  color: var(--censolab-muted);
-  font-size: 0.82rem;
+.landing-cta {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  margin-top: 1.8rem;
+  padding: 0.72rem 1rem;
+  border: 1px solid rgb(255 255 255 / 42%);
+  border-radius: 0.45rem;
+  background: rgb(0 0 0 / 10%);
+  color: #fff !important;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
 }
 
+.landing-cta:hover,
+.landing-cta:focus-visible {
+  border-color: #fff;
+  background: #fff;
+  color: var(--censolab-primary) !important;
+}
+
+.landing-capabilities {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: clamp(3.5rem, 8vh, 6rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(255 255 255 / 18%);
+}
+
+.landing-capability {
+  min-width: 0;
+  padding-right: clamp(0.5rem, 3vw, 2rem);
+}
+
+.landing-capability > span {
+  color: rgb(255 255 255 / 42%);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.landing-capability h3 {
+  margin: 0.35rem 0 0;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+.landing-capability p {
+  max-width: 20rem;
+  margin: 0.45rem 0 0;
+  color: rgb(255 255 255 / 64%);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* Misma banda editorial usada por Cómo usar y Acerca de en la app. */
+.information-page {
+  background: var(--censolab-bg);
+}
+
+.information-intro {
+  padding: clamp(3.5rem, 7vh, 5.5rem) clamp(1.5rem, 5vw, 5rem) clamp(5rem, 9vh, 7rem);
+  background:
+    linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 7%) 100%),
+    var(--censolab-primary);
+  color: #fff;
+}
+
+.information-intro-copy {
+  width: min(900px, 100%);
+  margin-inline: auto;
+}
+
+.information-intro h2 {
+  margin: 0.45rem 0 0;
+  color: #fff;
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  font-weight: 200;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
+}
+
+.information-intro p {
+  max-width: 44rem;
+  margin: 0.9rem 0 0;
+  color: rgb(255 255 255 / 72%);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.information-content {
+  position: relative;
+  z-index: 1;
+  width: min(900px, calc(100% - 3rem));
+  margin-top: -2rem;
+  margin-inline: auto;
+  margin-bottom: clamp(4rem, 8vh, 7rem);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--censolab-border);
+  border-radius: 1rem;
+  background: var(--censolab-surface);
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 7%);
+}
+
+.information-content h3 {
+  margin: 0 0 1.4rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.query-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--censolab-border);
+  border-radius: 0.65rem;
+}
+
+.query-part {
+  min-height: 10.5rem;
+  padding: 1.35rem;
+  background: var(--censolab-bg);
+}
+
+.query-part:nth-child(odd) {
+  border-right: 1px solid var(--censolab-border);
+}
+
+.query-part:nth-child(-n + 2) {
+  border-bottom: 1px solid var(--censolab-border);
+}
+
+.query-part > span,
+.prompt-card > span {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: color-mix(in srgb, var(--censolab-primary) 72%, var(--censolab-muted));
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.query-part strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.query-part p {
+  margin: 0;
+  color: var(--censolab-muted);
+  font-size: 0.83rem;
+  line-height: 1.5;
+}
+
+.query-formula {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0 3.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  border-radius: 0.65rem;
+  background: var(--censolab-primary-soft);
+  color: var(--censolab-primary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.query-formula b {
+  color: color-mix(in srgb, var(--censolab-primary) 40%, transparent);
+  font-weight: 300;
+}
+
+.prompt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.prompt-card {
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--censolab-border);
+  border-radius: 0.65rem;
+  background: var(--censolab-bg);
+}
+
+.prompt-card blockquote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--censolab-text);
+  font-size: 0.9rem;
+  font-style: normal;
+  line-height: 1.55;
+}
+
+.prompt-card blockquote p {
+  margin: 0;
+}
+
+/* Acerca de mantiene el mismo gesto editorial pero sin crear otra página. */
+.landing-about {
+  padding: clamp(5rem, 10vh, 8rem) clamp(1.5rem, 5vw, 5rem);
+  background: color-mix(in srgb, var(--censolab-primary) 96%, #000);
+  color: #fff;
+}
+
+.landing-about-inner {
+  width: min(900px, 100%);
+  margin-inline: auto;
+}
+
+.landing-about h2 {
+  margin: 0.45rem 0 1.5rem;
+  color: #fff;
+  font-size: clamp(2.5rem, 5vw, 4.7rem);
+  font-weight: 200;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.landing-about p {
+  max-width: 46rem;
+  color: rgb(255 255 255 / 72%);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.landing-text-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #fff !important;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration-color: rgb(255 255 255 / 40%);
+  text-underline-offset: 0.25em;
+}
+
+.page-footer {
+  border-top: 0;
+  background: var(--censolab-primary-dark);
+  color: rgb(255 255 255 / 52%);
+  font-size: 0.75rem;
+}
+
+/* /app conserva la aplicación como una experiencia completamente independiente. */
 .app-page {
   overflow: hidden;
 }
@@ -210,34 +416,48 @@ body {
   width: 100vw;
   height: 100vh;
   border: 0;
-  background: white;
+  background: #fff;
 }
 
-@media (max-width: 768px) {
-  .hero {
-    padding: 5.5rem 1.35rem 4rem;
+@media (max-width: 767.98px) {
+  .landing-hero-inner {
+    padding-inline: 1.25rem;
   }
 
-  .hero::after {
-    right: -18rem;
+  .landing-hero h1 {
+    font-size: clamp(4rem, 20vw, 6rem);
   }
 
-  .hero h1 {
-    font-size: clamp(3.4rem, 18vw, 5rem);
-  }
-
-  .hero h2 {
-    font-size: 1.65rem;
-  }
-
-  .home-grid {
+  .landing-capabilities {
     grid-template-columns: 1fr;
-    margin-bottom: 4rem;
-    padding: 0 1.35rem;
+    gap: 1.25rem;
   }
 
-  .home-card {
-    min-height: 0;
+  .landing-capability {
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid rgb(255 255 255 / 12%);
+  }
+
+  .information-intro {
+    padding-inline: 1rem;
+  }
+
+  .information-content {
+    width: calc(100% - 2rem);
+  }
+
+  .query-grid,
+  .prompt-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .query-part:nth-child(n) {
+    border-right: 0;
+    border-bottom: 1px solid var(--censolab-border);
+  }
+
+  .query-part:last-child {
+    border-bottom: 0;
   }
 }
 
@@ -246,7 +466,7 @@ body {
     scroll-behavior: auto;
   }
 
-  .home-card {
+  .landing-cta {
     transition: none;
   }
 }

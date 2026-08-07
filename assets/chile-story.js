@@ -218,10 +218,10 @@
           animation: false,
           enableMouseTracking: true,
           nullInteraction: true,
-          borderColor: "rgba(14, 79, 90, 0.42)",
+          borderColor: "rgba(14, 79, 90, 0.36)",
           borderWidth: 0.8,
-          color: "rgba(63, 113, 128, 0.20)",
-          nullColor: "rgba(63, 113, 128, 0.20)",
+          color: "rgba(222, 235, 237, 0.88)",
+          nullColor: "rgba(222, 235, 237, 0.88)",
           states: {
             hover: {
               color: "#0E4F5A",

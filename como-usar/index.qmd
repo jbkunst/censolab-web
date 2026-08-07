@@ -1,0 +1,113 @@
+---
+page-layout: full
+---
+
+::: {.information-page}
+::: {.information-intro}
+::: {.information-intro-copy}
+<span class="information-eyebrow">Guía de consulta</span>
+
+## Cómo usar CensoLab
+
+CensoLab permite consultar información censal usando lenguaje natural. No es necesario conocer los nombres técnicos de las tablas o variables, pero una consulta bien estructurada produce resultados más precisos.
+:::
+:::
+
+::: {.information-content}
+### Estructura básica
+
+Una buena consulta reúne cuatro elementos:
+
+::: {.how-to-use-structure}
+::: {.how-to-use-structure-item}
+**¿Cómo quiero verlo?**
+
+Mapa, tabla, gráfico o respuesta directa.
+:::
+
+::: {.how-to-use-structure-item}
+**¿Dónde?**
+
+Región, provincia, comuna, distrito, zona, localidad, entidad, aldea, manzana urbana o manzana de aldea.
+:::
+
+::: {.how-to-use-structure-item}
+**¿Qué quiero saber?**
+
+Población, edad, educación u otro indicador, expresado como total, porcentaje, promedio o distribución.
+:::
+
+::: {.how-to-use-structure-item}
+**¿Sobre quién o qué?**
+
+Personas, hogares, viviendas o un grupo específico dentro de esos universos.
+:::
+:::
+
+<p class="how-to-use-formula-intro">La fórmula general es:</p>
+
+<div class="how-to-use-formula">
+  <div class="how-to-use-formula-part"><span class="how-to-use-formula-label">Formato del resultado</span></div>
+  <span class="how-to-use-formula-plus">+</span>
+  <div class="how-to-use-formula-part"><span class="how-to-use-formula-label">Unidad geográfica</span></div>
+  <span class="how-to-use-formula-plus">+</span>
+  <div class="how-to-use-formula-part"><span class="how-to-use-formula-label">Indicador y cálculo</span></div>
+  <span class="how-to-use-formula-plus">+</span>
+  <div class="how-to-use-formula-part"><span class="how-to-use-formula-label">Universo</span></div>
+</div>
+
+### Ejemplos
+
+::: {.how-to-use-examples}
+::: {.how-to-use-example .card}
+<div class="card-header">Mostrar información en un mapa</div>
+
+> [“Muéstrame el porcentaje de viviendas desocupadas por manzana en Estación Central.”]{.how-to-use-prompt-text}
+
+<iframe
+  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/map.html"
+  title="Resultado del ejemplo: Mostrar información en un mapa"
+  loading="lazy"
+  class="how-to-use-preview how-to-use-preview-map"></iframe>
+:::
+
+::: {.how-to-use-example .card}
+<div class="card-header">Crear un gráfico estadístico</div>
+
+> [“Haz un gráfico de columnas con la población de la Región de Valparaíso en los tramos 0–14, 15–29, 30–44, 45–59 y 60 años o más.”]{.how-to-use-prompt-text}
+
+<iframe
+  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/chart.html"
+  title="Resultado del ejemplo: Crear un gráfico estadístico"
+  loading="lazy"
+  class="how-to-use-preview"></iframe>
+:::
+
+::: {.how-to-use-example .card}
+<div class="card-header">Construir una tabla con un cálculo</div>
+
+> [“Muéstrame en una tabla las tres comunas más pobladas de la Región de Valparaíso y qué porcentaje representan del total regional.”]{.how-to-use-prompt-text}
+
+<iframe
+  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/table.html"
+  title="Resultado del ejemplo: Construir una tabla con un cálculo"
+  loading="lazy"
+  class="how-to-use-preview how-to-use-preview-table"></iframe>
+:::
+
+::: {.how-to-use-example .card}
+<div class="card-header">Responder una pregunta directa</div>
+
+> [“¿Qué comuna de la Región Metropolitana tiene el mayor porcentaje de personas de 65 años o más?”]{.how-to-use-prompt-text}
+
+<iframe
+  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/answer.html"
+  title="Resultado del ejemplo: Responder una pregunta directa"
+  loading="lazy"
+  class="how-to-use-preview how-to-use-preview-answer"></iframe>
+:::
+:::
+
+[Explorar CensoLab →](../app/){.landing-text-link}
+:::
+:::

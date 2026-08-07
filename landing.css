@@ -10,7 +10,7 @@
   --cl-story-max: 92rem;
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 46%) minmax(0, 54%);
   width: 100%;
   margin-inline: auto;
   background:
@@ -18,8 +18,8 @@
     linear-gradient(
       180deg,
       var(--censolab-primary, #0E4F5A) 0,
-      var(--censolab-primary, #0E4F5A) 46rem,
-      var(--censolab-bg, #F7F8F8) 46rem,
+      var(--censolab-primary, #0E4F5A) 42rem,
+      var(--censolab-bg, #F7F8F8) 42rem,
       var(--censolab-bg, #F7F8F8) 100%
     );
 }
@@ -27,16 +27,16 @@
 .cl-story-copy {
   position: relative;
   z-index: 2;
-  padding-inline: clamp(1.5rem, 5vw, 5rem) clamp(0.5rem, 1.2vw, 1.4rem);
+  padding-inline: clamp(3rem, 7vw, 8rem) clamp(0.5rem, 1vw, 1rem);
 }
 
 .cl-story-step {
   display: flex;
-  min-height: 31rem;
-  max-width: 38rem;
+  min-height: 26rem;
+  max-width: 34rem;
   flex-direction: column;
   justify-content: center;
-  padding-block: clamp(3rem, 7vh, 5.5rem);
+  padding-block: clamp(2.4rem, 5vh, 4rem);
 }
 
 .cl-story-step + .cl-story-step {
@@ -44,7 +44,7 @@
 }
 
 .cl-story-intro {
-  min-height: 46rem;
+  min-height: 42rem;
   justify-content: center;
 }
 
@@ -92,6 +92,7 @@
 
 .cl-story-step h2 {
   margin: 0 0 1rem;
+  border-bottom: 0;
   color: var(--censolab-text, #202326);
   font-size: clamp(1.65rem, 2.6vw, 2.6rem);
   font-weight: 300;
@@ -288,10 +289,10 @@
 }
 
 #cl-chile-map {
-  width: 112%;
+  width: 124%;
   height: 100%;
-  min-height: 3300px;
-  margin-left: -12%;
+  min-height: 3160px;
+  margin-left: -24%;
 }
 
 .cl-map-tooltip {

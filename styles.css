@@ -30,6 +30,26 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Las páginas informativas comienzan inmediatamente debajo de la navbar. */
+.page-layout-full main.content:has(> .information-page) {
+  grid-column: screen-start / screen-end !important;
+  width: 100%;
+  max-width: none;
+  margin: 0 !important;
+  padding: 0;
+}
+
+.page-layout-full main.content:has(> .information-page) > .quarto-title-block:empty {
+  display: none;
+}
+
+.page-layout-full:has(.information-page) {
+  row-gap: 0;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  background: var(--censolab-primary);
+}
+
 /* La navbar conserva el mismo gesto que page_navbar(bg-primary) de la app. */
 .navbar {
   border-bottom: 0 !important;
@@ -228,7 +248,8 @@ body {
 
 .information-intro-about {
   background:
-    linear-gradient(90deg, var(--censolab-primary) 0%, var(--censolab-info) 100%);
+    linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 7%) 100%),
+    var(--censolab-primary);
 }
 
 .information-intro-copy {

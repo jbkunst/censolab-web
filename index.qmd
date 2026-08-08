@@ -2,119 +2,447 @@
 page-layout: custom
 section-divs: false
 toc: false
+css: landing.css
 ---
 
-<link rel="stylesheet" href="landing.css?v=20260807-4">
-
 ```{=html}
-<section class="cl-story">
-  <div class="cl-story-copy">
-    <article class="cl-story-step cl-story-intro">
-      <p class="cl-kicker">CENSO 2024 · CHILE</p>
+<!-- Hero cartográfico dinámico: MapLibre se mantiene bajo el manto. -->
+<link rel="stylesheet" href="assets/maplibre-gl.css">
+<style>
+.page-layout-custom#quarto-content {
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+body:has(.cl-home) footer.footer {
+  display: none;
+}
+
+.cl-home {
+  position: relative;
+  isolation: isolate;
+  height: calc(100svh - 3.5rem);
+  min-height: calc(100svh - 3.5rem);
+  overflow: hidden;
+  background: var(--censolab-primary, #0E4F5A);
+  color: #fff;
+}
+
+.cl-home::before,
+.cl-home::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+  pointer-events: none;
+}
+
+#cl-hero-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: transparent;
+}
+
+.cl-map-place {
+  color: rgb(14 79 90 / 72%);
+  font-family: inherit;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+#cl-hero-map .maplibregl-canvas {
+  opacity: 1;
+}
+
+#cl-hero-map .maplibregl-ctrl-attrib {
+  background: rgb(255 255 255 / 72%);
+  color: rgb(5 48 56 / 88%);
+  font-size: 9px;
+  opacity: .82;
+}
+
+#cl-hero-map .maplibregl-ctrl-attrib a {
+  color: rgb(5 48 56 / 100%);
+}
+
+.cl-home::before {
+  background:
+    linear-gradient(
+      180deg,
+      var(--censolab-primary, #0E4F5A) 0,
+      var(--censolab-primary, #0E4F5A) 2rem,
+      color-mix(in srgb, var(--censolab-primary, #0E4F5A) 96%, transparent) 6rem,
+      color-mix(in srgb, var(--censolab-primary, #0E4F5A) 82%, transparent) 12rem,
+      color-mix(in srgb, var(--censolab-primary, #0E4F5A) 55%, transparent) 20rem,
+      transparent 30rem
+    ),
+    linear-gradient(
+      color-mix(in srgb, var(--censolab-primary, #0E4F5A) 44%, transparent),
+      color-mix(in srgb, var(--censolab-primary, #0E4F5A) 44%, transparent)
+    );
+}
+
+.cl-home::after {
+  background:
+    linear-gradient(0deg, rgb(0 0 0 / 38%), transparent 46%),
+    linear-gradient(90deg, rgb(0 27 32 / 32%), rgb(0 27 32 / 14%) 48%, transparent 70%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0 14rem, #000 26rem);
+  mask-image: linear-gradient(180deg, transparent 0 14rem, #000 26rem);
+}
+
+.cl-home-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: min(calc(100% - 3rem), 82rem);
+  height: 100%;
+  margin-inline: auto;
+  padding-block: clamp(4rem, 9vh, 7rem);
+  align-items: center;
+}
+
+.cl-home-copy {
+  width: 66.666%;
+  max-width: 54rem;
+}
+
+.cl-home .cl-kicker {
+  margin-bottom: 1rem;
+  color: rgb(255 255 255 / 62%);
+  font-weight: 500;
+}
+
+.cl-home h1 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(4.8rem, 9vw, 8rem);
+  font-weight: 200;
+  letter-spacing: -0.065em;
+  line-height: .86;
+}
+
+.cl-home-slogan {
+  max-width: 43rem;
+  margin: 1.6rem 0 0;
+  border: 0;
+  color: #fff;
+  font-size: clamp(2rem, 3.7vw, 3.35rem);
+  font-weight: 300;
+  letter-spacing: -.045em;
+  line-height: 1.02;
+}
+
+.cl-prompt-demo {
+  display: flex;
+  width: min(100%, 39rem);
+  min-height: 2.8rem;
+  margin-top: 1.5rem;
+  border: 0;
+  border-left: 2px solid rgb(255 255 255 / 52%);
+  border-radius: 0;
+  background: linear-gradient(90deg, rgb(0 0 0 / 14%), transparent 88%);
+  color: rgb(255 255 255 / 88%);
+  font-size: clamp(0.88rem, 1.2vw, 1rem);
+  font-weight: 300;
+  line-height: 1.35;
+  padding: 0.62rem 0.9rem;
+  align-items: center;
+}
+
+.cl-prompt-mark {
+  margin-right: 0.65rem;
+  color: rgb(255 255 255 / 55%);
+  flex: 0 0 auto;
+}
+
+.cl-prompt-text::after {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  margin-left: 0.2rem;
+  background: currentColor;
+  content: "";
+  vertical-align: -0.12em;
+  animation: cl-cursor 0.9s steps(1) infinite;
+}
+
+@keyframes cl-cursor {
+  50% { opacity: 0; }
+}
+
+.cl-home-lead {
+  max-width: 39rem;
+  margin: 1.3rem 0 0;
+  color: rgb(255 255 255 / 75%);
+  font-size: 1.03rem;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.cl-home .cl-story-actions {
+  margin-top: 2rem;
+}
+
+.cl-home .cl-story-cta,
+.cl-home .cl-story-link {
+  border-color: rgb(255 255 255 / 42%);
+  background: rgb(0 0 0 / 10%);
+  color: #fff !important;
+  font-weight: 400;
+  backdrop-filter: blur(12px);
+}
+
+.cl-home .cl-story-cta:hover,
+.cl-home .cl-story-cta:focus-visible,
+.cl-home .cl-story-link:hover,
+.cl-home .cl-story-link:focus-visible {
+  border-color: #fff;
+  background: #fff;
+  color: var(--censolab-primary, #0E4F5A) !important;
+}
+
+@media (max-width: 899.98px) {
+  .cl-home {
+    height: auto;
+  }
+
+  .cl-home-inner {
+    height: auto;
+    min-height: calc(100svh - 3.5rem);
+  }
+
+  .cl-home-copy {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .cl-home-inner {
+    width: calc(100% - 2.5rem);
+    padding-block: 3.5rem;
+  }
+
+  .cl-home h1 {
+    font-size: clamp(4rem, 21vw, 5.7rem);
+  }
+
+  .cl-prompt-demo {
+    min-height: 4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-prompt-text::after {
+    animation: none;
+  }
+}
+</style>
+
+<main class="cl-home">
+  <div id="cl-hero-map" aria-hidden="true"></div>
+  <div class="cl-home-inner">
+    <div class="cl-home-copy">
+      <p class="cl-kicker">Censo 2024 · Datos para explorar</p>
       <h1>CensoLab</h1>
-      <h2>Explora Chile conversando con los datos.</h2>
-      <p>
-        Un laboratorio para recorrer el Censo 2024, comparar territorios y convertir preguntas en mapas, gráficos, tablas y respuestas concretas.
-      </p>
+      <p class="cl-home-slogan">Pregúntale a los datos. Descubre tu territorio.</p>
+      <div class="cl-prompt-demo" aria-label="Ejemplos de consultas que puedes hacer en CensoLab">
+        <span class="cl-prompt-mark" aria-hidden="true">›</span>
+        <span class="cl-prompt-text" aria-hidden="true">Muéstrame la cantidad de habitantes por comuna para la región del Biobío</span>
+      </div>
+      <p class="cl-home-lead">Explora la información censal usando lenguaje natural. CensoLab convierte tus preguntas en respuestas claras, cálculos y visualizaciones construidas con los datos.</p>
       <div class="cl-story-actions">
-        <a class="cl-story-cta" href="app/">Explorar CensoLab →</a>
-        <a class="cl-story-link" href="como-usar/">Cómo usarlo</a>
+        <a class="cl-story-cta" href="app/">Explorar CensoLab</a>
+        <a class="cl-story-link" href="como-usar/">Ver cómo funciona</a>
       </div>
-      <p class="cl-story-note">A la derecha, Chile a escala. Pasa el cursor por sus regiones mientras recorres la página.</p>
-    </article>
-
-    <article class="cl-story-step">
-      <p class="cl-kicker">01 · EMPIEZA POR UNA PREGUNTA</p>
-      <h2>No necesitas conocer la base antes de empezar.</h2>
-      <p>
-        CensoLab permite consultar información censal usando lenguaje natural. Puedes comenzar con una curiosidad sobre población, hogares, viviendas, educación, edad u otra característica y describir el resultado que quieres obtener.
-      </p>
-    </article>
-
-    <article class="cl-story-step">
-      <p class="cl-kicker">02 · EL TERRITORIO IMPORTA</p>
-      <h2>De Chile completo a una manzana.</h2>
-      <p>
-        Una misma pregunta cambia cuando cambia la escala. Puedes recorrer regiones, provincias, comunas y unidades territoriales menores, incluyendo zonas, localidades, entidades y manzanas.
-      </p>
-      <p>
-        El territorio no es solo un filtro: es parte de la pregunta y también de la forma de entender el resultado.
-      </p>
-    </article>
-
-    <article class="cl-story-step">
-      <p class="cl-kicker">03 · UNA CONSULTA, CUATRO PIEZAS</p>
-      <h2>Dile qué quieres ver, dónde y sobre quién.</h2>
-      <p>
-        No hay una sintaxis especial. Una consulta clara normalmente combina el formato del resultado, el lugar, el indicador y el universo que quieres estudiar.
-      </p>
-      <div class="cl-query-parts">
-        <div class="cl-query-part"><span>Formato</span><b>Mapa, gráfico, tabla o respuesta</b></div>
-        <div class="cl-query-part"><span>Territorio</span><b>Región, comuna, manzana…</b></div>
-        <div class="cl-query-part"><span>Indicador</span><b>Total, porcentaje, promedio…</b></div>
-        <div class="cl-query-part"><span>Universo</span><b>Personas, hogares o viviendas</b></div>
-      </div>
-    </article>
-
-    <article class="cl-story-step">
-      <p class="cl-kicker">04 · EL RESULTADO TOMA FORMA</p>
-      <h2>La pregunta decide cómo mirar los datos.</h2>
-      <p>
-        Algunas respuestas se entienden mejor sobre un mapa; otras necesitan comparar categorías, ordenar territorios o resumirse en una cifra. CensoLab utiliza distintas salidas para responder cada tipo de consulta.
-      </p>
-      <div class="cl-output-row" aria-label="Tipos de resultados">
-        <span>Mapas</span><span>Gráficos</span><span>Tablas</span><span>Respuestas directas</span><span>Perfiles territoriales</span>
-      </div>
-    </article>
-
-    <article class="cl-story-step">
-      <p class="cl-kicker">05 · CENSOBOT + HERRAMIENTAS</p>
-      <h2>El modelo interpreta. CensoLab calcula.</h2>
-      <p>
-        CensoBot entiende el requerimiento y decide qué herramientas necesita. La extracción, los cálculos y las visualizaciones se ejecutan sobre datos censales preparados para consulta, en lugar de depender de cifras memorizadas por un modelo de lenguaje.
-      </p>
-      <p>
-        Así, una conversación puede convertirse en una consulta territorial reproducible y en un resultado construido con los datos.
-      </p>
-    </article>
-
-    <article class="cl-story-step">
-      <p class="cl-kicker">06 · UN LABORATORIO TERRITORIAL</p>
-      <h2>Explorar primero. Profundizar después.</h2>
-      <p>
-        CensoLab combina estadística, análisis territorial, visualización y desarrollo de software para hacer más accesible la información pública. La idea es simple: reducir la distancia entre una pregunta sobre tu entorno y los datos necesarios para responderla.
-      </p>
-      <div class="cl-story-actions">
-        <a class="cl-story-link" href="acerca-de/">Acerca del proyecto →</a>
-        <a class="cl-story-link" href="como-usar/">Ver ejemplos →</a>
-      </div>
-    </article>
-  </div>
-
-  <aside class="cl-map-column" aria-label="Recorrido regional de Chile">
-    <div class="cl-map-intro">
-      <div class="cl-map-intro-copy">
-        <strong>Chile · región por región</strong>
-        <span>Hover para descubrir población, participación nacional y cambio desde 2017.</span>
-      </div>
-      <a class="cl-map-source" href="https://censo2024.ine.gob.cl/resultados/" target="_blank" rel="noopener">Fuente: INE</a>
     </div>
-    <div id="cl-chile-map" role="img" aria-label="Mapa interactivo de las regiones de Chile"></div>
-  </aside>
-</section>
 
-<section class="cl-landing-close">
-  <div class="cl-landing-close-inner">
-    <p class="cl-kicker">AHORA TE TOCA A TI</p>
-    <h2>Chile tiene muchas historias. Empieza con una pregunta.</h2>
-    <p>
-      Explora el Censo 2024 desde el país hasta tu territorio y decide qué quieres comparar, calcular o visualizar.
-    </p>
-    <a class="cl-story-cta" href="app/">Entrar a CensoLab →</a>
   </div>
-</section>
+</main>
 
-<script src="https://code.highcharts.com/maps/highmaps.js"></script>
-<script src="https://code.highcharts.com/mapdata/countries/cl/cl-all.js"></script>
-<script src="assets/chile-story.js?v=20260807-4"></script>
+<script src="assets/maplibre-gl.js"></script>
+<script>
+(() => {
+  const promptText = document.querySelector('.cl-prompt-text');
+  const promptExamples = [
+    'Muéstrame la cantidad de habitantes por comuna para la región del Biobío',
+    'Grafica escolaridad promedio vs. conexión a internet de las comunas de Valparaíso',
+    'Dame el informe territorial de Isla de Maipo',
+    'Cuéntame una historia sobre el envejecimiento en Chile'
+  ];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (promptText && !reducedMotion) {
+    let promptIndex = 0;
+    let characterIndex = promptExamples[0].length;
+    let deleting = true;
+
+    const typePrompt = () => {
+      const phrase = promptExamples[promptIndex];
+
+      if (deleting) {
+        characterIndex -= 1;
+      } else {
+        characterIndex += 1;
+      }
+
+      promptText.textContent = phrase.slice(0, characterIndex);
+
+      if (!deleting && characterIndex === phrase.length) {
+        deleting = true;
+        window.setTimeout(typePrompt, 2200);
+        return;
+      }
+
+      if (deleting && characterIndex === 0) {
+        deleting = false;
+        promptIndex = (promptIndex + 1) % promptExamples.length;
+        window.setTimeout(typePrompt, 320);
+        return;
+      }
+
+      window.setTimeout(typePrompt, deleting ? 18 : 38);
+    };
+
+    window.setTimeout(typePrompt, 2200);
+  }
+
+  const container = document.getElementById('cl-hero-map');
+  if (!container || !window.maplibregl) return;
+
+  const places = [
+    { center: [-70.31, -18.48], zoom: 7.1, bearing: -8 },
+    { center: [-70.40, -23.65], zoom: 6.7, bearing: 7 },
+    { center: [-71.25, -29.95], zoom: 6.5, bearing: -5 },
+    { center: [-70.67, -33.45], zoom: 7.0, bearing: 4 },
+    { center: [-73.05, -36.82], zoom: 6.8, bearing: -7 },
+    { center: [-72.94, -41.47], zoom: 6.4, bearing: 6 },
+    { center: [-72.68, -45.57], zoom: 6.2, bearing: -5 },
+    { center: [-70.91, -53.16], zoom: 6.5, bearing: 8 }
+  ];
+
+  const chileLabels = [
+    { name: 'Arica', coordinates: [-70.31, -18.48] },
+    { name: 'Antofagasta', coordinates: [-70.40, -23.65] },
+    { name: 'Copiapó', coordinates: [-70.33, -27.37] },
+    { name: 'La Serena', coordinates: [-71.25, -29.90] },
+    { name: 'Santiago', coordinates: [-70.67, -33.45] },
+    { name: 'Concepción', coordinates: [-73.05, -36.82] },
+    { name: 'Puerto Montt', coordinates: [-72.94, -41.47] },
+    { name: 'Coyhaique', coordinates: [-72.07, -45.57] },
+    { name: 'Punta Arenas', coordinates: [-70.91, -53.16] }
+  ];
+
+  let current = 3;
+  let timer;
+
+  const cameraOffset = () => [
+    container.clientWidth >= 900 ? Math.min(container.clientWidth * 0.2, 300) : 0,
+    Math.min(container.clientHeight * 0.06, 64)
+  ];
+
+  const map = new maplibregl.Map({
+    container,
+    style: {
+      version: 8,
+      sources: {
+        carto: {
+          type: 'raster',
+          tiles: [
+            'https://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+            'https://b.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+            'https://c.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'
+          ],
+          tileSize: 256,
+          attribution: '&copy; <a href="https://carto.com/about-carto/" target="_blank" rel="noopener">CARTO</a> · &copy; <a href="https://www.openstreetmap.org/about/" target="_blank" rel="noopener">OpenStreetMap</a> contributors · CensoLab'
+        }
+      },
+      layers: [{
+        id: 'carto-tiles',
+        type: 'raster',
+        source: 'carto',
+        minzoom: 0,
+        maxzoom: 20,
+        paint: {
+          'raster-opacity': 1,
+          'raster-saturation': 0,
+          'raster-contrast': 0.2
+        }
+      }]
+    },
+    center: places[current].center,
+    zoom: places[current].zoom,
+    bearing: places[current].bearing,
+    pitch: 18,
+    interactive: false,
+    attributionControl: false,
+    renderWorldCopies: false,
+    fadeDuration: 0
+  });
+
+  map.addControl(new maplibregl.AttributionControl({ compact: false }), 'bottom-right');
+
+  const travel = () => {
+    let next = current;
+    while (next === current) next = Math.floor(Math.random() * places.length);
+    current = next;
+    map.flyTo({
+      ...places[current],
+      offset: cameraOffset(),
+      pitch: 18,
+      duration: 3200,
+      curve: 0.9,
+      essential: false
+    });
+  };
+
+  map.once('load', () => {
+    map.jumpTo({
+      ...places[current],
+      offset: cameraOffset(),
+      pitch: 18
+    });
+
+    map.addSource('chile-regions', {
+      type: 'geojson',
+      data: 'assets/geo/chile-regions.geojson?v=20260808-2'
+    });
+
+    map.addLayer({
+      id: 'chile-region-borders',
+      type: 'line',
+      source: 'chile-regions',
+      paint: {
+        'line-color': '#ffffff',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 5, 0.9, 8, 1.45],
+        'line-opacity': 0.76,
+        'line-blur': 0
+      }
+    });
+
+    chileLabels.forEach(({ name, coordinates }) => {
+      const label = document.createElement('span');
+      label.className = 'cl-map-place';
+      label.textContent = name;
+      new maplibregl.Marker({ element: label, anchor: 'center' })
+        .setLngLat(coordinates)
+        .addTo(map);
+    });
+
+    if (!reducedMotion) timer = window.setInterval(travel, 7000);
+  });
+
+  window.addEventListener('pagehide', () => {
+    if (timer) window.clearInterval(timer);
+  }, { once: true });
+})();
+</script>
 ```

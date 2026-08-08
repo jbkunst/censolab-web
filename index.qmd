@@ -15,6 +15,11 @@ css: landing.css
   max-width: none;
   margin: 0;
   padding: 0;
+  background: var(--censolab-primary, #0E4F5A);
+}
+
+body:has(.cl-home) {
+  background: var(--censolab-primary, #0E4F5A);
 }
 
 body:has(.cl-home) footer.footer {
@@ -64,14 +69,14 @@ body:has(.cl-home) footer.footer {
 }
 
 #cl-hero-map .maplibregl-ctrl-attrib {
-  background: rgb(255 255 255 / 72%);
-  color: rgb(5 48 56 / 88%);
+  background: rgb(5 48 56 / 38%);
+  color: rgb(255 255 255 / 82%);
   font-size: 9px;
-  opacity: .82;
+  opacity: .88;
 }
 
 #cl-hero-map .maplibregl-ctrl-attrib a {
-  color: rgb(5 48 56 / 100%);
+  color: rgb(255 255 255 / 92%);
 }
 
 .cl-home::before {
@@ -355,28 +360,50 @@ body:has(.cl-home) footer.footer {
       version: 8,
       sources: {
         carto: {
-          type: 'raster',
-          tiles: [
-            'https://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-            'https://b.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
-            'https://c.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'
-          ],
-          tileSize: 256,
+          type: 'vector',
+          url: 'https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json',
           attribution: '&copy; <a href="https://carto.com/about-carto/" target="_blank" rel="noopener">CARTO</a> · &copy; <a href="https://www.openstreetmap.org/about/" target="_blank" rel="noopener">OpenStreetMap</a> contributors · CensoLab'
         }
       },
-      layers: [{
-        id: 'carto-tiles',
-        type: 'raster',
-        source: 'carto',
-        minzoom: 0,
-        maxzoom: 20,
-        paint: {
-          'raster-opacity': 1,
-          'raster-saturation': 0,
-          'raster-contrast': 0.2
+      layers: [
+        {
+          id: 'territory-background',
+          type: 'background',
+          paint: { 'background-color': '#f4f4f1' }
+        },
+        {
+          id: 'territory-water',
+          type: 'fill',
+          source: 'carto',
+          'source-layer': 'water',
+          paint: { 'fill-color': '#d9e4e7' }
+        },
+        {
+          id: 'territory-state-boundaries',
+          type: 'line',
+          source: 'carto',
+          'source-layer': 'boundary',
+          minzoom: 4,
+          filter: ['all', ['==', 'admin_level', 4], ['==', 'maritime', 0]],
+          paint: {
+            'line-color': '#90a5aa',
+            'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.45, 8, 0.9],
+            'line-opacity': 0.72
+          }
+        },
+        {
+          id: 'territory-country-boundaries',
+          type: 'line',
+          source: 'carto',
+          'source-layer': 'boundary',
+          filter: ['all', ['==', 'admin_level', 2], ['==', 'maritime', 0]],
+          paint: {
+            'line-color': '#607d84',
+            'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.8, 8, 1.4],
+            'line-opacity': 0.78
+          }
         }
-      }]
+      ]
     },
     center: places[current].center,
     zoom: places[current].zoom,
@@ -409,23 +436,6 @@ body:has(.cl-home) footer.footer {
       ...places[current],
       offset: cameraOffset(),
       pitch: 18
-    });
-
-    map.addSource('chile-regions', {
-      type: 'geojson',
-      data: 'assets/geo/chile-regions.geojson?v=20260808-2'
-    });
-
-    map.addLayer({
-      id: 'chile-region-borders',
-      type: 'line',
-      source: 'chile-regions',
-      paint: {
-        'line-color': '#ffffff',
-        'line-width': ['interpolate', ['linear'], ['zoom'], 5, 0.9, 8, 1.45],
-        'line-opacity': 0.76,
-        'line-blur': 0
-      }
     });
 
     chileLabels.forEach(({ name, coordinates }) => {

@@ -71,7 +71,7 @@ body:has(.cl-home) footer.footer {
 #cl-hero-map .maplibregl-ctrl-attrib {
   background: rgb(5 48 56 / 38%);
   color: rgb(255 255 255 / 82%);
-  font-size: 9px;
+  font-size: 10px;
   opacity: .88;
 }
 
@@ -258,7 +258,7 @@ body:has(.cl-home) footer.footer {
     <div class="cl-home-copy">
       <p class="cl-kicker">Censo 2024 · Datos para explorar</p>
       <h1>CensoLab</h1>
-      <p class="cl-home-slogan">Pregúntale a los datos. Descubre tu territorio.</p>
+      <h2 class="cl-home-slogan unanchored">Pregúntale a los datos. Descubre tu territorio.</h2>
       <div class="cl-prompt-demo" aria-label="Ejemplos de consultas que puedes hacer en CensoLab">
         <span class="cl-prompt-mark" aria-hidden="true">›</span>
         <span class="cl-prompt-text" aria-hidden="true">Muéstrame la cantidad de habitantes por comuna para la región del Biobío</span>
@@ -276,6 +276,9 @@ body:has(.cl-home) footer.footer {
 <script src="assets/maplibre-gl.js"></script>
 <script>
 (() => {
+  document.querySelector('.navbar-toggler[role="menu"]')?.removeAttribute('role');
+  document.querySelector('.cl-home-slogan')?.classList.remove('anchored');
+
   const promptText = document.querySelector('.cl-prompt-text');
   const promptExamples = [
     'Muéstrame la cantidad de habitantes por comuna para la región del Biobío',
@@ -450,9 +453,14 @@ body:has(.cl-home) footer.footer {
       const label = document.createElement('span');
       label.className = 'cl-map-place';
       label.textContent = name;
-      new maplibregl.Marker({ element: label, anchor: 'center' })
+      const marker = new maplibregl.Marker({ element: label, anchor: 'center' })
         .setLngLat(coordinates)
         .addTo(map);
+      const markerElement = marker.getElement();
+      markerElement.setAttribute('aria-hidden', 'true');
+      markerElement.setAttribute('role', 'presentation');
+      markerElement.removeAttribute('aria-label');
+      markerElement.removeAttribute('tabindex');
     });
 
     if (!reducedMotion) timer = window.setInterval(travel, 7000);

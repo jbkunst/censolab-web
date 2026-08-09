@@ -256,7 +256,7 @@ body:has(.cl-home) footer.footer {
   <div id="cl-hero-map" aria-hidden="true"></div>
   <div class="cl-home-inner">
     <div class="cl-home-copy">
-      <p class="cl-kicker">Censo 2024 · Datos para explorar</p>
+      <p class="cl-kicker" aria-hidden="true">&nbsp;</p>
       <h1>CensoLab</h1>
       <h2 class="cl-home-slogan unanchored">Pregúntale a los datos. Descubre tu territorio.</h2>
       <div class="cl-prompt-demo" aria-label="Ejemplos de consultas que puedes hacer en CensoLab">

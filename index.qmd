@@ -99,7 +99,7 @@ body:has(.cl-home) footer.footer {
 .cl-home::after {
   background:
     linear-gradient(0deg, rgb(0 0 0 / 38%), transparent 46%),
-    linear-gradient(90deg, rgb(0 27 32 / 32%), rgb(0 27 32 / 14%) 48%, transparent 70%);
+    linear-gradient(90deg, rgb(0 27 32 / 40%), rgb(0 27 32 / 18%) 48%, transparent 70%);
   -webkit-mask-image: linear-gradient(180deg, transparent 0 14rem, #000 26rem);
   mask-image: linear-gradient(180deg, transparent 0 14rem, #000 26rem);
 }
@@ -187,7 +187,7 @@ body:has(.cl-home) footer.footer {
 .cl-home-lead {
   max-width: 39rem;
   margin: 1.3rem 0 0;
-  color: rgb(255 255 255 / 75%);
+  color: rgb(255 255 255 / 86%);
   font-size: 1.03rem;
   font-weight: 300;
   line-height: 1.7;
@@ -349,6 +349,13 @@ body:has(.cl-home) footer.footer {
   let current = 3;
   let timer;
 
+  const initialView = {
+    ...places[current],
+    center: [-78.84, -33.64],
+    zoom: 4,
+    bearing: 0
+  };
+
   const cameraOffset = () => [
     container.clientWidth >= 900 ? Math.min(container.clientWidth * 0.2, 300) : 0,
     Math.min(container.clientHeight * 0.06, 64)
@@ -405,9 +412,9 @@ body:has(.cl-home) footer.footer {
         }
       ]
     },
-    center: places[current].center,
-    zoom: places[current].zoom,
-    bearing: places[current].bearing,
+    center: initialView.center,
+    zoom: initialView.zoom,
+    bearing: initialView.bearing,
     pitch: 18,
     interactive: false,
     attributionControl: false,
@@ -421,6 +428,7 @@ body:has(.cl-home) footer.footer {
     let next = current;
     while (next === current) next = Math.floor(Math.random() * places.length);
     current = next;
+
     map.flyTo({
       ...places[current],
       offset: cameraOffset(),
@@ -433,7 +441,7 @@ body:has(.cl-home) footer.footer {
 
   map.once('load', () => {
     map.jumpTo({
-      ...places[current],
+      ...initialView,
       offset: cameraOffset(),
       pitch: 18
     });

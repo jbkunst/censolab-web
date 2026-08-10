@@ -1,0 +1,276 @@
+---
+draft: true
+page-layout: full
+toc: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: load-evaluation-set
+cases_url <- paste0(
+  "https://docs.google.com/spreadsheets/d/",
+  "1W4n-JBNBC9k03Py2DqIb_zXxu9ni8tGpUfcUaTm_A18/",
+  "gviz/tq?tqx=out:csv&sheet=Casos"
+)
+
+cases <- utils::read.csv(
+  cases_url,
+  check.names = FALSE,
+  stringsAsFactors = FALSE,
+  na.strings = c("", "NA")
+)
+
+required_columns <- c(
+  "ID", "Categoría", "Pregunta", "Resultado esperado", "Criterio",
+  "Dificultad", "Activo", "Tipo de validación", "Valor esperado", "Tolerancia"
+)
+stopifnot(all(required_columns %in% names(cases)))
+
+active <- tolower(trimws(cases$Activo)) %in% c("sí", "si", "true", "1")
+active_cases <- cases[active, , drop = FALSE]
+
+n_cases <- nrow(active_cases)
+n_categories <- length(unique(active_cases$Categoría))
+n_difficulties <- length(unique(active_cases$Dificultad))
+n_pending <- sum(grepl("PENDIENTE", active_cases$`Resultado esperado`, fixed = TRUE))
+
+category_counts <- sort(table(active_cases$Categoría), decreasing = TRUE)
+difficulty_counts <- table(
+  factor(active_cases$Dificultad, levels = c("Básica", "Media", "Alta"))
+)
+```
+
+```{=html}
+<style>
+.eval-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1.4rem 0 2rem;
+}
+.eval-metric {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--censolab-border);
+  border-radius: .55rem;
+  background: var(--censolab-bg);
+}
+.eval-metric-value {
+  display: block;
+  color: var(--censolab-primary);
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+.eval-metric-label {
+  display: block;
+  margin-top: .35rem;
+  color: var(--censolab-muted);
+  font-size: .76rem;
+  line-height: 1.35;
+}
+.eval-method {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1rem 0 2rem;
+}
+.eval-method-item {
+  padding: 1rem;
+  border: 1px solid var(--censolab-border);
+  border-radius: .55rem;
+  background: #fff;
+}
+.eval-method-item strong {
+  display: block;
+  margin-bottom: .3rem;
+  color: var(--censolab-text);
+}
+.eval-method-item p {
+  margin: 0;
+  color: var(--censolab-muted);
+  font-size: .85rem;
+  line-height: 1.5;
+}
+.eval-table {
+  width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+  font-size: .82rem;
+}
+.eval-table th,
+.eval-table td {
+  padding: .75rem .65rem;
+  border-bottom: 1px solid var(--censolab-border);
+  vertical-align: top;
+  text-align: left;
+}
+.eval-table th {
+  color: var(--censolab-muted);
+  font-size: .66rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.eval-table td:nth-child(3),
+.eval-table td:nth-child(4) {
+  min-width: 15rem;
+}
+.eval-note {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-left: 3px solid var(--censolab-primary);
+  background: var(--censolab-bg);
+  color: var(--censolab-muted);
+  font-size: .85rem;
+  line-height: 1.55;
+}
+.eval-source {
+  margin-top: .65rem;
+  font-size: .82rem;
+}
+@media (max-width: 860px) {
+  .eval-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .eval-grid,
+  .eval-method {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+```
+
+::: {.information-page}
+::: {.information-intro}
+::: {.information-intro-copy}
+<span class="information-eyebrow">Transparencia y calidad</span>
+
+## Cómo evaluamos CensoBot
+
+Una respuesta convincente no basta. Estamos construyendo una batería pública de preguntas para comprobar que CensoBot encuentra el dato correcto, resuelve bien el territorio, realiza los cálculos pedidos y utiliza una salida adecuada cuando la pregunta requiere una tabla, un gráfico, un mapa o un perfil territorial.
+:::
+:::
+
+::: {.information-content}
+### Una batería abierta y en crecimiento
+
+Los casos se mantienen en una hoja pública y son la misma fuente que consume el proceso de evaluación. Así podemos ampliar o corregir preguntas sin mantener una versión separada para documentación.
+
+<div class="eval-grid">
+  <div class="eval-metric">
+    <span class="eval-metric-value">`r n_cases`</span>
+    <span class="eval-metric-label">casos activos</span>
+  </div>
+  <div class="eval-metric">
+    <span class="eval-metric-value">`r n_categories`</span>
+    <span class="eval-metric-label">categorías cubiertas</span>
+  </div>
+  <div class="eval-metric">
+    <span class="eval-metric-value">`r n_difficulties`</span>
+    <span class="eval-metric-label">niveles de dificultad</span>
+  </div>
+  <div class="eval-metric">
+    <span class="eval-metric-value">`r n_pending`</span>
+    <span class="eval-metric-label">referencias por completar</span>
+  </div>
+</div>
+
+### Qué medimos
+
+::: {.eval-method}
+::: {.eval-method-item}
+**Exactitud verificable**
+
+Cuando conocemos la cifra esperada, la comparación es determinística. No pedimos a otro modelo que decida si un número “parece correcto”.
+:::
+
+::: {.eval-method-item}
+**Respuesta y razonamiento aplicado**
+
+Para respuestas más abiertas usamos criterios escritos de antemano: qué territorio debe considerar, qué universo corresponde y qué debe explicar al usuario.
+:::
+
+::: {.eval-method-item}
+**Salidas estructuradas**
+
+Las preguntas incluyen tablas, gráficos, mapas y perfiles territoriales. La evaluación revisa tanto la respuesta como si la salida solicitada pudo construirse correctamente.
+:::
+
+::: {.eval-method-item}
+**No inventar información**
+
+También incluimos preguntas que CensoBot no debería contestar con una cifra. Reconocer los límites de los datos forma parte de una buena respuesta.
+:::
+:::
+
+### Cobertura actual
+
+```{r}
+#| label: category-chart
+#| fig-cap: "Casos activos por categoría"
+#| fig-width: 8
+#| fig-height: 4.2
+if (length(category_counts)) {
+  par(mar = c(4.5, 9, 1, 1))
+  barplot(
+    rev(category_counts),
+    horiz = TRUE,
+    las = 1,
+    border = NA,
+    xlab = "Número de casos"
+  )
+}
+```
+
+```{r}
+#| label: difficulty-chart
+#| fig-cap: "Casos activos por dificultad"
+#| fig-width: 8
+#| fig-height: 3.2
+par(mar = c(4.5, 7, 1, 1))
+barplot(
+  difficulty_counts,
+  horiz = TRUE,
+  las = 1,
+  border = NA,
+  xlab = "Número de casos"
+)
+```
+
+### Los casos
+
+```{r}
+#| label: cases-table
+public_cases <- active_cases[, c(
+  "ID", "Categoría", "Pregunta", "Resultado esperado", "Dificultad"
+), drop = FALSE]
+
+knitr::kable(
+  public_cases,
+  format = "html",
+  escape = TRUE,
+  table.attr = "class='eval-table'"
+)
+```
+
+<p class="eval-source">
+<a href="https://docs.google.com/spreadsheets/d/1W4n-JBNBC9k03Py2DqIb_zXxu9ni8tGpUfcUaTm_A18/edit?usp=sharing" target="_blank" rel="noopener">Ver la fuente pública de los casos →</a>
+</p>
+
+### Cómo usamos `vitals`
+
+Internamente usamos `vitals` para ejecutar los casos, registrar cada corrida y comparar resultados. Ese visor detallado es muy útil durante el desarrollo porque permite investigar por qué falló una pregunta, pero también contiene información operacional que no es necesaria para entender la calidad de CensoBot.
+
+La versión pública de esta página apunta a otra cosa: mostrar **qué probamos, cuántos casos cubrimos y cómo evoluciona el desempeño por tipo de tarea**. Cuando la batería esté más madura agregaremos métricas resumidas por categoría y dificultad, manteniendo el detalle técnico disponible para diagnóstico y reproducibilidad sin convertirlo en la interfaz principal del sitio.
+
+<div class="eval-note">
+Este benchmark está en construcción. Los casos marcados como “PENDIENTE” permanecen visibles porque forman parte de la batería que estamos definiendo, pero una referencia incompleta no se presenta como una validación numérica definitiva.
+</div>
+:::
+:::

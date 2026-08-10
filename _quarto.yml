@@ -9,6 +9,7 @@ project:
 website:
   title: "CensoLab"
   site-url: https://censolab.cl
+  google-analytics: "G-KQNMTM4EDX"
   search: false
   navbar:
     left:
@@ -27,4 +28,3 @@ format:
     theme: cosmo
     css: styles.css
     toc: false
-    include-in-header: _includes/analytics.html

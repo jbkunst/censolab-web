@@ -216,8 +216,7 @@ También incluimos preguntas que CensoBot no debería contestar con una cifra. R
 #| fig-width: 8
 #| fig-height: 4.2
 if (length(category_counts)) {
-  old_par <- par(mar = c(4.5, 9, 1, 1))
-  on.exit(par(old_par), add = TRUE)
+  par(mar = c(4.5, 9, 1, 1))
   barplot(
     rev(category_counts),
     horiz = TRUE,
@@ -233,8 +232,7 @@ if (length(category_counts)) {
 #| fig-cap: "Casos activos por dificultad"
 #| fig-width: 8
 #| fig-height: 3.2
-old_par <- par(mar = c(4.5, 7, 1, 1))
-on.exit(par(old_par), add = TRUE)
+par(mar = c(4.5, 7, 1, 1))
 barplot(
   difficulty_counts,
   horiz = TRUE,

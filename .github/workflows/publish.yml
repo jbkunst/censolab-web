@@ -30,7 +30,7 @@ jobs:
           use-public-rspm: true
 
       - name: Install R dependencies
-        run: Rscript -e 'install.packages(c("rmarkdown", "ggplot2", "showtext"), repos = "https://cloud.r-project.org")'
+        uses: r-lib/actions/setup-r-dependencies@v2
 
       - name: Render site
         run: quarto render --profile production

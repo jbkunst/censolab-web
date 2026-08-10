@@ -12,12 +12,23 @@ body-classes: app-page
 ></iframe>
 
 <script>
+const censolabAnalyticsEvents = new Set([
+  "app_loaded",
+  "map_analysis_generated",
+  "territorial_profile_generated"
+]);
+
 window.addEventListener("message", (event) => {
   if (event.origin !== "https://jbkunst-censolab.share.connect.posit.cloud") return;
   if (event.data?.source !== "censolab-shiny") return;
-  if (event.data?.event !== "app_loaded") return;
+  if (!censolabAnalyticsEvents.has(event.data?.event)) return;
   if (typeof window.gtag !== "function") return;
 
-  window.gtag("event", "app_loaded");
+  const params =
+    event.data?.params && typeof event.data.params === "object" && !Array.isArray(event.data.params)
+      ? event.data.params
+      : {};
+
+  window.gtag("event", event.data.event, params);
 });
 </script>

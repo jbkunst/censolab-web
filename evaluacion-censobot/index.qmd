@@ -1,7 +1,11 @@
 ---
 draft: true
-page-layout: full
-toc: false
+lang: es
+page-layout: article
+toc: true
+toc-location: right
+toc-title: "Tabla de contenidos"
+toc-depth: 3
 execute:
   echo: false
   warning: false
@@ -162,8 +166,7 @@ ggplot2::theme_set(
 </style>
 ```
 
-::: {.information-page}
-::: {.information-intro}
+::: {.information-intro .column-screen}
 ::: {.information-intro-copy}
 <span class="information-eyebrow">Transparencia y calidad</span>
 
@@ -319,5 +322,4 @@ La versión pública de esta página apunta a otra cosa: mostrar **qué probamos
 <div class="eval-note">
 Este benchmark está en construcción. Los casos marcados como “PENDIENTE” permanecen visibles porque forman parte de la batería que estamos definiendo, pero una referencia incompleta no se presenta como una validación numérica definitiva.
 </div>
-:::
 :::

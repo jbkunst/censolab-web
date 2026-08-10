@@ -5,7 +5,7 @@ body-classes: app-page
 
 <iframe
   class="app-frame"
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/"
+  src="https://jbkunst-censolab.share.connect.posit.cloud/"
   title="CensoLab"
   loading="eager"
   allow="clipboard-read; clipboard-write"
@@ -13,7 +13,7 @@ body-classes: app-page
 
 <script>
 window.addEventListener("message", (event) => {
-  if (event.origin !== "https://jbkunst-censo-ia-app.share.connect.posit.cloud") return;
+  if (event.origin !== "https://jbkunst-censolab.share.connect.posit.cloud") return;
   if (event.data?.source !== "censolab-shiny") return;
   if (event.data?.event !== "app_loaded") return;
   if (typeof window.gtag !== "function") return;

@@ -41,6 +41,22 @@ category_counts <- sort(table(active_cases$Categoría), decreasing = TRUE)
 difficulty_counts <- table(
   factor(active_cases$Dificultad, levels = c("Básica", "Media", "Alta"))
 )
+
+try(
+  sysfonts::font_add_google("IBM Plex Sans", family = "IBM Plex Sans"),
+  silent = TRUE
+)
+showtext::showtext_auto()
+
+ggplot2::theme_set(
+  ggplot2::theme_minimal(base_size = 9, base_family = "IBM Plex Sans") +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(face = "plain"),
+      plot.background = ggplot2::element_rect(fill = "#f9f9f9", colour = NA),
+      panel.background = ggplot2::element_rect(fill = "#f9f9f9", colour = NA),
+      legend.key.width = grid::unit(1.5, "cm")
+    )
+)
 ```
 
 ```{=html}
@@ -162,24 +178,30 @@ Una respuesta convincente no basta. Estamos construyendo una batería pública d
 
 Los casos se mantienen en una hoja pública y son la misma fuente que consume el proceso de evaluación. Así podemos ampliar o corregir preguntas sin mantener una versión separada para documentación.
 
-<div class="eval-grid">
-  <div class="eval-metric">
-    <span class="eval-metric-value">`r n_cases`</span>
-    <span class="eval-metric-label">casos activos</span>
-  </div>
-  <div class="eval-metric">
-    <span class="eval-metric-value">`r n_categories`</span>
-    <span class="eval-metric-label">categorías cubiertas</span>
-  </div>
-  <div class="eval-metric">
-    <span class="eval-metric-value">`r n_difficulties`</span>
-    <span class="eval-metric-label">niveles de dificultad</span>
-  </div>
-  <div class="eval-metric">
-    <span class="eval-metric-value">`r n_pending`</span>
-    <span class="eval-metric-label">referencias por completar</span>
-  </div>
-</div>
+```{r}
+#| label: evaluation-metrics
+#| results: asis
+metric_cards <- c(
+  sprintf(
+    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">casos activos</span></div>',
+    n_cases
+  ),
+  sprintf(
+    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">categorías cubiertas</span></div>',
+    n_categories
+  ),
+  sprintf(
+    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">niveles de dificultad</span></div>',
+    n_difficulties
+  ),
+  sprintf(
+    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">referencias por completar</span></div>',
+    n_pending
+  )
+)
+
+cat('<div class="eval-grid">', paste(metric_cards, collapse = "\n"), '</div>')
+```
 
 ### Qué medimos
 
@@ -216,15 +238,26 @@ También incluimos preguntas que CensoBot no debería contestar con una cifra. R
 #| fig-cap: "Casos activos por categoría"
 #| fig-width: 8
 #| fig-height: 4.2
-if (length(category_counts)) {
-  par(mar = c(4.5, 9, 1, 1))
-  barplot(
-    rev(category_counts),
-    horiz = TRUE,
-    las = 1,
-    border = NA,
-    xlab = "Número de casos"
-  )
+category_data <- data.frame(
+  category = names(category_counts),
+  n = as.integer(category_counts)
+)
+
+if (nrow(category_data)) {
+  ggplot2::ggplot(
+    category_data,
+    ggplot2::aes(x = n, y = stats::reorder(category, n))
+  ) +
+    ggplot2::geom_col(fill = "#0E4F5A", width = .62) +
+    ggplot2::labs(x = NULL, y = NULL) +
+    ggplot2::scale_x_continuous(
+      breaks = seq(0, max(category_data$n), by = 1),
+      expand = ggplot2::expansion(mult = c(0, .04))
+    ) +
+    ggplot2::theme(
+      panel.grid.major.y = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank()
+    )
 }
 ```
 
@@ -233,14 +266,28 @@ if (length(category_counts)) {
 #| fig-cap: "Casos activos por dificultad"
 #| fig-width: 8
 #| fig-height: 3.2
-par(mar = c(4.5, 7, 1, 1))
-barplot(
-  difficulty_counts,
-  horiz = TRUE,
-  las = 1,
-  border = NA,
-  xlab = "Número de casos"
+difficulty_data <- data.frame(
+  difficulty = factor(
+    names(difficulty_counts),
+    levels = c("Básica", "Media", "Alta")
+  ),
+  n = as.integer(difficulty_counts)
 )
+
+ggplot2::ggplot(
+  difficulty_data,
+  ggplot2::aes(x = n, y = difficulty)
+) +
+  ggplot2::geom_col(fill = "#0E4F5A", width = .62) +
+  ggplot2::labs(x = NULL, y = NULL) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, max(difficulty_data$n), by = 1),
+    expand = ggplot2::expansion(mult = c(0, .04))
+  ) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank()
+  )
 ```
 
 ### Los casos

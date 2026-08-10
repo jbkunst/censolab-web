@@ -1,5 +1,0 @@
----
-title: "Datos"
----
-
-Esta sección documentará las fuentes utilizadas por CensoLab, su cobertura, periodicidad y principales consideraciones de uso.

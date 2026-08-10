@@ -108,6 +108,6 @@ Personas, hogares, viviendas o un grupo específico dentro de esos universos.
 :::
 :::
 
-[Explorar CensoLab →](../app/){.landing-text-link}
+[Ir a CensoLab →](../app/){.landing-text-link}
 :::
 :::

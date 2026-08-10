@@ -265,7 +265,7 @@ body:has(.cl-home) footer.footer {
       </div>
       <p class="cl-home-lead">Explora la información censal usando lenguaje natural. CensoLab convierte tus preguntas en respuestas claras, cálculos y visualizaciones construidas con los datos.</p>
       <div class="cl-story-actions">
-        <a class="cl-story-cta" href="app/">Explorar CensoLab</a>
+        <a class="cl-story-cta" href="app/">Ir a CensoLab</a>
         <a class="cl-story-link" href="como-usar/">Ver cómo funciona</a>
       </div>
     </div>

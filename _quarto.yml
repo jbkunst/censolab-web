@@ -16,7 +16,7 @@ website:
     logo: assets/brand/censolab-logo-white.svg
     logo-alt: CensoLab
     left:
-      - text: Explorar
+      - text: Ir a CensoLab
         href: app/
     right:
       - text: Cómo usar

@@ -1,6 +1,7 @@
 ---
 page-layout: full
 body-classes: app-page
+pagetitle: CensoLab
 ---
 
 <iframe

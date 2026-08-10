@@ -1,11 +1,14 @@
 ---
 draft: true
 lang: es
-page-layout: article
-toc: true
-toc-location: right
-toc-title: "Tabla de contenidos"
-toc-depth: 3
+format:
+  html:
+    page-layout: article
+    toc: true
+    toc-location: right
+    toc-title: "Tabla de contenidos"
+    toc-depth: 3
+    toc-expand: true
 execute:
   echo: false
   warning: false
@@ -65,6 +68,11 @@ ggplot2::theme_set(
 
 ```{=html}
 <style>
+#quarto-content.page-layout-article,
+.page-layout-article main.content {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
 .eval-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

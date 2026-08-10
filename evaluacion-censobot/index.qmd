@@ -1,0 +1,260 @@
+---
+page-layout: full
+toc: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: load-evaluation-set
+sheet_url <- "https://docs.google.com/spreadsheets/d/1W4n-JBNBC9k03Py2DqIb_zXxu9ni8tGpUfcUaTm_A18/edit"
+
+cases <- tryCatch({
+  googlesheets4::gs4_deauth()
+  data <- googlesheets4::read_sheet(sheet_url, sheet = "Casos", col_types = "c")
+  names(data) <- c(
+    "id", "category", "question", "expected_result", "criterion",
+    "difficulty", "active"
+  )
+  data
+}, error = function(error) {
+  data.frame(
+    id = "01",
+    category = "Consulta",
+    question = "¿Cuántas personas viven en la comuna de Maipú?",
+    expected_result = "Población total correcta de la comuna de Maipú según el Censo 2024.",
+    criterion = "Debe resolver correctamente Maipú, consultar la fuente censal correspondiente y responder sin inventar cifras.",
+    difficulty = "Básica",
+    active = "Sí",
+    stringsAsFactors = FALSE
+  )
+})
+
+active_cases <- cases[tolower(trimws(cases$active)) %in% c("sí", "si", "true", "1"), , drop = FALSE]
+
+n_cases <- nrow(active_cases)
+n_categories <- length(unique(active_cases$category))
+n_difficulties <- length(unique(active_cases$difficulty))
+
+category_counts <- sort(table(active_cases$category), decreasing = TRUE)
+difficulty_counts <- sort(table(active_cases$difficulty), decreasing = TRUE)
+```
+
+```{=html}
+<style>
+.eval-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1.4rem 0 2rem;
+}
+.eval-metric {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--censolab-border);
+  border-radius: .55rem;
+  background: var(--censolab-bg);
+}
+.eval-metric-value {
+  display: block;
+  color: var(--censolab-primary);
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+.eval-metric-label {
+  display: block;
+  margin-top: .35rem;
+  color: var(--censolab-muted);
+  font-size: .76rem;
+  line-height: 1.35;
+}
+.eval-method {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1rem 0 2rem;
+}
+.eval-method-item {
+  padding: 1rem;
+  border: 1px solid var(--censolab-border);
+  border-radius: .55rem;
+}
+.eval-method-item strong {
+  display: block;
+  margin-bottom: .3rem;
+  color: var(--censolab-text);
+}
+.eval-method-item p {
+  margin: 0;
+  color: var(--censolab-muted);
+  font-size: .85rem;
+  line-height: 1.5;
+}
+.eval-sheet-link {
+  display: inline-flex;
+  margin: .4rem 0 1rem;
+  font-size: .9rem;
+  font-weight: 500;
+}
+.eval-table {
+  width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+  font-size: .84rem;
+}
+.eval-table th,
+.eval-table td {
+  padding: .7rem .65rem;
+  border-bottom: 1px solid var(--censolab-border);
+  vertical-align: top;
+  text-align: left;
+}
+.eval-table th {
+  color: var(--censolab-muted);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.eval-note {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-left: 3px solid var(--censolab-primary);
+  background: var(--censolab-bg);
+  color: var(--censolab-muted);
+  font-size: .85rem;
+  line-height: 1.55;
+}
+@media (max-width: 760px) {
+  .eval-grid,
+  .eval-method {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+```
+
+::: {.information-page}
+::: {.information-intro}
+::: {.information-intro-copy}
+<span class="information-eyebrow">Transparencia y calidad</span>
+
+## Cómo evaluamos CensoBot
+
+CensoBot no se evalúa solamente por si una respuesta “suena bien”. Estamos construyendo un conjunto público de preguntas realistas para comprobar que consulta correctamente el Censo 2024, resuelve territorios, calcula indicadores y utiliza las herramientas adecuadas para responder, graficar, mapear y presentar información.
+:::
+:::
+
+::: {.information-content}
+### Un conjunto de pruebas abierto
+
+Los casos de evaluación se mantienen en una Google Sheet que puede leerse públicamente. Cada prueba describe la pregunta, el resultado que esperamos y el criterio con que debe juzgarse la respuesta.
+
+<a class="eval-sheet-link" href="https://docs.google.com/spreadsheets/d/1W4n-JBNBC9k03Py2DqIb_zXxu9ni8tGpUfcUaTm_A18/edit?gid=0#gid=0" target="_blank" rel="noopener">Ver casos de evaluación →</a>
+
+<div class="eval-grid">
+  <div class="eval-metric">
+    <span class="eval-metric-value">`r n_cases`</span>
+    <span class="eval-metric-label">casos activos</span>
+  </div>
+  <div class="eval-metric">
+    <span class="eval-metric-value">`r n_categories`</span>
+    <span class="eval-metric-label">categorías cubiertas</span>
+  </div>
+  <div class="eval-metric">
+    <span class="eval-metric-value">`r n_difficulties`</span>
+    <span class="eval-metric-label">niveles de dificultad</span>
+  </div>
+</div>
+
+### Qué se evalúa
+
+::: {.eval-method}
+::: {.eval-method-item}
+**Resultado**
+
+La cifra, cálculo o contenido solicitado debe ser correcto. Cuando el resultado puede verificarse directamente, se compara contra un valor esperado y no se deja esa decisión únicamente a un modelo.
+:::
+
+::: {.eval-method-item}
+**Proceso**
+
+También importa cómo llega CensoBot al resultado: resolver el territorio correcto, consultar las variables apropiadas y utilizar la herramienta que corresponde.
+:::
+
+::: {.eval-method-item}
+**Visualización**
+
+En gráficos, mapas y tablas se revisa que los datos representados correspondan al territorio, universo e indicador pedidos y que el formato sea adecuado para la tarea.
+:::
+
+::: {.eval-method-item}
+**Respuesta**
+
+La claridad y pertinencia de la explicación pueden evaluarse con un modelo juez independiente, usando como referencia el criterio definido para cada caso.
+:::
+:::
+
+### Cobertura actual
+
+```{r}
+#| label: category-chart
+#| fig-cap: "Casos activos por categoría"
+#| fig-width: 8
+#| fig-height: 3.6
+if (length(category_counts)) {
+  old_par <- par(mar = c(4.5, 8, 1, 1))
+  on.exit(par(old_par), add = TRUE)
+  barplot(
+    rev(category_counts),
+    horiz = TRUE,
+    las = 1,
+    border = NA,
+    xlab = "Número de casos"
+  )
+}
+```
+
+```{r}
+#| label: difficulty-chart
+#| fig-cap: "Casos activos por dificultad"
+#| fig-width: 8
+#| fig-height: 3.2
+if (length(difficulty_counts)) {
+  old_par <- par(mar = c(4.5, 8, 1, 1))
+  on.exit(par(old_par), add = TRUE)
+  barplot(
+    rev(difficulty_counts),
+    horiz = TRUE,
+    las = 1,
+    border = NA,
+    xlab = "Número de casos"
+  )
+}
+```
+
+### Casos
+
+```{r}
+#| label: cases-table
+if (nrow(active_cases)) {
+  table_data <- active_cases[, c("id", "category", "question", "expected_result", "difficulty"), drop = FALSE]
+  names(table_data) <- c("ID", "Categoría", "Pregunta", "Resultado esperado", "Dificultad")
+  knitr::kable(table_data, format = "html", escape = TRUE, table.attr = "class='eval-table'")
+}
+```
+
+### Cómo se usa con `vitals`
+
+La pregunta de cada caso se entrega a CensoBot como **solver**. La expectativa del caso sirve como referencia para el **scorer**. Las comprobaciones objetivas —por ejemplo cifras, territorios o llamadas a herramientas— pueden verificarse directamente; los aspectos semánticos de la respuesta pueden ser revisados por un modelo juez separado.
+
+Este enfoque permite distinguir dos preguntas diferentes: **¿CensoBot llegó al resultado correcto?** y **¿lo hizo de la manera esperada?**
+
+<div class="eval-note">
+Esta página está en construcción. La batería inicial se está definiendo antes de publicar métricas de desempeño; la prioridad es que los casos sean comprensibles, reproducibles y suficientemente variados antes de resumirlos en un único porcentaje.
+</div>
+:::
+:::

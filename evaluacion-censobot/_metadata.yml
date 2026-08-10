@@ -1,7 +1,0 @@
-format:
-  html:
-    toc: true
-    toc-location: right
-    toc-title: "Tabla de contenidos"
-    toc-depth: 3
-    toc-expand: true

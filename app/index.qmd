@@ -5,8 +5,30 @@ body-classes: app-page
 
 <iframe
   class="app-frame"
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/"
+  src="https://jbkunst-censolab.share.connect.posit.cloud/"
   title="CensoLab"
   loading="eager"
   allow="clipboard-read; clipboard-write"
 ></iframe>
+
+<script>
+const censolabAnalyticsEvents = new Set([
+  "app_loaded",
+  "map_analysis_generated",
+  "territorial_profile_generated"
+]);
+
+window.addEventListener("message", (event) => {
+  if (event.origin !== "https://jbkunst-censolab.share.connect.posit.cloud") return;
+  if (event.data?.source !== "censolab-shiny") return;
+  if (!censolabAnalyticsEvents.has(event.data?.event)) return;
+  if (typeof window.gtag !== "function") return;
+
+  const params =
+    event.data?.params && typeof event.data.params === "object" && !Array.isArray(event.data.params)
+      ? event.data.params
+      : {};
+
+  window.gtag("event", event.data.event, params);
+});
+</script>

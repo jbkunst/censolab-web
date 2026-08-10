@@ -65,7 +65,7 @@ Personas, hogares, viviendas o un grupo específico dentro de esos universos.
 > [“Muéstrame el porcentaje de viviendas desocupadas por manzana en Estación Central.”]{.how-to-use-prompt-text}
 
 <iframe
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/map.html"
+  src="https://jbkunst-censolab.share.connect.posit.cloud/how-to-use/map.html"
   title="Resultado del ejemplo: Mostrar información en un mapa"
   loading="lazy"
   class="how-to-use-preview how-to-use-preview-map"></iframe>
@@ -77,7 +77,7 @@ Personas, hogares, viviendas o un grupo específico dentro de esos universos.
 > [“Haz un gráfico de columnas con la población de la Región de Valparaíso en los tramos 0–14, 15–29, 30–44, 45–59 y 60 años o más.”]{.how-to-use-prompt-text}
 
 <iframe
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/chart.html"
+  src="https://jbkunst-censolab.share.connect.posit.cloud/how-to-use/chart.html"
   title="Resultado del ejemplo: Crear un gráfico estadístico"
   loading="lazy"
   class="how-to-use-preview"></iframe>
@@ -89,7 +89,7 @@ Personas, hogares, viviendas o un grupo específico dentro de esos universos.
 > [“Muéstrame en una tabla las tres comunas más pobladas de la Región de Valparaíso y qué porcentaje representan del total regional.”]{.how-to-use-prompt-text}
 
 <iframe
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/table.html"
+  src="https://jbkunst-censolab.share.connect.posit.cloud/how-to-use/table.html"
   title="Resultado del ejemplo: Construir una tabla con un cálculo"
   loading="lazy"
   class="how-to-use-preview how-to-use-preview-table"></iframe>
@@ -101,7 +101,7 @@ Personas, hogares, viviendas o un grupo específico dentro de esos universos.
 > [“¿Qué comuna de la Región Metropolitana tiene el mayor porcentaje de personas de 65 años o más?”]{.how-to-use-prompt-text}
 
 <iframe
-  src="https://jbkunst-censo-ia-app.share.connect.posit.cloud/_w_044771992ef0437392ffbae7ffa3a855/how-to-use/answer.html"
+  src="https://jbkunst-censolab.share.connect.posit.cloud/how-to-use/answer.html"
   title="Resultado del ejemplo: Responder una pregunta directa"
   loading="lazy"
   class="how-to-use-preview how-to-use-preview-answer"></iframe>

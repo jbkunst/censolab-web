@@ -207,7 +207,6 @@ La claridad y pertinencia de la explicación pueden evaluarse con un modelo juez
 #| fig-height: 3.6
 if (length(category_counts)) {
   old_par <- par(mar = c(4.5, 8, 1, 1))
-  on.exit(par(old_par), add = TRUE)
   barplot(
     rev(category_counts),
     horiz = TRUE,
@@ -215,6 +214,7 @@ if (length(category_counts)) {
     border = NA,
     xlab = "Número de casos"
   )
+  par(old_par)
 }
 ```
 
@@ -225,7 +225,6 @@ if (length(category_counts)) {
 #| fig-height: 3.2
 if (length(difficulty_counts)) {
   old_par <- par(mar = c(4.5, 8, 1, 1))
-  on.exit(par(old_par), add = TRUE)
   barplot(
     rev(difficulty_counts),
     horiz = TRUE,
@@ -233,6 +232,7 @@ if (length(difficulty_counts)) {
     border = NA,
     xlab = "Número de casos"
   )
+  par(old_par)
 }
 ```
 

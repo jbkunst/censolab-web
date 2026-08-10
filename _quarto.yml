@@ -9,9 +9,12 @@ project:
 website:
   title: "CensoLab"
   site-url: https://censolab.cl
+  favicon: assets/brand/favicon.ico
   google-analytics: "G-KQNMTM4EDX"
   search: false
   navbar:
+    logo: assets/brand/censolab-logo-white.svg
+    logo-alt: CensoLab
     left:
       - text: Explorar
         href: app/
@@ -26,5 +29,7 @@ website:
 format:
   html:
     theme: cosmo
-    css: styles.css
+    css:
+      - styles.css
+      - brand.css
     toc: false

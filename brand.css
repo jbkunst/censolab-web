@@ -1,0 +1,7 @@
+/* Ajusta el símbolo de marca para que acompañe al nombre sin dominar la navbar. */
+.navbar-brand .navbar-logo {
+  width: 1.55rem;
+  height: 1.55rem;
+  margin-right: 0.35rem;
+  object-fit: contain;
+}

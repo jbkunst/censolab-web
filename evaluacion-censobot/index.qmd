@@ -248,7 +248,7 @@ if (nrow(category_data)) {
     category_data,
     ggplot2::aes(x = n, y = stats::reorder(category, n))
   ) +
-    ggplot2::geom_col(fill = "#0E4F5A", width = .62) +
+    ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
     ggplot2::labs(x = NULL, y = NULL) +
     ggplot2::scale_x_continuous(
       breaks = seq(0, max(category_data$n), by = 1),
@@ -278,7 +278,7 @@ ggplot2::ggplot(
   difficulty_data,
   ggplot2::aes(x = n, y = difficulty)
 ) +
-  ggplot2::geom_col(fill = "#0E4F5A", width = .62) +
+  ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
   ggplot2::labs(x = NULL, y = NULL) +
   ggplot2::scale_x_continuous(
     breaks = seq(0, max(difficulty_data$n), by = 1),

@@ -10,3 +10,14 @@ body-classes: app-page
   loading="eager"
   allow="clipboard-read; clipboard-write"
 ></iframe>
+
+<script>
+window.addEventListener("message", (event) => {
+  if (event.origin !== "https://jbkunst-censo-ia-app.share.connect.posit.cloud") return;
+  if (event.data?.source !== "censolab-shiny") return;
+  if (event.data?.event !== "app_loaded") return;
+  if (typeof window.gtag !== "function") return;
+
+  window.gtag("event", "app_loaded");
+});
+</script>

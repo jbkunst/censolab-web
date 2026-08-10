@@ -27,3 +27,4 @@ format:
     theme: cosmo
     css: styles.css
     toc: false
+    include-in-header: _includes/analytics.html

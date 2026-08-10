@@ -6,6 +6,9 @@ project:
     - landing.css
     - assets/**
 
+profile:
+  default: development
+
 website:
   title: "CensoLab"
   site-url: https://censolab.cl

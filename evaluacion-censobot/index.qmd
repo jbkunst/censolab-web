@@ -3,12 +3,7 @@ draft: true
 lang: es
 format:
   html:
-    page-layout: article
-    toc: true
-    toc-location: right
-    toc-title: "Tabla de contenidos"
-    toc-depth: 3
-    toc-expand: true
+    page-layout: full
 execute:
   echo: false
   warning: false
@@ -68,11 +63,6 @@ ggplot2::theme_set(
 
 ```{=html}
 <style>
-#quarto-content.page-layout-article,
-.page-layout-article main.content {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
 .eval-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -174,7 +164,8 @@ ggplot2::theme_set(
 </style>
 ```
 
-::: {.information-intro .column-screen}
+::: {.information-page}
+::: {.information-intro}
 ::: {.information-intro-copy}
 <span class="information-eyebrow">Transparencia y calidad</span>
 
@@ -330,4 +321,5 @@ La versión pública de esta página apunta a otra cosa: mostrar **qué probamos
 <div class="eval-note">
 Este benchmark está en construcción. Los casos marcados como “PENDIENTE” permanecen visibles porque forman parte de la batería que estamos definiendo, pero una referencia incompleta no se presenta como una validación numérica definitiva.
 </div>
+:::
 :::

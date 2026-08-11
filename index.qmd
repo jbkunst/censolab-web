@@ -1,7 +1,6 @@
 ---
 page-layout: custom
 section-divs: false
-toc: false
 css: landing.css
 ---
 

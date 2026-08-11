@@ -37,4 +37,3 @@ format:
     css:
       - styles.css
       - brand.css
-    toc: false

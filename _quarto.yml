@@ -24,8 +24,6 @@ website:
     right:
       - text: Cómo usar
         href: como-usar/
-      - text: Evaluación
-        href: evaluacion-censobot/
       - text: Acerca de
         href: acerca-de/
   page-footer:

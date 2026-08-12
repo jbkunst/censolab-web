@@ -260,7 +260,7 @@ body:has(.cl-home) footer.footer {
       <h2 class="cl-home-slogan unanchored">Pregúntale a los datos. Descubre tu territorio.</h2>
       <div class="cl-prompt-demo" aria-label="Ejemplos de consultas que puedes hacer en CensoLab">
         <span class="cl-prompt-mark" aria-hidden="true">›</span>
-        <span class="cl-prompt-text" aria-hidden="true">Muéstrame la cantidad de habitantes por comuna para la región del Biobío</span>
+        <span class="cl-prompt-text" aria-hidden="true">¿Cuántos hogares hay en Isla de Maipo?</span>
       </div>
       <p class="cl-home-lead">Explora la información censal usando lenguaje natural. CensoLab convierte tus preguntas en respuestas claras, cálculos y visualizaciones construidas con los datos.</p>
       <div class="cl-story-actions">
@@ -280,79 +280,39 @@ body:has(.cl-home) footer.footer {
 
   const promptText = document.querySelector('.cl-prompt-text');
   const promptExamples = [
-    'Muéstrame la cantidad de habitantes por comuna para la región del Biobío',
-    'Grafica escolaridad promedio vs. conexión a internet de las comunas de Valparaíso',
-    'Dame el informe territorial de Isla de Maipo',
-    'Cuéntame una historia sobre el envejecimiento en Chile'
+    { text: '¿Cuántos hogares hay en Isla de Maipo?', center: [-70.90, -33.75], zoom: 7.8, bearing: 3 },
+    { text: 'Muéstrame la población de Arica', center: [-70.31, -18.48], zoom: 7.7, bearing: -8 },
+    { text: '¿Cómo envejece Antofagasta?', center: [-70.40, -23.65], zoom: 7.6, bearing: 7 },
+    { text: 'Compara las edades en Copiapó', center: [-70.33, -27.37], zoom: 7.7, bearing: -5 },
+    { text: '¿Cuántas viviendas hay en La Serena?', center: [-71.25, -29.90], zoom: 7.8, bearing: 4 },
+    { text: 'Muestra la escolaridad de Valparaíso', center: [-71.62, -33.05], zoom: 7.8, bearing: -5 },
+    { text: 'Grafica las edades de Concepción', center: [-73.05, -36.82], zoom: 7.7, bearing: -7 },
+    { text: '¿Cuántas personas viven en Puerto Montt?', center: [-72.94, -41.47], zoom: 7.7, bearing: 6 },
+    { text: 'Cuéntame cómo ha crecido Coyhaique', center: [-72.07, -45.57], zoom: 7.6, bearing: -5 },
+    { text: 'Resume los hogares de Punta Arenas', center: [-70.91, -53.16], zoom: 7.7, bearing: 8 }
   ];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (promptText && !reducedMotion) {
-    let promptIndex = 0;
-    let characterIndex = promptExamples[0].length;
-    let deleting = true;
-
-    const typePrompt = () => {
-      const phrase = promptExamples[promptIndex];
-
-      if (deleting) {
-        characterIndex -= 1;
-      } else {
-        characterIndex += 1;
-      }
-
-      promptText.textContent = phrase.slice(0, characterIndex);
-
-      if (!deleting && characterIndex === phrase.length) {
-        deleting = true;
-        window.setTimeout(typePrompt, 2200);
-        return;
-      }
-
-      if (deleting && characterIndex === 0) {
-        deleting = false;
-        promptIndex = (promptIndex + 1) % promptExamples.length;
-        window.setTimeout(typePrompt, 320);
-        return;
-      }
-
-      window.setTimeout(typePrompt, deleting ? 18 : 38);
-    };
-
-    window.setTimeout(typePrompt, 2200);
-  }
-
   const container = document.getElementById('cl-hero-map');
   if (!container || !window.maplibregl) return;
-
-  const places = [
-    { center: [-70.31, -18.48], zoom: 7.1, bearing: -8 },
-    { center: [-70.40, -23.65], zoom: 6.7, bearing: 7 },
-    { center: [-71.25, -29.95], zoom: 6.5, bearing: -5 },
-    { center: [-70.67, -33.45], zoom: 7.0, bearing: 4 },
-    { center: [-73.05, -36.82], zoom: 6.8, bearing: -7 },
-    { center: [-72.94, -41.47], zoom: 6.4, bearing: 6 },
-    { center: [-72.68, -45.57], zoom: 6.2, bearing: -5 },
-    { center: [-70.91, -53.16], zoom: 6.5, bearing: 8 }
-  ];
 
   const chileLabels = [
     { name: 'Arica', coordinates: [-70.31, -18.48] },
     { name: 'Antofagasta', coordinates: [-70.40, -23.65] },
     { name: 'Copiapó', coordinates: [-70.33, -27.37] },
     { name: 'La Serena', coordinates: [-71.25, -29.90] },
+    { name: 'Valparaíso', coordinates: [-71.62, -33.05] },
     { name: 'Santiago', coordinates: [-70.67, -33.45] },
+    { name: 'Isla de Maipo', coordinates: [-70.90, -33.75] },
     { name: 'Concepción', coordinates: [-73.05, -36.82] },
     { name: 'Puerto Montt', coordinates: [-72.94, -41.47] },
     { name: 'Coyhaique', coordinates: [-72.07, -45.57] },
     { name: 'Punta Arenas', coordinates: [-70.91, -53.16] }
   ];
 
-  let current = 3;
-  let timer;
+  let current = 0;
 
   const initialView = {
-    ...places[current],
     center: [-78.84, -33.64],
     zoom: 4,
     bearing: 0
@@ -426,16 +386,14 @@ body:has(.cl-home) footer.footer {
 
   map.addControl(new maplibregl.AttributionControl({ compact: false }), 'bottom-right');
 
-  const travel = () => {
-    let next = current;
-    while (next === current) next = Math.floor(Math.random() * places.length);
-    current = next;
-
+  const travel = (place) => {
     map.flyTo({
-      ...places[current],
+      center: place.center,
+      zoom: place.zoom,
+      bearing: place.bearing,
       offset: cameraOffset(),
       pitch: 18,
-      duration: 3200,
+      duration: 2600,
       curve: 0.9,
       essential: false
     });
@@ -462,12 +420,39 @@ body:has(.cl-home) footer.footer {
       markerElement.removeAttribute('tabindex');
     });
 
-    if (!reducedMotion) timer = window.setInterval(travel, 7000);
+    if (promptText && !reducedMotion) {
+      let characterIndex = 0;
+      let deleting = false;
+      promptText.textContent = '';
+
+      const typePrompt = () => {
+        const phrase = promptExamples[current].text;
+        characterIndex += deleting ? -1 : 1;
+        promptText.textContent = phrase.slice(0, characterIndex);
+
+        if (!deleting && characterIndex === phrase.length) {
+          travel(promptExamples[current]);
+          deleting = true;
+          window.setTimeout(typePrompt, 3600);
+          return;
+        }
+
+        if (deleting && characterIndex === 0) {
+          let next = current;
+          while (next === current) next = Math.floor(Math.random() * promptExamples.length);
+          current = next;
+          deleting = false;
+          window.setTimeout(typePrompt, 500);
+          return;
+        }
+
+        window.setTimeout(typePrompt, deleting ? 24 : 58);
+      };
+
+      window.setTimeout(typePrompt, 900);
+    }
   });
 
-  window.addEventListener('pagehide', () => {
-    if (timer) window.clearInterval(timer);
-  }, { once: true });
 })();
 </script>
 ```

@@ -1,2 +1,8 @@
 website:
   draft-mode: gone
+  navbar:
+    right:
+      - text: Cómo usar
+        href: como-usar/
+      - text: Acerca de
+        href: acerca-de/

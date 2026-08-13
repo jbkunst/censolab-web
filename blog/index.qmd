@@ -1,6 +1,7 @@
 ---
 title: Blog
 description: Ideas, aprendizajes y ejemplos para explorar los datos censales.
+draft: true
 listing:
   contents: posts
   type: default

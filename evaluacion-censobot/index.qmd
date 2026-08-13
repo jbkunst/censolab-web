@@ -1,6 +1,7 @@
 ---
 title: Cómo evaluamos CensoBot
 description: Preguntas, referencias humanas y resultados de la evaluación de CensoBot.
+draft: true
 lang: es
 body-classes: evaluation-page
 toc: true

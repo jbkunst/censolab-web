@@ -1,2 +1,12 @@
 website:
   draft-mode: visible
+  navbar:
+    right:
+      - text: Cómo usar
+        href: como-usar/
+      - text: Evaluación
+        href: evaluacion-censobot/
+      - text: Blog
+        href: blog/
+      - text: Acerca de
+        href: acerca-de/

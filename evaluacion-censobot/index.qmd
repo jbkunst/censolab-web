@@ -322,10 +322,10 @@ public_cases$Evaluación <- ifelse(
   ifelse(is.na(public_cases$Evaluación), "Sin evaluar", "Necesita revisión")
 )
 names(public_cases) <- c(
-  "Pregunta (CensoLab)",
-  "Resultado esperado (CensoLab)",
-  "Respuesta (CensoBot)",
-  "Evaluación (equipo CensoLab)"
+  "Pregunta",
+  "Resultado esperado",
+  "Respuesta de CensoBot",
+  "Evaluación"
 )
 
 reactable::reactable(
@@ -343,10 +343,10 @@ reactable::reactable(
     headerVAlign = "center"
   ),
   columns = list(
-    `Pregunta (CensoLab)` = reactable::colDef(minWidth = 220),
-    `Resultado esperado (CensoLab)` = reactable::colDef(minWidth = 260),
-    `Respuesta (CensoBot)` = reactable::colDef(minWidth = 340),
-    `Evaluación (equipo CensoLab)` = reactable::colDef(minWidth = 180)
+    Pregunta = reactable::colDef(minWidth = 220),
+    `Resultado esperado` = reactable::colDef(minWidth = 260),
+    `Respuesta de CensoBot` = reactable::colDef(minWidth = 340),
+    Evaluación = reactable::colDef(minWidth = 180)
   ),
   class = "eval-reactable",
   language = reactable::reactableLang(

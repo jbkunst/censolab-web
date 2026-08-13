@@ -6,6 +6,8 @@ project:
     - landing.css
     - assets/**
 
+lang: es
+
 profile:
   default: development
 
@@ -24,6 +26,10 @@ website:
     right:
       - text: Cómo usar
         href: como-usar/
+      - text: Evaluación
+        href: evaluacion-censobot/
+      - text: Blog
+        href: blog/
       - text: Acerca de
         href: acerca-de/
   page-footer:
@@ -31,7 +37,7 @@ website:
 
 format:
   html:
-    theme: cosmo
+    brand: _brand.yml
+    title-block-banner: true
     css:
       - styles.css
-      - brand.css

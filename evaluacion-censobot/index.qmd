@@ -1,35 +1,39 @@
 ---
-draft: true
+title: Cómo evaluamos CensoBot
+description: Preguntas, referencias humanas y resultados de la evaluación de CensoBot.
 lang: es
-format:
-  html:
-    page-layout: full
+body-classes: evaluation-page
+toc: true
+toc-location: left
 execute:
   echo: false
   warning: false
   message: false
+  freeze: auto
 ---
 
 ```{r}
 #| label: load-evaluation-set
-cases_url <- paste0(
-  "https://docs.google.com/spreadsheets/d/",
-  "1W4n-JBNBC9k03Py2DqIb_zXxu9ni8tGpUfcUaTm_A18/",
-  "gviz/tq?tqx=out:csv&sheet=Casos"
-)
-
-cases <- utils::read.csv(
-  cases_url,
+evaluation_data <- utils::read.csv(
+  "../data/evals/censobot-eval-latest.csv",
   check.names = FALSE,
   stringsAsFactors = FALSE,
   na.strings = c("", "NA")
 )
 
-required_columns <- c(
-  "ID", "Categoría", "Pregunta", "Resultado esperado", "Criterio",
-  "Dificultad", "Activo", "Tipo de validación", "Valor esperado", "Tolerancia"
+source_columns <- c(
+  "id", "category", "input", "target", "criterion", "difficulty",
+  "active", "validation_type", "expected_value", "tolerance", "score",
+  "response", "evaluated_at", "app_version"
 )
-stopifnot(all(required_columns %in% names(cases)))
+stopifnot(all(source_columns %in% names(evaluation_data)))
+
+cases <- evaluation_data[source_columns]
+names(cases) <- c(
+  "ID", "Categoría", "Pregunta", "Resultado esperado", "Criterio",
+  "Dificultad", "Activo", "Tipo de validación", "Valor esperado", "Tolerancia",
+  "Evaluación", "Respuesta", "Fecha de evaluación", "Versión"
+)
 
 active <- tolower(trimws(cases$Activo)) %in% c("sí", "si", "true", "1")
 active_cases <- cases[active, , drop = FALSE]
@@ -37,9 +41,33 @@ active_cases <- cases[active, , drop = FALSE]
 n_cases <- nrow(active_cases)
 n_categories <- length(unique(active_cases$Categoría))
 n_difficulties <- length(unique(active_cases$Dificultad))
-n_pending <- sum(grepl("PENDIENTE", active_cases$`Resultado esperado`, fixed = TRUE))
+n_evaluated <- sum(!is.na(active_cases$Evaluación))
+n_correct <- sum(active_cases$Evaluación == "C", na.rm = TRUE)
+accuracy <- if (n_evaluated) n_correct / n_evaluated else NA_real_
+accuracy_label <- if (is.na(accuracy)) "—" else sprintf("%.0f%%", accuracy * 100)
 
-category_counts <- sort(table(active_cases$Categoría), decreasing = TRUE)
+evaluation_dates <- as.Date(substr(active_cases$`Fecha de evaluación`, 1, 10))
+evaluation_dates <- evaluation_dates[!is.na(evaluation_dates)]
+latest_evaluation_date <- if (length(evaluation_dates)) {
+  max(evaluation_dates)
+} else {
+  as.Date(NA)
+}
+spanish_months <- c(
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+)
+latest_evaluation_label <- if (is.na(latest_evaluation_date)) {
+  "fecha no disponible"
+} else {
+  sprintf(
+    "%d de %s de %d",
+    as.integer(format(latest_evaluation_date, "%d")),
+    spanish_months[as.integer(format(latest_evaluation_date, "%m"))],
+    as.integer(format(latest_evaluation_date, "%Y"))
+  )
+}
+
 difficulty_counts <- table(
   factor(active_cases$Dificultad, levels = c("Básica", "Media", "Alta"))
 )
@@ -65,15 +93,15 @@ ggplot2::theme_set(
 <style>
 .eval-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: .75rem;
   margin: 1.4rem 0 2rem;
 }
 .eval-metric {
   padding: 1rem 1.1rem;
-  border: 1px solid var(--censolab-border);
+  border: 1px solid var(--bs-border-color);
   border-radius: .55rem;
-  background: var(--censolab-bg);
+  background: var(--bs-body-bg);
 }
 .eval-metric-value {
   display: block;
@@ -86,63 +114,45 @@ ggplot2::theme_set(
 .eval-metric-label {
   display: block;
   margin-top: .35rem;
-  color: var(--censolab-muted);
+  color: var(--bs-secondary-color);
   font-size: .76rem;
   line-height: 1.35;
 }
-.eval-method {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .75rem;
-  margin: 1rem 0 2rem;
-}
-.eval-method-item {
-  padding: 1rem;
-  border: 1px solid var(--censolab-border);
-  border-radius: .55rem;
-  background: #fff;
-}
-.eval-method-item strong {
-  display: block;
-  margin-bottom: .3rem;
-  color: var(--censolab-text);
-}
-.eval-method-item p {
-  margin: 0;
-  color: var(--censolab-muted);
-  font-size: .85rem;
-  line-height: 1.5;
-}
-.eval-table {
+.eval-table-wrap {
   width: 100%;
+  max-height: 700px;
+  overflow: auto;
+  border-block: 1px solid var(--bs-border-color);
+}
+.eval-reactable {
   margin-top: 1rem;
-  border-collapse: collapse;
   font-size: .82rem;
 }
-.eval-table th,
-.eval-table td {
-  padding: .75rem .65rem;
-  border-bottom: 1px solid var(--censolab-border);
-  vertical-align: top;
-  text-align: left;
-}
-.eval-table th {
-  color: var(--censolab-muted);
+.eval-reactable .rt-th {
+  color: var(--bs-secondary-color);
   font-size: .66rem;
   font-weight: 600;
   letter-spacing: .05em;
   text-transform: uppercase;
 }
-.eval-table td:nth-child(3),
-.eval-table td:nth-child(4) {
-  min-width: 15rem;
+.eval-reactable .rt-td {
+  line-height: 1.45;
+  white-space: normal;
+}
+.evaluation-page #TOC .nav-link:hover,
+.evaluation-page #TOC .nav-link.active {
+  border-left-color: var(--censolab-primary);
+  color: var(--censolab-primary);
+}
+.evaluation-page #toc-title {
+  color: var(--censolab-primary);
 }
 .eval-note {
   margin-top: 1.5rem;
   padding: 1rem;
   border-left: 3px solid var(--censolab-primary);
-  background: var(--censolab-bg);
-  color: var(--censolab-muted);
+  background: var(--bs-body-bg);
+  color: var(--bs-secondary-color);
   font-size: .85rem;
   line-height: 1.55;
 }
@@ -156,37 +166,26 @@ ggplot2::theme_set(
   }
 }
 @media (max-width: 640px) {
-  .eval-grid,
-  .eval-method {
+  .eval-grid {
     grid-template-columns: 1fr;
   }
 }
 </style>
 ```
 
-::: {.information-page}
-::: {.information-intro}
-::: {.information-intro-copy}
-<span class="information-eyebrow">Transparencia y calidad</span>
+Una respuesta convincente no basta. Evaluamos si CensoBot encuentra el dato correcto, resuelve bien el territorio, realiza los cálculos pedidos y utiliza una salida adecuada cuando la consulta requiere una tabla, un gráfico, un mapa o un perfil territorial.
 
-## Cómo evaluamos CensoBot
+## Una batería abierta y en crecimiento
 
-Una respuesta convincente no basta. Estamos construyendo una batería pública de preguntas para comprobar que CensoBot encuentra el dato correcto, resuelve bien el territorio, realiza los cálculos pedidos y utiliza una salida adecuada cuando la pregunta requiere una tabla, un gráfico, un mapa o un perfil territorial.
-:::
-:::
-
-::: {.information-content}
-### Una batería abierta y en crecimiento
-
-Los casos se mantienen en una hoja pública y son la misma fuente que consume el proceso de evaluación. Así podemos ampliar o corregir preguntas sin mantener una versión separada para documentación.
+Cada caso comienza con una **pregunta escrita por una persona** y un **resultado esperado definido por una persona**. Luego CensoBot responde y, mediante `vitals`, un modelo de inteligencia artificial compara esa respuesta con el resultado esperado. Así medimos el desempeño con una referencia humana explícita, sin pedirle al evaluador que invente cuál debería haber sido la respuesta.
 
 ```{r}
 #| label: evaluation-metrics
 #| results: asis
 metric_cards <- c(
   sprintf(
-    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">casos activos</span></div>',
-    n_cases
+    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">casos evaluados</span></div>',
+    n_evaluated
   ),
   sprintf(
     '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">categorías cubiertas</span></div>',
@@ -195,73 +194,82 @@ metric_cards <- c(
   sprintf(
     '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">niveles de dificultad</span></div>',
     n_difficulties
-  ),
-  sprintf(
-    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">referencias por completar</span></div>',
-    n_pending
   )
 )
 
 cat('<div class="eval-grid">', paste(metric_cards, collapse = "\n"), '</div>')
 ```
 
-### Qué medimos
+## Resultado de la evaluación
 
-::: {.eval-method}
-::: {.eval-method-item}
+Cada caso evaluado aporta `1` cuando la respuesta es correcta y `0` cuando necesita revisión. El promedio de esos valores corresponde a la proporción de respuestas correctas.
+
+```{r}
+#| label: accuracy-chart
+#| fig-cap: "Proporción de respuestas evaluadas clasificadas como correctas"
+#| fig-width: 8
+#| fig-height: 2.5
+accuracy_value <- if (is.na(accuracy)) 0 else accuracy
+accuracy_data <- data.frame(
+  result = "Correctas",
+  proportion = accuracy_value,
+  label = accuracy_label,
+  label_x = if (accuracy_value >= .15) accuracy_value - .02 else accuracy_value + .02
+)
+
+ggplot2::ggplot(
+  accuracy_data,
+  ggplot2::aes(x = proportion, y = result)
+) +
+  ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
+  ggplot2::geom_text(
+    ggplot2::aes(x = label_x, label = label),
+    hjust = if (accuracy_value >= .15) 1 else 0,
+    colour = if (accuracy_value >= .15) "#FFFFFF" else "#202326",
+    size = 5
+  ) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 1),
+    breaks = seq(0, 1, by = .25),
+    labels = paste0(seq(0, 100, by = 25), "%"),
+    expand = c(0, 0)
+  ) +
+  ggplot2::labs(x = NULL, y = NULL) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank()
+  )
+```
+
+## Qué medimos
+
+::: {.cl-card-grid}
+::: {.cl-card}
 **Exactitud verificable**
 
 Cuando conocemos la cifra esperada, la comparación es determinística. No pedimos a otro modelo que decida si un número “parece correcto”.
 :::
 
-::: {.eval-method-item}
-**Respuesta y razonamiento aplicado**
+::: {.cl-card}
+**Referencia humana**
 
-Para respuestas más abiertas usamos criterios escritos de antemano: qué territorio debe considerar, qué universo corresponde y qué debe explicar al usuario.
+La pregunta, el resultado esperado y los criterios se preparan antes de ejecutar la evaluación. La referencia no cambia para acomodarse a la respuesta de CensoBot.
 :::
 
-::: {.eval-method-item}
-**Salidas estructuradas**
+::: {.cl-card}
+**Comparación con IA**
 
-Las preguntas incluyen tablas, gráficos, mapas y perfiles territoriales. La evaluación revisa tanto la respuesta como si la salida solicitada pudo construirse correctamente.
+`vitals` ejecuta cada caso y un modelo de IA compara la respuesta de CensoBot con la referencia humana, considerando el criterio definido para esa pregunta.
 :::
 
-::: {.eval-method-item}
-**No inventar información**
+::: {.cl-card}
+**Preguntas diversas**
 
-También incluimos preguntas que CensoBot no debería contestar con una cifra. Reconocer los límites de los datos forma parte de una buena respuesta.
+El conjunto combina categorías y niveles de dificultad: consultas directas, cálculos, comparaciones, tablas, gráficos, mapas, perfiles territoriales y casos fuera de alcance.
 :::
 :::
 
-### Cobertura actual
-
-```{r}
-#| label: category-chart
-#| fig-cap: "Casos activos por categoría"
-#| fig-width: 8
-#| fig-height: 4.2
-category_data <- data.frame(
-  category = names(category_counts),
-  n = as.integer(category_counts)
-)
-
-if (nrow(category_data)) {
-  ggplot2::ggplot(
-    category_data,
-    ggplot2::aes(x = n, y = stats::reorder(category, n))
-  ) +
-    ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
-    ggplot2::labs(x = NULL, y = NULL) +
-    ggplot2::scale_x_continuous(
-      breaks = seq(0, max(category_data$n), by = 1),
-      expand = ggplot2::expansion(mult = c(0, .04))
-    ) +
-    ggplot2::theme(
-      panel.grid.major.y = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank()
-    )
-}
-```
+## Dificultad de los casos
 
 ```{r}
 #| label: difficulty-chart
@@ -292,34 +300,68 @@ ggplot2::ggplot(
   )
 ```
 
-### Los casos
+## Los casos
 
 ```{r}
 #| label: cases-table
+#| column: page
 public_cases <- active_cases[, c(
-  "ID", "Categoría", "Pregunta", "Resultado esperado", "Dificultad"
+  "Pregunta", "Resultado esperado", "Respuesta", "Evaluación"
 ), drop = FALSE]
 
-knitr::kable(
+public_cases$Respuesta <- trimws(gsub(
+  "(?s)\\n*[-*]\\s*<span class=\"suggestion submit\">.*?</span>",
+  "",
+  public_cases$Respuesta,
+  perl = TRUE
+))
+public_cases$Respuesta <- gsub("\\*\\*", "", public_cases$Respuesta)
+public_cases$Evaluación <- ifelse(
+  public_cases$Evaluación == "C",
+  "Correcta",
+  ifelse(is.na(public_cases$Evaluación), "Sin evaluar", "Necesita revisión")
+)
+names(public_cases) <- c(
+  "Pregunta (CensoLab)",
+  "Resultado esperado (CensoLab)",
+  "Respuesta (CensoBot)",
+  "Evaluación (equipo CensoLab)"
+)
+
+reactable::reactable(
   public_cases,
-  format = "html",
-  escape = TRUE,
-  table.attr = "class='eval-table'"
+  sortable = TRUE,
+  pagination = FALSE,
+  height = 700,
+  highlight = TRUE,
+  bordered = FALSE,
+  striped = FALSE,
+  compact = FALSE,
+  defaultColDef = reactable::colDef(
+    minWidth = 180,
+    vAlign = "top",
+    headerVAlign = "center"
+  ),
+  columns = list(
+    `Pregunta (CensoLab)` = reactable::colDef(minWidth = 220),
+    `Resultado esperado (CensoLab)` = reactable::colDef(minWidth = 260),
+    `Respuesta (CensoBot)` = reactable::colDef(minWidth = 340),
+    `Evaluación (equipo CensoLab)` = reactable::colDef(minWidth = 180)
+  ),
+  class = "eval-reactable",
+  language = reactable::reactableLang(
+    noData = "No hay casos para mostrar"
+  )
 )
 ```
 
 <p class="eval-source">
-<a href="https://docs.google.com/spreadsheets/d/1W4n-JBNBC9k03Py2DqIb_zXxu9ni8tGpUfcUaTm_A18/edit?usp=sharing" target="_blank" rel="noopener">Ver la fuente pública de los casos →</a>
+Resultados de la última corrida disponible de evaluación de CensoBot.
+<strong>Última evaluación:</strong> `r latest_evaluation_label`.
 </p>
 
-### Cómo usamos `vitals`
+## Cómo usamos `vitals`
 
-Internamente usamos `vitals` para ejecutar los casos, registrar cada corrida y comparar resultados. Ese visor detallado es muy útil durante el desarrollo porque permite investigar por qué falló una pregunta, pero también contiene información operacional que no es necesaria para entender la calidad de CensoBot.
+Usamos `vitals` para ejecutar los casos, registrar cada corrida y comparar las respuestas. En cada caso, CensoBot recibe la pregunta preparada por una persona. Después, un modelo de IA evalúa la respuesta obtenida frente al resultado esperado y los criterios que esa persona definió previamente.
 
-La versión pública de esta página apunta a otra cosa: mostrar **qué probamos, cuántos casos cubrimos y cómo evoluciona el desempeño por tipo de tarea**. Cuando la batería esté más madura agregaremos métricas resumidas por categoría y dificultad, manteniendo el detalle técnico disponible para diagnóstico y reproducibilidad sin convertirlo en la interfaz principal del sitio.
-
-<div class="eval-note">
-Este benchmark está en construcción. Los casos marcados como “PENDIENTE” permanecen visibles porque forman parte de la batería que estamos definiendo, pero una referencia incompleta no se presenta como una validación numérica definitiva.
-</div>
-:::
-:::
+Esta página muestra **qué preguntamos, qué esperábamos, qué respondió CensoBot y cuál fue la evaluación**. Los detalles operacionales —como instrucciones internas, consultas SQL o llamadas a herramientas— se mantienen fuera del informe público porque no son necesarios para comprender el resultado.

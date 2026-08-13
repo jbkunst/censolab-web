@@ -15,6 +15,13 @@ typography:
   fonts:
     - family: IBM Plex Sans
       source: google
+      weight: [200, 300, 400, 500, 600, 700]
+      style: [normal, italic]
 
-  base: IBM Plex Sans
-  headings: IBM Plex Sans
+  base:
+    family: IBM Plex Sans
+    weight: 400
+
+  headings:
+    family: IBM Plex Sans
+    weight: 300

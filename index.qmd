@@ -1,6 +1,7 @@
 ---
 page-layout: custom
 section-divs: false
+title-block-banner: false
 css: landing.css
 ---
 
@@ -8,7 +9,7 @@ css: landing.css
 <!-- Hero cartográfico dinámico: MapLibre se mantiene bajo el manto. -->
 <link rel="stylesheet" href="assets/maplibre-gl.css">
 <style>
-.page-layout-custom#quarto-content {
+.page-layout-custom#quarto-content:has(.cl-home) {
   display: block;
   width: 100%;
   max-width: none;
@@ -28,8 +29,10 @@ body:has(.cl-home) footer.footer {
 .cl-home {
   position: relative;
   isolation: isolate;
-  height: calc(100svh - 3.5rem);
-  min-height: calc(100svh - 3.5rem);
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
+  min-height: calc(100vh - 64px);
+  min-height: calc(100dvh - 64px);
   overflow: hidden;
   background: var(--censolab-primary, #0E4F5A);
   color: #fff;
@@ -44,14 +47,14 @@ body:has(.cl-home) footer.footer {
   pointer-events: none;
 }
 
-#cl-hero-map {
+.cl-home #cl-hero-map {
   position: absolute;
   inset: 0;
   z-index: 0;
   background: transparent;
 }
 
-.cl-map-place {
+.cl-home .cl-map-place {
   color: rgb(14 79 90 / 72%);
   font-family: inherit;
   font-size: 0.66rem;
@@ -63,18 +66,18 @@ body:has(.cl-home) footer.footer {
   pointer-events: none;
 }
 
-#cl-hero-map .maplibregl-canvas {
+.cl-home #cl-hero-map .maplibregl-canvas {
   opacity: 1;
 }
 
-#cl-hero-map .maplibregl-ctrl-attrib {
+.cl-home #cl-hero-map .maplibregl-ctrl-attrib {
   background: rgb(5 48 56 / 38%);
   color: rgb(255 255 255 / 82%);
   font-size: 10px;
   opacity: .88;
 }
 
-#cl-hero-map .maplibregl-ctrl-attrib a {
+.cl-home #cl-hero-map .maplibregl-ctrl-attrib a {
   color: rgb(255 255 255 / 92%);
 }
 
@@ -103,7 +106,7 @@ body:has(.cl-home) footer.footer {
   mask-image: linear-gradient(180deg, transparent 0 14rem, #000 26rem);
 }
 
-.cl-home-inner {
+.cl-home .cl-home-inner {
   position: relative;
   z-index: 2;
   display: flex;
@@ -114,7 +117,7 @@ body:has(.cl-home) footer.footer {
   align-items: center;
 }
 
-.cl-home-copy {
+.cl-home .cl-home-copy {
   width: 66.666%;
   max-width: 54rem;
 }
@@ -134,7 +137,7 @@ body:has(.cl-home) footer.footer {
   line-height: .86;
 }
 
-.cl-home-slogan {
+.cl-home .cl-home-slogan {
   max-width: 43rem;
   margin: 1.6rem 0 0;
   border: 0;
@@ -145,7 +148,7 @@ body:has(.cl-home) footer.footer {
   line-height: 1.02;
 }
 
-.cl-prompt-demo {
+.cl-home .cl-prompt-demo {
   display: flex;
   width: min(100%, 39rem);
   min-height: 2.8rem;
@@ -162,13 +165,13 @@ body:has(.cl-home) footer.footer {
   align-items: center;
 }
 
-.cl-prompt-mark {
+.cl-home .cl-prompt-mark {
   margin-right: 0.65rem;
   color: rgb(255 255 255 / 55%);
   flex: 0 0 auto;
 }
 
-.cl-prompt-text::after {
+.cl-home .cl-prompt-text::after {
   display: inline-block;
   width: 1px;
   height: 1em;
@@ -176,14 +179,14 @@ body:has(.cl-home) footer.footer {
   background: currentColor;
   content: "";
   vertical-align: -0.12em;
-  animation: cl-cursor 0.9s steps(1) infinite;
+  animation: cl-home-cursor 0.9s steps(1) infinite;
 }
 
-@keyframes cl-cursor {
+@keyframes cl-home-cursor {
   50% { opacity: 0; }
 }
 
-.cl-home-lead {
+.cl-home .cl-home-lead {
   max-width: 39rem;
   margin: 1.3rem 0 0;
   color: rgb(255 255 255 / 86%);
@@ -219,18 +222,25 @@ body:has(.cl-home) footer.footer {
     height: auto;
   }
 
-  .cl-home-inner {
+  .cl-home .cl-home-inner {
     height: auto;
-    min-height: calc(100svh - 3.5rem);
+    min-height: calc(100vh - 64px);
+    min-height: calc(100dvh - 64px);
   }
 
-  .cl-home-copy {
+  .cl-home .cl-home-copy {
     width: 100%;
   }
 }
 
+@media (min-width: 900px) {
+  body:has(.cl-home) {
+    overflow: hidden;
+  }
+}
+
 @media (max-width: 520px) {
-  .cl-home-inner {
+  .cl-home .cl-home-inner {
     width: calc(100% - 2.5rem);
     padding-block: 3.5rem;
   }
@@ -239,13 +249,13 @@ body:has(.cl-home) footer.footer {
     font-size: clamp(4rem, 21vw, 5.7rem);
   }
 
-  .cl-prompt-demo {
+  .cl-home .cl-prompt-demo {
     min-height: 4rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cl-prompt-text::after {
+  .cl-home .cl-prompt-text::after {
     animation: none;
   }
 }
@@ -260,7 +270,7 @@ body:has(.cl-home) footer.footer {
       <h2 class="cl-home-slogan unanchored">Pregúntale a los datos. Descubre tu territorio.</h2>
       <div class="cl-prompt-demo" aria-label="Ejemplos de consultas que puedes hacer en CensoLab">
         <span class="cl-prompt-mark" aria-hidden="true">›</span>
-        <span class="cl-prompt-text" aria-hidden="true">¿Cuántos hogares hay en Isla de Maipo?</span>
+        <span class="cl-prompt-text" aria-hidden="true">Dame el informe territorial de Isla de Maipo</span>
       </div>
       <p class="cl-home-lead">Explora la información censal usando lenguaje natural. CensoLab convierte tus preguntas en respuestas claras, cálculos y visualizaciones construidas con los datos.</p>
       <div class="cl-story-actions">
@@ -280,16 +290,16 @@ body:has(.cl-home) footer.footer {
 
   const promptText = document.querySelector('.cl-prompt-text');
   const promptExamples = [
-    { text: '¿Cuántos hogares hay en Isla de Maipo?', center: [-70.90, -33.75], zoom: 7.8, bearing: 3 },
-    { text: 'Muéstrame la población de Arica', center: [-70.31, -18.48], zoom: 7.7, bearing: -8 },
-    { text: '¿Cómo envejece Antofagasta?', center: [-70.40, -23.65], zoom: 7.6, bearing: 7 },
-    { text: 'Compara las edades en Copiapó', center: [-70.33, -27.37], zoom: 7.7, bearing: -5 },
-    { text: '¿Cuántas viviendas hay en La Serena?', center: [-71.25, -29.90], zoom: 7.8, bearing: 4 },
-    { text: 'Muestra la escolaridad de Valparaíso', center: [-71.62, -33.05], zoom: 7.8, bearing: -5 },
-    { text: 'Grafica las edades de Concepción', center: [-73.05, -36.82], zoom: 7.7, bearing: -7 },
-    { text: '¿Cuántas personas viven en Puerto Montt?', center: [-72.94, -41.47], zoom: 7.7, bearing: 6 },
-    { text: 'Cuéntame cómo ha crecido Coyhaique', center: [-72.07, -45.57], zoom: 7.6, bearing: -5 },
-    { text: 'Resume los hogares de Punta Arenas', center: [-70.91, -53.16], zoom: 7.7, bearing: 8 }
+    { text: 'Dame el informe territorial de Isla de Maipo', center: [-70.90, -33.75], zoom: 7.8, bearing: 3 },
+    { text: 'Muéstrame los hogares con internet por zona en Arica', center: [-70.31, -18.48], zoom: 7.7, bearing: -8 },
+    { text: '¿Cómo se distribuye la escolaridad promedio por zona en Antofagasta?', center: [-70.40, -23.65], zoom: 7.6, bearing: 7 },
+    { text: 'Grafica la distribución etaria de Copiapó', center: [-70.33, -27.37], zoom: 7.7, bearing: -5 },
+    { text: 'Lista las zonas más pobladas de La Serena', center: [-71.25, -29.90], zoom: 7.8, bearing: 4 },
+    { text: '¿Dónde se concentran las viviendas desocupadas por manzana en Valparaíso?', center: [-71.62, -33.05], zoom: 7.8, bearing: -5 },
+    { text: 'Compara la edad promedio por distrito en Concepción', center: [-73.05, -36.82], zoom: 7.7, bearing: -7 },
+    { text: 'Grafica los tipos de vivienda en Puerto Montt', center: [-72.94, -41.47], zoom: 7.7, bearing: 6 },
+    { text: 'Identifica las entidades con más hogares unipersonales en Coyhaique', center: [-72.07, -45.57], zoom: 7.6, bearing: -5 },
+    { text: 'Caracteriza el envejecimiento por zona en Punta Arenas', center: [-70.91, -53.16], zoom: 7.7, bearing: 8 }
   ];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

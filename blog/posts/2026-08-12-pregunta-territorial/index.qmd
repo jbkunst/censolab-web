@@ -1,0 +1,27 @@
+---
+title: Cómo formular una buena pregunta territorial
+description: Cuatro elementos sencillos para obtener una respuesta más precisa en CensoLab.
+date: 2026-08-12
+author: Matías Parra
+categories: [Guías, Territorio]
+---
+
+Una consulta territorial clara no necesita ser técnica. Basta con expresar cuatro cosas: qué queremos ver, dónde queremos observarlo, qué indicador nos interesa y sobre qué población, hogares o viviendas queremos calcularlo.
+
+## Partir por el lugar
+
+Nombrar el territorio ayuda a resolver correctamente la consulta. Puede ser una región, comuna, localidad, zona censal o manzana.
+
+> “Muéstrame la población de 65 años o más en Isla de Maipo.”
+
+Aquí sabemos qué se quiere medir, para quiénes y en qué comuna. Si además queremos comparar sectores, podemos pedir una tabla o un mapa y precisar la unidad territorial.
+
+## Pedir el resultado que necesitamos
+
+No todas las preguntas requieren la misma salida. Una cifra sirve para una consulta directa; un gráfico ayuda a observar una distribución y un mapa permite reconocer diferencias dentro del territorio.
+
+Una consulta más completa podría ser:
+
+> “Muestra en un mapa el porcentaje de hogares con internet por zona censal en Isla de Maipo.”
+
+La mejor pregunta no es necesariamente la más larga. Es la que deja claro el propósito de la consulta.

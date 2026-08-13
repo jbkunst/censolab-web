@@ -1,60 +1,150 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;1,400&display=swap");
-
+/* Ajustes de navegación que no expresa la configuración de marca. */
 :root {
   --censolab-primary: #0E4F5A;
-  --censolab-info: #3F7180;
   --censolab-primary-dark: #0A3D46;
-  --censolab-bg: #F7F8F8;
-  --censolab-surface: #FFFFFF;
-  --censolab-text: #202326;
-  --censolab-muted: #62676C;
-  --censolab-border: rgba(32, 35, 38, 0.12);
-  --censolab-shadow: 0 1rem 3rem rgb(0 0 0 / 7%);
-  --bs-primary: #0E4F5A;
-  --bs-primary-rgb: 14, 79, 90;
-  --bs-body-bg: #F7F8F8;
-  --bs-body-color: #202326;
-  --bs-secondary-color: #62676C;
-  --bs-body-font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  background: var(--censolab-bg);
-  color: var(--censolab-text);
-  font-family: var(--bs-body-font-family);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Las páginas informativas comienzan inmediatamente debajo de la navbar. */
-.page-layout-full main.content:has(> .information-page) {
-  grid-column: screen-start / screen-end !important;
-  width: 100%;
-  max-width: none;
-  margin: 0 !important;
-  padding: 0;
-}
-
-.page-layout-full main.content:has(> .information-page) > .quarto-title-block:empty {
-  display: none;
-}
-
-.page-layout-full:has(.information-page) {
-  row-gap: 0;
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-  background: var(--censolab-primary);
-}
-
-/* La navbar conserva el mismo gesto que page_navbar(bg-primary) de la app. */
 .navbar {
   border-bottom: 0 !important;
   background: var(--censolab-primary) !important;
   box-shadow: none !important;
+}
+
+.quarto-title-banner {
+  background: var(--censolab-primary);
+  color: #fff;
+}
+
+.quarto-title-banner .quarto-title .title {
+  color: #fff;
+  font-size: clamp(2.6rem, 4vw, 3.25rem);
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.quarto-title-banner .description {
+  color: rgb(255 255 255 / 76%);
+}
+
+.quarto-title .title {
+  font-weight: 200;
+  letter-spacing: -0.04em;
+}
+
+main.content h1,
+main.content h2,
+main.content h3 {
+  font-weight: 300;
+  letter-spacing: -0.025em;
+}
+
+main.content a {
+  color: var(--censolab-primary);
+}
+
+main.content a:hover {
+  color: var(--censolab-primary-dark);
+}
+
+main.content blockquote {
+  border-left-color: var(--censolab-primary);
+}
+
+/* Cards compartidas por las páginas editoriales. */
+.cl-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 2rem;
+}
+
+.cl-card {
+  padding: 1rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.55rem;
+  background: #fff;
+}
+
+.cl-card > p,
+.cl-card > section > p,
+.how-to-example-card blockquote {
+  color: var(--bs-secondary-color);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.cl-card > p:first-child strong {
+  color: var(--bs-body-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.cl-card > :last-child,
+.cl-card > section > :last-child {
+  margin-bottom: 0;
+}
+
+/* Cómo usar: una card ancha reúne la petición y su resultado. */
+.how-to-examples-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 0.75rem;
+  margin: 1rem 0 2rem;
+}
+
+.how-to-example-card {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.how-to-example-card > p:first-child {
+  margin: 0;
+  padding: 1rem 1rem 0.4rem;
+}
+
+.how-to-example-card blockquote {
+  margin: 0;
+  padding: 0.35rem 1rem 1rem;
+  border-left: 0;
+  background: transparent;
+}
+
+.how-to-example-card iframe {
+  display: block;
+  border-top: 1px solid var(--bs-border-color);
+}
+
+.how-to-page .math.display {
+  margin: 1.25rem 0 2.25rem;
+  overflow-x: auto;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .cl-card-grid,
+  .how-to-examples-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.navbar-brand-container {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.navbar-brand-container > .navbar-brand {
+  margin-right: 0;
+}
+
+.navbar-brand .navbar-logo {
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-right: 0;
+  object-fit: contain;
 }
 
 .navbar-brand,
@@ -66,7 +156,10 @@ body {
   font-size: 1.15rem;
   font-weight: 200;
   letter-spacing: 0.01em;
-  margin-right: 2.25rem;
+}
+
+.navbar-brand .navbar-title {
+  font-weight: 200 !important;
 }
 
 .navbar-nav .nav-link {
@@ -89,416 +182,10 @@ body {
   filter: invert(1) grayscale(1) brightness(2);
 }
 
-/* Portada: el primary avanza horizontalmente hacia el info del brand. */
-.landing-hero {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  min-height: max(42rem, calc(100svh - 3.5rem));
-  overflow: hidden;
-  background: linear-gradient(
-    90deg,
-    var(--censolab-primary) 0%,
-    #165B67 48%,
-    var(--censolab-info) 100%
-  );
-  color: #fff;
-}
-
-.landing-hero::before,
-.landing-hero::after {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  content: "";
-  pointer-events: none;
-}
-
-.landing-hero::before {
-  background:
-    linear-gradient(90deg, rgb(0 0 0 / 18%), transparent 58%),
-    linear-gradient(180deg, transparent 52%, rgb(0 0 0 / 13%) 100%);
-}
-
-.landing-hero::after {
-  left: auto;
-  width: min(52vw, 48rem);
-  background: radial-gradient(circle at 58% 43%, rgb(255 255 255 / 14%), transparent 62%);
-}
-
-.landing-hero-inner {
-  display: flex;
-  width: min(100%, 92rem);
-  margin-inline: auto;
-  padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 5vw, 5rem) clamp(2.5rem, 5vh, 4rem);
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.landing-eyebrow,
-.information-eyebrow {
-  display: block;
-  color: rgb(255 255 255 / 58%);
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.landing-hero h1 {
-  max-width: 62rem;
-  margin: 0.65rem 0 0;
-  color: #fff;
-  font-size: clamp(4.7rem, 10vw, 8.7rem);
-  font-weight: 200;
-  letter-spacing: -0.06em;
-  line-height: 0.86;
-}
-
-.landing-hero h2 {
-  max-width: 62rem;
-  margin: 1.5rem 0 0;
-  color: #fff;
-  font-size: clamp(1.7rem, 3.3vw, 3.15rem);
-  font-weight: 200;
-  letter-spacing: -0.045em;
-  line-height: 1.03;
-  text-wrap: balance;
-}
-
-.landing-hero-inner > p {
-  max-width: 46rem;
-  margin: 1.2rem 0 0;
-  color: rgb(255 255 255 / 74%);
-  font-size: 1rem;
-  line-height: 1.65;
-}
-
-.landing-cta {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  margin-top: 1.8rem;
-  padding: 0.72rem 1rem;
-  border: 1px solid rgb(255 255 255 / 42%);
-  border-radius: 0.45rem;
-  background: rgb(0 0 0 / 10%);
-  color: #fff !important;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-  backdrop-filter: blur(12px);
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-}
-
-.landing-cta:hover,
-.landing-cta:focus-visible {
-  border-color: #fff;
-  background: #fff;
-  color: var(--censolab-primary) !important;
-}
-
-.landing-capabilities {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: clamp(3.5rem, 8vh, 6rem);
-  padding-top: 1.5rem;
-  border-top: 1px solid rgb(255 255 255 / 18%);
-}
-
-.landing-capability {
-  min-width: 0;
-  padding-right: clamp(0.5rem, 3vw, 2rem);
-}
-
-.landing-capability > span {
-  color: rgb(255 255 255 / 42%);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-}
-
-.landing-capability h3 {
-  margin: 0.35rem 0 0;
-  color: #fff;
-  font-size: 1.2rem;
-  font-weight: 300;
-}
-
-.landing-capability p {
-  max-width: 21rem;
-  margin: 0.45rem 0 0;
-  color: rgb(255 255 255 / 65%);
-  font-size: 0.82rem;
-  line-height: 1.45;
-}
-
-/* Banda editorial tomada de las páginas informativas de CensoLab. */
-.information-page {
-  background: var(--censolab-bg);
-}
-
-.information-intro {
-  padding: clamp(3.5rem, 7vh, 5.5rem) clamp(1.5rem, 5vw, 5rem) clamp(5rem, 9vh, 7rem);
-  background:
-    linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 7%) 100%),
-    var(--censolab-primary);
-  color: #fff;
-}
-
-.information-intro-about {
-  background:
-    linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 7%) 100%),
-    var(--censolab-primary);
-}
-
-.information-intro-copy {
-  width: min(900px, 100%);
-  margin-inline: auto;
-}
-
-.information-intro h2 {
-  margin: 0.45rem 0 0;
-  padding-bottom: 0;
-  border-bottom: 0;
-  color: #fff;
-  font-size: clamp(2.4rem, 4vw, 4rem);
-  font-weight: 200;
-  letter-spacing: -0.05em;
-  line-height: 0.95;
-}
-
-.information-intro p {
-  max-width: 44rem;
-  margin: 0.9rem 0 0;
-  color: rgb(255 255 255 / 74%);
-  font-size: 0.98rem;
-  line-height: 1.6;
-}
-
-.information-content {
-  position: relative;
-  z-index: 1;
-  width: min(900px, calc(100% - 3rem));
-  margin-top: -2rem;
-  margin-inline: auto;
-  margin-bottom: clamp(4rem, 8vh, 7rem);
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  border: 1px solid var(--censolab-border);
-  border-radius: 1rem;
-  background: var(--censolab-surface);
-  box-shadow: var(--censolab-shadow);
-}
-
-.information-content > :first-child,
-.about-section > :first-child {
-  margin-top: 0;
-}
-
-.information-content h3,
-.about-section h3 {
-  color: var(--censolab-text);
-  font-size: 1.25rem;
-  font-weight: 500;
-  letter-spacing: -0.025em;
-}
-
-.information-content > p,
-.about-section p,
-.about-section li {
-  color: var(--censolab-muted);
-  line-height: 1.65;
-}
-
-/* Anatomía de la consulta: mismas clases y proporciones de helper_ui.R. */
-.how-to-use-structure {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin: 1rem 0 0;
-}
-
-.how-to-use-structure-item {
-  padding: 0.9rem;
-  border: 1px solid var(--censolab-border);
-  border-radius: 0.45rem;
-  background: var(--censolab-bg);
-}
-
-.how-to-use-structure-item strong {
-  display: block;
-  margin-bottom: 0.35rem;
-  color: var(--censolab-text);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.how-to-use-structure-item p {
-  margin: 0;
-  color: var(--censolab-muted);
-  font-size: 0.82rem;
-  line-height: 1.45;
-}
-
-.how-to-use-formula-intro {
-  margin: 1.25rem 0 0.5rem !important;
-  font-size: 0.9rem;
-}
-
-.how-to-use-formula {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  align-items: center;
-  margin-bottom: 3rem;
-}
-
-.how-to-use-formula-part {
-  display: flex;
-  min-width: 0;
-  flex: 1 1 135px;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.85rem;
-  border: 1px solid var(--censolab-border);
-  border-radius: 0.45rem;
-  background: var(--censolab-bg);
-}
-
-.how-to-use-formula-label {
-  color: var(--censolab-muted);
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  line-height: 1.25;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.how-to-use-formula-plus {
-  color: var(--censolab-muted);
-  font-weight: 600;
-}
-
-/* Los previews son los mismos cuatro outputs estáticos usados por la app. */
-.how-to-use-examples {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.how-to-use-example {
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid var(--censolab-border) !important;
-  border-radius: 0.55rem !important;
-  background: #fff;
-  box-shadow: none !important;
-}
-
-.how-to-use-example > .card-header {
-  padding: 0.9rem 1rem;
-  border-bottom: 1px solid var(--censolab-border);
-  background: #fff;
-  color: var(--censolab-text);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.how-to-use-example blockquote {
-  min-height: 7.2rem;
-  margin: 1rem;
-  padding: 0;
-  border: 0;
-  color: var(--censolab-muted);
-  font-size: 0.9rem;
-  font-style: normal;
-  line-height: 1.45;
-}
-
-.how-to-use-example blockquote p {
-  margin: 0;
-}
-
-.how-to-use-prompt-text {
-  color: inherit;
-}
-
-.how-to-use-preview {
-  display: block;
-  width: 100%;
-  height: 285px;
-  border: 0;
-  border-top: 1px solid var(--censolab-border);
-  background: var(--censolab-bg);
-}
-
-.how-to-use-preview-map {
-  height: 320px;
-}
-
-.how-to-use-preview-table {
-  height: 235px;
-}
-
-.how-to-use-preview-answer {
-  height: 145px;
-}
-
-/* Acerca de reutiliza el contenido completo del about_ui() de la aplicación. */
-.about-content > hr {
-  margin: 2rem 0;
-  border-color: var(--censolab-border);
-  opacity: 1;
-}
-
-.about-section a {
-  color: var(--censolab-primary);
-  text-decoration-color: color-mix(in srgb, var(--censolab-primary) 35%, transparent);
-  text-underline-offset: 0.18em;
-}
-
-.about-people {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  margin: 1rem 0 1.25rem;
-}
-
-.about-person {
-  padding: 1.25rem;
-  border: 1px solid var(--censolab-border);
-  border-radius: 0.55rem;
-  background: var(--censolab-bg);
-}
-
-.about-person h4 {
-  margin: 0 0 0.7rem;
-  color: var(--censolab-text);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.about-person p {
-  margin-bottom: 0.8rem;
-  font-size: 0.88rem;
-}
-
-.about-person p:last-child {
-  margin-bottom: 0;
-  font-size: 0.8rem;
-}
-
-.landing-text-link {
-  display: inline-block;
-  margin-top: 1rem;
-  color: var(--censolab-primary) !important;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration-color: color-mix(in srgb, var(--censolab-primary) 35%, transparent);
-  text-underline-offset: 0.25em;
+@media (min-width: 992px) {
+  .navbar .navbar-nav.me-auto {
+    margin-left: 1rem;
+  }
 }
 
 .page-footer {
@@ -508,7 +195,7 @@ body {
   font-size: 0.75rem;
 }
 
-/* /app conserva la aplicación como experiencia completamente independiente. */
+/* /app funciona como una experiencia independiente a pantalla completa. */
 .app-page {
   overflow: hidden;
 }
@@ -535,60 +222,4 @@ body {
   height: 100vh;
   border: 0;
   background: #fff;
-}
-
-@media (max-width: 767.98px) {
-  .landing-hero {
-    background: linear-gradient(145deg, var(--censolab-primary) 0%, var(--censolab-info) 100%);
-  }
-
-  .landing-hero-inner {
-    padding-inline: 1.25rem;
-  }
-
-  .landing-hero h1 {
-    font-size: clamp(4rem, 20vw, 6rem);
-  }
-
-  .landing-capabilities,
-  .how-to-use-structure,
-  .how-to-use-examples,
-  .about-people {
-    grid-template-columns: 1fr;
-  }
-
-  .landing-capabilities {
-    gap: 1.25rem;
-  }
-
-  .landing-capability {
-    padding-bottom: 1.1rem;
-    border-bottom: 1px solid rgb(255 255 255 / 12%);
-  }
-
-  .information-intro {
-    padding-inline: 1rem;
-  }
-
-  .information-content {
-    width: calc(100% - 2rem);
-  }
-
-  .how-to-use-example blockquote {
-    min-height: 0;
-  }
-
-  .how-to-use-formula-plus {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .landing-cta {
-    transition: none;
-  }
 }

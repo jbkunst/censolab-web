@@ -1,0 +1,23 @@
+---
+title: Del dato al mapa
+description: Qué ocurre cuando una pregunta censal necesita convertirse en una visualización territorial.
+date: 2026-08-05
+author: Matías Parra
+categories: [Datos, Mapas, Territorio]
+---
+
+Un mapa censal no comienza con colores: comienza con una pregunta. Antes de representar un indicador necesitamos definir su universo, su cálculo y la escala geográfica adecuada.
+
+## Un indicador con contexto
+
+Supongamos que queremos conocer la conectividad de los hogares de una región. La pregunta debe distinguir hogares de personas o viviendas y aclarar si buscamos un total o un porcentaje.
+
+> “Muéstrame el porcentaje de hogares con internet por comuna en la Región del Biobío.”
+
+CensoLab identifica el territorio, calcula el indicador para cada comuna y prepara una capa geográfica con esos resultados.
+
+## Leer diferencias, no solo colores
+
+El mapa permite descubrir patrones que una cifra regional puede ocultar. Las comunas no tienen el mismo tamaño ni la misma cantidad de hogares, por lo que un porcentaje suele ser más útil que un total para compararlas.
+
+La visualización es el último paso de una cadena: pregunta, definición, cálculo y representación. Mantener esa cadena visible ayuda a interpretar el resultado con mayor confianza.

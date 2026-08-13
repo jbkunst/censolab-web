@@ -1,0 +1,13 @@
+---
+title: Blog
+description: Ideas, aprendizajes y ejemplos para explorar los datos censales.
+listing:
+  contents: posts
+  type: default
+  sort: "date desc"
+  categories: true
+  filter-ui: true
+  sort-ui: true
+  fields: [date, title, description, categories]
+  page-size: 10
+---

@@ -245,8 +245,24 @@ body:has(.cl-home) footer.footer {
     padding-block: 3.5rem;
   }
 
+  .cl-home .cl-home-copy {
+    min-width: 0;
+  }
+
   .cl-home h1 {
-    font-size: clamp(4rem, 21vw, 5.7rem);
+    max-width: 100%;
+    font-size: clamp(3.5rem, 18vw, 4.5rem);
+  }
+
+  .cl-home .cl-home-slogan,
+  .cl-home .cl-home-lead,
+  .cl-home .cl-prompt-demo {
+    max-width: 100%;
+  }
+
+  .cl-home .cl-prompt-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .cl-home .cl-prompt-demo {

@@ -14,7 +14,7 @@ profile:
 website:
   title: "CensoLab"
   site-url: https://censolab.cl
-  favicon: assets/brand/favicon-32x32.png
+  favicon: assets/brand/censolab-logo-teal.svg
   google-analytics: "G-KQNMTM4EDX"
   search: false
   navbar:

@@ -104,11 +104,14 @@ Describir con palabras simples qué queremos saber y dónde.
 
 Texto · tabla · gráfico · mapa
 
-## También podemos usar fondos de slide. {.background-demo background-color="#0E4F5A"}
+## La misma slide, invertida. {.inverse background-color="#0E4F5A"}
 
-Este slide usa el atributo `background-color` de Quarto/Reveal.
+### Para cambiar el ritmo sin cambiar la estructura.
 
-Sirve para marcar secciones, pausas o cambios de ritmo sin crear otra plantilla.
+- Fondo teal.
+- Título y contenido en blanco.
+- Los mismos márgenes y jerarquía del resto de la presentación.
+- El color de fondo lo define Quarto con `background-color`.
 
 ## El modelo no consulta datos solo. {.statement .steps}
 

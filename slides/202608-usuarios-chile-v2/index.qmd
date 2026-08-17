@@ -45,25 +45,25 @@ CensoLab reduce la distancia entre una pregunta y los datos que pueden responder
 ## Cuatro cosas que CensoLab intenta cuidar. {.inverse .hero-cards background-color="#0E4F5A"}
 
 :::: {.columns}
-::: {.column width="25%"}
+::: {.column width="50%"}
 ### Preguntar
 
 Partir desde lenguaje natural, no desde el nombre exacto de una tabla.
 :::
 
-::: {.column width="25%"}
+::: {.column width="50%"}
 ### Territorio
 
 Resolver regiones, comunas, localidades, zonas y manzanas.
 :::
 
-::: {.column width="25%"}
+::: {.column width="50%"}
 ### Evidencia
 
 Volver siempre a una consulta y a datos reproducibles.
 :::
 
-::: {.column width="25%"}
+::: {.column width="50%"}
 ### Visualizar
 
 Elegir texto, tabla, gráfico o mapa según la pregunta.
@@ -104,6 +104,20 @@ Describir con palabras simples qué queremos saber y dónde.
 > “Dame un perfil territorial de Isla de Maipo.”
 
 Texto · tabla · gráfico · mapa
+
+## Un dato que abre la conversación. {.inverse .metric-slide background-color="#0E4F5A"}
+
+::: {.metric}
+::: {.metric-value}
+10
+:::
+
+::: {.metric-label}
+casos evaluados
+:::
+
+Un punto de partida para aprender, corregir y ampliar la batería.
+:::
 
 ## La misma slide, invertida. {.inverse background-color="#0E4F5A"}
 
@@ -180,7 +194,7 @@ La conversación sirve para coordinar el proceso, no para reemplazar la fuente.
 
 > Es hacer que preguntar por un territorio sea tan natural como explorarlo.
 
-## Sigamos explorando. {.closing .dark}
+## Sigamos explorando. {.inverse .closing background-color="#0E4F5A"}
 
 Preguntar · mirar · comparar
 

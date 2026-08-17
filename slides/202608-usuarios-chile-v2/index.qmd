@@ -1,0 +1,100 @@
+---
+title: CensoLab
+subtitle: Plataforma abierta de exploración de datos geográficos y censales con inteligencia artificial.
+author: Grupo de usuari@s de R · Santiago de Chile
+date: 2026-08-01
+date-format: MMMM YYYY
+draft: true
+resources:
+  - cover.js
+include-after-body: cover.html
+format:
+  revealjs:
+    brand: ../../_brand.yml
+    css: slides.css
+    width: 1600
+    height: 900
+    margin: 0
+    center: false
+    center-title-slide: false
+    controls: false
+    progress: false
+    slide-number: c/t
+    transition: fade
+    background-transition: fade
+    auto-stretch: false
+    hash: true
+---
+
+## Los datos están ahí. {.statement}
+
+### Llegar a ellos todavía cuesta.
+
+- Encontrar la tabla correcta.
+- Entender la geografía.
+- Preparar filtros y cálculos.
+- Elegir cómo mirar el resultado.
+
+## La idea es más simple. {.statement .quote}
+
+> Preguntar. Mirar. Comparar.
+
+CensoLab reduce la distancia entre una pregunta y los datos que pueden responderla.
+
+## Dos puertas al mismo dato. {.light}
+
+:::: {.columns}
+
+::: {.column width="48%"}
+### Explorar
+
+Navegar por territorios, indicadores, mapas y comparaciones.
+:::
+
+::: {.column width="48%"}
+### Preguntar
+
+Describir con palabras simples qué queremos saber y dónde.
+:::
+
+::::
+
+## Una pregunta puede ser suficiente. {.prompt}
+
+> “Dame un perfil territorial de Isla de Maipo.”
+
+Texto · tabla · gráfico · mapa
+
+## El modelo no consulta datos solo. {.statement .steps}
+
+### Usa herramientas pequeñas y explícitas.
+
+1. Resolver el territorio.
+2. Construir la consulta.
+3. Obtener los datos.
+4. Elegir cómo mostrarlos.
+
+## La interfaz puede ser mínima. {.light .flow}
+
+### La complejidad queda detrás.
+
+`pregunta` → `tools` → `datos` → `visualización`
+
+La conversación sirve para coordinar el proceso, no para reemplazar la fuente.
+
+## Cada respuesta vuelve a la evidencia. {.statement}
+
+- El territorio queda identificado.
+- La consulta se puede reproducir.
+- El resultado proviene de datos reales.
+- La visualización conserva el contexto.
+
+## Lo importante no es el chat. {.statement .quote}
+
+> Es hacer que preguntar por un territorio sea tan natural como explorarlo.
+
+## Sigamos explorando. {.closing}
+
+Preguntar · mirar · comparar
+
+[censolab.cl](https://censolab.cl)

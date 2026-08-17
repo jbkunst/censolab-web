@@ -1,0 +1,269 @@
+---
+title: CensoLab
+subtitle: Plataforma abierta de exploración de datos geográficos y censales con inteligencia artificial.
+author: Grupo de usuari@s de R · Santiago de Chile
+date: 2026-08-01
+date-format: MMMM YYYY
+draft: true
+resources:
+  - cover.js
+include-after-body: cover.html
+format:
+  revealjs:
+    brand: ../../_brand.yml
+    css: slides.css
+    width: 1600
+    height: 900
+    margin: 0
+    center: false
+    center-title-slide: false
+    controls: false
+    progress: true
+    slide-number: false
+    transition: fade
+    background-transition: fade
+    auto-stretch: false
+    hash: true
+---
+
+## Preguntar, mirar, comparar {.cl-marketing}
+
+::: {.cl-grid .cl-grid-four}
+::: {.cl-card}
+**Preguntar**
+
+Escribir con palabras simples lo que queremos saber.
+:::
+
+::: {.cl-card}
+**Navegar**
+
+Moverse por regiones, comunas, localidades, zonas y manzanas.
+:::
+
+::: {.cl-card}
+**Mirar**
+
+Ver la respuesta como texto, tabla, gráfico o mapa.
+:::
+
+::: {.cl-card}
+**Comparar**
+
+Revisar qué cambia entre distintos territorios.
+:::
+:::
+
+## Una idea por slide {.cl-marketing}
+
+> CensoLab transforma una pregunta en una forma de mirar el territorio.
+
+## La conversación avanza de a poco {.cl-marketing}
+
+::: {.incremental}
+
+- Primero, una pregunta.
+- Después, un territorio.
+- Finalmente, una respuesta que podemos explorar.
+
+:::
+
+## Una app Shiny tiene dos partes {.cl-technical}
+
+:::: {.columns}
+
+::: {.column width="48%"}
+### UI
+
+Es lo que ve la persona:
+
+- una caja para escribir;
+- un botón;
+- una respuesta.
+:::
+
+::: {.column width="48%"}
+### Server
+
+Es lo que ocurre por detrás:
+
+- recibe la pregunta;
+- busca los datos;
+- devuelve el resultado.
+:::
+
+::::
+
+## Explorar el territorio {.cl-marketing .cl-section}
+
+De la pregunta general al detalle de cada lugar.
+
+## Un dato que abre la conversación {.cl-marketing .cl-data}
+
+::: {.cl-metric}
+::: {.cl-metric-value}
+10
+:::
+
+::: {.cl-metric-label}
+casos evaluados
+:::
+
+Un punto de partida para aprender, corregir y ampliar la batería.
+:::
+
+## El mapa también cuenta la historia {.cl-technical .cl-map}
+
+::: {.cl-map-layout}
+::: {.cl-map-copy}
+[Isla de Maipo]{.cl-map-heading}
+
+El territorio permite leer una cifra dentro de su contexto.
+
+**Idea principal:** acercarse lo suficiente para reconocer el lugar, sin perder su entorno.
+:::
+
+::: {.cl-map-frame}
+::: {.cl-map-place}
+Isla de Maipo
+:::
+:::
+:::
+
+## Dos formas de llegar al dato {.cl-technical .cl-comparison}
+
+::: {.cl-compare}
+::: {.cl-compare-card}
+[Buscar]{.cl-compare-heading}
+
+Encontrar una tabla, interpretar sus variables y preparar el cálculo.
+:::
+
+::: {.cl-compare-card .is-highlighted}
+[Preguntar]{.cl-compare-heading}
+
+Explicar qué necesitamos y explorar directamente el resultado.
+:::
+:::
+
+## De una pregunta a una respuesta {.cl-marketing .cl-process-slide}
+
+::: {.cl-process}
+::: {.cl-step .fragment}
+**1**
+
+Pregunta
+:::
+
+::: {.cl-step .fragment}
+**2**
+
+Territorio
+:::
+
+::: {.cl-step .fragment}
+**3**
+
+Resultado
+:::
+:::
+
+## Una demostración, sin ruido {.cl-technical .cl-demo-slide}
+
+::: {.cl-demo-window}
+::: {.cl-demo-bar}
+CensoLab
+:::
+
+::: {.cl-demo-body}
+::: {.cl-demo-question}
+“Dame un perfil territorial de Isla de Maipo.”
+:::
+
+::: {.cl-demo-answer .fragment}
+Preparé un resumen con población, hogares, vivienda y escolaridad.
+:::
+:::
+:::
+
+## Una idea para recordar {.cl-marketing .cl-quote-slide}
+
+> Los datos se vuelven útiles cuando podemos hacerles preguntas cercanas.
+
+::: {.cl-quote-source}
+CensoLab
+:::
+
+## UI y server, lado a lado {.cl-technical}
+
+:::: {.columns}
+
+::: {.column width="48%"}
+### UI
+
+```r
+ui <- fluidPage(
+  textInput(
+    "pregunta",
+    "¿Qué quieres saber?"
+  ),
+  actionButton(
+    "consultar",
+    "Preguntar"
+  ),
+  textOutput("respuesta")
+)
+```
+:::
+
+::: {.column width="48%"}
+### Server
+
+```r
+server <- function(input, output) {
+  observeEvent(input$consultar, {
+    output$respuesta <- renderText({
+      responder(input$pregunta)
+    })
+  })
+}
+
+shinyApp(ui, server)
+```
+:::
+
+::::
+
+## Del input al output {.cl-technical}
+
+:::: {.columns}
+
+::: {.column width="56%"}
+```r
+observeEvent(input$consultar, {
+  texto <- input$pregunta
+
+  output$respuesta <- renderText({
+    responder(texto)
+  })
+})
+```
+:::
+
+::: {.column width="40%"}
+::: {.incremental}
+
+1. `input` recibe la pregunta.
+2. `server` prepara la respuesta.
+3. `output` actualiza la pantalla.
+
+:::
+:::
+
+::::
+
+## Sigamos explorando {.cl-marketing .cl-closing}
+
+Preguntar · mirar · comparar
+
+[censolab.cl](https://censolab.cl)

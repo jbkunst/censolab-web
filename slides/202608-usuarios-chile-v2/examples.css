@@ -47,8 +47,7 @@ body:has(#title-slide.present) .reveal .slide-logo {
   opacity: 0 !important;
 }
 
-/* Remove the old CSS-painted logo from slide pseudo-elements.
-   On normal slides the teal background color of the bar remains. */
+/* Remove any old CSS-painted logo image from slide pseudo-elements. */
 .reveal .slides > section:not(#title-slide)::before {
   background-image: none !important;
 }
@@ -110,8 +109,7 @@ body:has(#title-slide.present) .reveal .slide-number {
   font-size: 31px;
 }
 
-/* Inverse slide: same content layout, only the colors flip.
-   Match the specificity of the pale-slide rules explicitly. */
+/* Inverse slide: same content layout, only the colors flip. */
 .reveal .slides > section.inverse:not(#title-slide) {
   color: #FFFFFF !important;
 }
@@ -125,7 +123,7 @@ body:has(#title-slide.present) .reveal .slide-number {
 
 .reveal .slides > section.inverse:not(#title-slide) p,
 .reveal .slides > section.inverse:not(#title-slide) li {
-  color: rgb(255 255 255 / 84%) !important;
+  color: rgb(255 255 255 / 86%) !important;
 }
 
 .reveal .slides > section.inverse:not(#title-slide) ul li::before {
@@ -157,7 +155,7 @@ body:has(#title-slide.present) .reveal .slide-number {
   background: rgb(255 255 255 / 9%);
 }
 
-.reveal .slides > section.hero-cards .column h3 {
+.reveal .slides > section.inverse.hero-cards:not(#title-slide) .column h3 {
   width: 100% !important;
   margin: 0 0 20px !important;
   color: #FFFFFF !important;
@@ -166,9 +164,9 @@ body:has(#title-slide.present) .reveal .slide-number {
   letter-spacing: -.025em;
 }
 
-.reveal .slides > section.hero-cards .column p {
+.reveal .slides > section.inverse.hero-cards:not(#title-slide) .column p {
   margin: 0;
-  color: rgb(255 255 255 / 78%) !important;
+  color: rgb(255 255 255 / 82%) !important;
   font-size: 22px;
   font-weight: 300;
   line-height: 1.42;

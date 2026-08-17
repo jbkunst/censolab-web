@@ -1,0 +1,156 @@
+/* Extra examples for the CensoLab RevealJS deck.
+   Keep the QMD simple: Quarto columns, incremental content and slide attributes
+   carry the semantics; CSS only turns them into the visual system. */
+
+/* Progress bar: thin, visible and branded. */
+.reveal .progress {
+  z-index: 30;
+  display: block;
+  height: 4px;
+  background: rgb(14 79 90 / 12%);
+  color: var(--cl-teal);
+}
+
+body:has(section.dark.present) .reveal .progress,
+body:has(section.background-demo.present) .reveal .progress {
+  background: rgb(255 255 255 / 18%);
+  color: #A7CECC;
+}
+
+/* Incremental list: no new component; Reveal handles the fragments. */
+.reveal .slides > section.incremental-demo ul {
+  width: 82%;
+  margin-top: 40px;
+}
+
+.reveal .slides > section.incremental-demo li {
+  margin-bottom: 28px;
+  font-size: 31px;
+}
+
+/* Slide background demo: background-color is set in the QMD slide attribute. */
+.reveal .slides > section.background-demo {
+  padding: 170px 96px 72px;
+  color: #FFFFFF;
+}
+
+.reveal .slides > section.background-demo::before {
+  top: 36px;
+  left: 96px;
+  width: 28px;
+  height: 28px;
+  background: url("../../assets/brand/censolab-logo-white.svg") center / contain no-repeat;
+  opacity: .84;
+}
+
+.reveal .slides > section.background-demo h2 {
+  position: static;
+  display: block;
+  width: 74%;
+  height: auto;
+  margin: 78px 0 42px;
+  color: #FFFFFF;
+  font-size: 76px;
+  font-weight: 500;
+  letter-spacing: -.048em;
+  line-height: .98;
+}
+
+.reveal .slides > section.background-demo p,
+.reveal .slides > section.background-demo li {
+  width: 72%;
+  color: rgb(255 255 255 / 78%);
+}
+
+.reveal .slides > section.background-demo code {
+  color: #FFFFFF;
+}
+
+/* Four hero cards, built only from Quarto's regular columns. */
+.reveal .slides > section.hero-cards {
+  padding-top: 150px;
+}
+
+.reveal .slides > section.hero-cards h2 {
+  width: 72%;
+  margin-bottom: 32px;
+}
+
+.reveal .slides > section.hero-cards .columns {
+  gap: 22px;
+  margin-top: 54px;
+}
+
+.reveal .slides > section.hero-cards .columns > .column {
+  box-sizing: border-box;
+  min-height: 275px;
+  padding: 30px 27px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 22px;
+  background: rgb(255 255 255 / 9%);
+}
+
+.reveal .slides > section.hero-cards .columns > .column + .column {
+  padding-left: 27px;
+  border-left: 1px solid rgb(255 255 255 / 18%);
+}
+
+.reveal .slides > section.hero-cards .column h3 {
+  width: 100%;
+  margin: 0 0 20px;
+  color: #FFFFFF;
+  font-size: 33px;
+  font-weight: 500;
+  letter-spacing: -.025em;
+}
+
+.reveal .slides > section.hero-cards .column p {
+  margin: 0;
+  color: rgb(255 255 255 / 74%);
+  font-size: 22px;
+  font-weight: 300;
+  line-height: 1.42;
+}
+
+/* Two-column code example, following the simple v1 structure. */
+.reveal .slides > section.code-pair {
+  padding-top: 132px;
+}
+
+.reveal .slides > section.code-pair .columns {
+  gap: 44px;
+  margin-top: 18px;
+}
+
+.reveal .slides > section.code-pair .columns > .column + .column {
+  padding-left: 44px;
+}
+
+.reveal .slides > section.code-pair .column h3 {
+  margin-bottom: 15px;
+  font-size: 32px;
+}
+
+.reveal .slides > section.code-pair pre,
+.reveal .slides > section.code-pair div.sourceCode {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.reveal .slides > section.code-pair pre.sourceCode {
+  box-sizing: border-box;
+  min-height: 405px;
+  padding: 22px 24px;
+  border: 1px solid var(--cl-rule);
+  border-radius: 18px;
+  background: #FFFFFF;
+}
+
+.reveal .slides > section.code-pair pre code {
+  max-height: none;
+  color: #26383C;
+  font-size: 19px;
+  line-height: 1.38;
+}

@@ -11,7 +11,7 @@ include-after-body: cover.html
 format:
   revealjs:
     brand: ../../_brand.yml
-    css: slides.css
+    css: [slides.css, palette.css]
     width: 1600
     height: 900
     margin: 0
@@ -26,7 +26,7 @@ format:
     hash: true
 ---
 
-## Los datos están ahí. {.statement}
+## Los datos están ahí. {.statement .dark}
 
 ### Llegar a ellos todavía cuesta.
 
@@ -35,7 +35,7 @@ format:
 - Preparar filtros y cálculos.
 - Elegir cómo mirar el resultado.
 
-## La idea es más simple. {.statement .quote}
+## La idea es más simple. {.statement .quote .dark}
 
 > Preguntar. Mirar. Comparar.
 

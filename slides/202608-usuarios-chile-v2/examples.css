@@ -1,6 +1,40 @@
 /* Extra examples for the CensoLab RevealJS deck.
-   Keep the QMD simple: Quarto columns, incremental content and slide attributes
-   carry the semantics; CSS only turns them into the visual system. */
+   Keep the QMD simple: Quarto carries the semantics; CSS carries the visual system. */
+
+/* Typography: never fall back to the Reveal theme's default families. */
+.reveal,
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6,
+.reveal p,
+.reveal li,
+.reveal blockquote,
+.reveal .slide-number,
+.reveal .slide-number * {
+  font-family: "IBM Plex Sans", sans-serif !important;
+}
+
+.reveal code,
+.reveal pre,
+.reveal pre code,
+.reveal kbd,
+.reveal samp,
+.reveal .sourceCode,
+.reveal .sourceCode * {
+  font-family: "IBM Plex Mono", monospace !important;
+}
+
+/* Quarto/Reveal backgrounds live on a separate full-slide layer.
+   Do not paint a second section background on top of them: that was the visible
+   teal strip/border at the bottom of background slides. */
+.reveal .slides > section[data-background-color],
+.reveal .slides > section[data-background-image] {
+  min-height: 100% !important;
+  background: transparent !important;
+}
 
 /* Progress bar: thin, visible and branded. */
 .reveal .progress {
@@ -17,7 +51,14 @@ body:has(section.inverse.present) .reveal .progress {
   color: #A7CECC;
 }
 
-/* Incremental list: no new component; Reveal handles the fragments. */
+/* Pagination uses IBM Plex Sans explicitly. */
+.reveal .slide-number,
+.reveal .slide-number a {
+  font-family: "IBM Plex Sans", sans-serif !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Incremental list: Reveal handles the fragments. */
 .reveal .slides > section.incremental-demo ul {
   width: 82%;
   margin-top: 40px;
@@ -28,41 +69,14 @@ body:has(section.inverse.present) .reveal .progress {
   font-size: 31px;
 }
 
-/* Inverse slide: same content slide, colours flipped.
-   The teal background itself comes from Quarto's background-color attribute. */
+/* Inverse slide: same layout as a normal content slide, only colours flip.
+   The actual full-slide teal comes from Quarto's background-color attribute. */
 .reveal .slides > section.inverse {
-  padding: 154px 96px 72px;
   color: #FFFFFF;
-}
-
-.reveal .slides > section.inverse::before {
-  top: 36px;
-  left: 96px;
-  width: 28px;
-  height: 28px;
-  background: url("../../assets/brand/censolab-logo-white.svg") center / contain no-repeat;
-  opacity: .84;
-}
-
-.reveal .slides > section.inverse h2 {
-  position: static;
-  display: block;
-  width: 78%;
-  height: auto;
-  margin: 30px 0 42px;
-  color: #FFFFFF;
-  font-size: 58px;
-  font-weight: 500;
-  letter-spacing: -.04em;
-  line-height: 1.02;
 }
 
 .reveal .slides > section.inverse h3 {
-  width: 74%;
-  margin: 0 0 34px;
-  color: rgb(255 255 255 / 82%);
-  font-size: 37px;
-  font-weight: 300;
+  color: rgb(255 255 255 / 84%);
 }
 
 .reveal .slides > section.inverse p,
@@ -80,23 +94,28 @@ body:has(section.inverse.present) .reveal .progress {
   box-shadow: none;
 }
 
-/* Four hero cards, built only from Quarto's regular columns. */
-.reveal .slides > section.hero-cards {
-  padding-top: 150px;
+.reveal .slides > section.inverse .columns > .column + .column {
+  border-left-color: rgb(255 255 255 / 20%);
 }
 
-.reveal .slides > section.hero-cards h2 {
-  width: 72%;
-  margin-bottom: 32px;
+/* Four hero cards, still authored with regular Quarto columns.
+   CSS turns the generated columns container into a four-column grid so it
+   cannot overflow when gaps are added. */
+.reveal .slides > section.hero-cards {
+  padding-top: 154px;
 }
 
 .reveal .slides > section.hero-cards .columns {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 22px;
   margin-top: 54px;
 }
 
 .reveal .slides > section.hero-cards .columns > .column {
   box-sizing: border-box;
+  width: auto !important;
+  min-width: 0;
   min-height: 275px;
   padding: 30px 27px;
   border: 1px solid rgb(255 255 255 / 18%);
@@ -120,7 +139,7 @@ body:has(section.inverse.present) .reveal .progress {
 
 .reveal .slides > section.hero-cards .column p {
   margin: 0;
-  color: rgb(255 255 255 / 74%);
+  color: rgb(255 255 255 / 76%);
   font-size: 22px;
   font-weight: 300;
   line-height: 1.42;
@@ -165,6 +184,7 @@ body:has(section.inverse.present) .reveal .progress {
 .reveal .slides > section.code-pair pre code {
   max-height: none;
   color: #26383C;
+  font-family: "IBM Plex Mono", monospace !important;
   font-size: 19px;
   line-height: 1.38;
 }

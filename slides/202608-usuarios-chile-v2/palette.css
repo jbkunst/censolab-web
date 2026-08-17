@@ -31,21 +31,18 @@
   color: var(--cl-ink);
 }
 
-/* Existing .light slides become the white variation. */
 .reveal .slides > section.light {
   background: var(--cl-white);
 }
 
-/* One simple teal bar. No extra eyebrow or decorative label. */
+/* One simple teal bar. Logo is supplied by Quarto via YAML. */
 .reveal .slides > section:not(#title-slide)::before {
   position: absolute;
   inset: 0 0 auto 0;
   display: block;
   width: 100%;
   height: 108px;
-  background:
-    url("../../assets/brand/censolab-logo-white.svg") 48px 50% / 28px 28px no-repeat,
-    var(--cl-teal);
+  background: var(--cl-teal);
   content: "";
   opacity: 1;
 }
@@ -94,17 +91,6 @@
 
 .reveal .slides > section:not(#title-slide) code {
   color: var(--cl-teal);
-}
-
-.reveal .slide-number {
-  z-index: 20;
-  top: 42px !important;
-  right: 52px !important;
-  color: rgb(255 255 255 / 68%);
-}
-
-body:has(#title-slide.present) .reveal .slide-number {
-  opacity: 0;
 }
 
 /* Lists stay visual without becoming decoration. */
@@ -169,15 +155,11 @@ body:has(#title-slide.present) .reveal .slide-number {
   color: #FFFFFF;
 }
 
-/* On full-colour slides, the bar disappears and the logo becomes a cue. */
+/* No pseudo-element logo here; Quarto owns the logo element. */
 .reveal .slides > section.dark::before,
 .reveal .slides > section.closing::before {
-  top: 36px;
-  left: 96px;
-  width: 28px;
-  height: 28px;
-  background: url("../../assets/brand/censolab-logo-white.svg") center / contain no-repeat;
-  opacity: .82;
+  display: none;
+  content: none;
 }
 
 .reveal .slides > section.dark h2,
@@ -237,7 +219,6 @@ body:has(#title-slide.present) .reveal .slide-number {
   color: rgb(255 255 255 / 57%);
 }
 
-/* The opening quote should feel like a statement, not a component. */
 .reveal .slides > section.dark.quote blockquote {
   margin-top: 80px;
 }
@@ -247,7 +228,6 @@ body:has(#title-slide.present) .reveal .slide-number {
   font-weight: 500;
 }
 
-/* Closing echoes the opening colour without adding new furniture. */
 .reveal .slides > section.closing {
   padding-top: 185px;
 }

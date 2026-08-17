@@ -41,7 +41,7 @@ format:
 
 CensoLab reduce la distancia entre una pregunta y los datos que pueden responderla.
 
-## Cuatro cosas que CensoLab intenta cuidar. {.dark .hero-cards background-color="#0E4F5A"}
+## Cuatro cosas que CensoLab intenta cuidar. {.inverse .hero-cards background-color="#0E4F5A"}
 
 :::: {.columns}
 ::: {.column width="25%"}

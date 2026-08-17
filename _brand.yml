@@ -17,6 +17,10 @@ typography:
       source: google
       weight: [200, 300, 400, 500, 600, 700]
       style: [normal, italic]
+    - family: IBM Plex Mono
+      source: google
+      weight: [400, 500, 600]
+      style: [normal, italic]
 
   base:
     family: IBM Plex Sans
@@ -25,3 +29,7 @@ typography:
   headings:
     family: IBM Plex Sans
     weight: 300
+
+  monospace:
+    family: IBM Plex Mono
+    weight: 400

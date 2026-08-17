@@ -1,7 +1,7 @@
-/* Extra examples for the CensoLab RevealJS deck.
+/* Extra examples and small overrides for the CensoLab RevealJS deck.
    Keep the QMD simple: Quarto carries the semantics; CSS carries the visual system. */
 
-/* Typography: never fall back to the Reveal theme's default families. */
+/* Typography */
 .reveal,
 .reveal h1,
 .reveal h2,
@@ -27,16 +27,40 @@
   font-family: "IBM Plex Mono", monospace !important;
 }
 
-/* Quarto/Reveal backgrounds live on a separate full-slide layer.
-   Do not paint a second section background on top of them: that was the visible
-   teal strip/border at the bottom of background slides. */
+/* Let Quarto own the logo asset. The YAML provides the image;
+   CSS only decides where it sits. */
+.reveal .slide-logo {
+  position: fixed !important;
+  z-index: 40 !important;
+  top: 34px !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: 48px !important;
+  width: 28px !important;
+  max-width: 28px !important;
+  height: 28px !important;
+  max-height: 28px !important;
+  margin: 0 !important;
+}
+
+body:has(#title-slide.present) .reveal .slide-logo {
+  opacity: 0 !important;
+}
+
+/* Remove the old CSS-painted logo from slide pseudo-elements.
+   On normal slides the teal background color of the bar remains. */
+.reveal .slides > section:not(#title-slide)::before {
+  background-image: none !important;
+}
+
+/* Native Reveal background layers should fill the whole 16:9 slide. */
 .reveal .slides > section[data-background-color],
 .reveal .slides > section[data-background-image] {
   min-height: 100% !important;
   background: transparent !important;
 }
 
-/* Progress bar: thin, visible and branded. */
+/* Progress bar */
 .reveal .progress {
   z-index: 30;
   display: block;
@@ -51,11 +75,28 @@ body:has(section.inverse.present) .reveal .progress {
   color: #A7CECC;
 }
 
-/* Pagination uses IBM Plex Sans explicitly. */
-.reveal .slide-number,
-.reveal .slide-number a {
+/* Pagination: Quarto's c/t, styled like the reference deck. */
+.reveal .slide-number {
+  display: block !important;
+  z-index: 41 !important;
+  top: 39px !important;
+  right: 52px !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  color: rgb(255 255 255 / 72%) !important;
   font-family: "IBM Plex Sans", sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
+  letter-spacing: .07em;
+  opacity: 1 !important;
+}
+
+body:has(#title-slide.present) .reveal .slide-number {
+  opacity: 0 !important;
 }
 
 /* Incremental list: Reveal handles the fragments. */
@@ -69,46 +110,39 @@ body:has(section.inverse.present) .reveal .progress {
   font-size: 31px;
 }
 
-/* Inverse slide: same layout as a normal content slide, only colours flip.
-   The actual full-slide teal comes from Quarto's background-color attribute. */
-.reveal .slides > section.inverse {
-  color: #FFFFFF;
+/* Inverse slide: same content layout, only the colors flip.
+   Match the specificity of the pale-slide rules explicitly. */
+.reveal .slides > section.inverse:not(#title-slide) {
+  color: #FFFFFF !important;
 }
 
-.reveal .slides > section.inverse h3 {
-  color: rgb(255 255 255 / 84%);
+.reveal .slides > section.inverse:not(#title-slide) h2,
+.reveal .slides > section.inverse:not(#title-slide) h3,
+.reveal .slides > section.inverse:not(#title-slide) strong,
+.reveal .slides > section.inverse:not(#title-slide) code {
+  color: #FFFFFF !important;
 }
 
-.reveal .slides > section.inverse p,
-.reveal .slides > section.inverse li {
-  color: rgb(255 255 255 / 82%);
+.reveal .slides > section.inverse:not(#title-slide) p,
+.reveal .slides > section.inverse:not(#title-slide) li {
+  color: rgb(255 255 255 / 84%) !important;
 }
 
-.reveal .slides > section.inverse strong,
-.reveal .slides > section.inverse code {
-  color: #FFFFFF;
+.reveal .slides > section.inverse:not(#title-slide) ul li::before {
+  background: #DDE9E8 !important;
+  box-shadow: none !important;
 }
 
-.reveal .slides > section.inverse ul li::before {
-  background: #DDE9E8;
-  box-shadow: none;
+.reveal .slides > section.inverse:not(#title-slide) .columns > .column + .column {
+  border-left-color: rgb(255 255 255 / 18%) !important;
 }
 
-.reveal .slides > section.inverse .columns > .column + .column {
-  border-left-color: rgb(255 255 255 / 20%);
-}
-
-/* Four hero cards, still authored with regular Quarto columns.
-   CSS turns the generated columns container into a four-column grid so it
-   cannot overflow when gaps are added. */
-.reveal .slides > section.hero-cards {
-  padding-top: 154px;
-}
-
+/* Four hero cards, built from Quarto's regular columns. */
 .reveal .slides > section.hero-cards .columns {
   display: grid !important;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 22px;
+  width: 100%;
   margin-top: 54px;
 }
 
@@ -117,21 +151,16 @@ body:has(section.inverse.present) .reveal .progress {
   width: auto !important;
   min-width: 0;
   min-height: 275px;
-  padding: 30px 27px;
-  border: 1px solid rgb(255 255 255 / 18%);
+  padding: 30px 27px !important;
+  border: 1px solid rgb(255 255 255 / 18%) !important;
   border-radius: 22px;
   background: rgb(255 255 255 / 9%);
 }
 
-.reveal .slides > section.hero-cards .columns > .column + .column {
-  padding-left: 27px;
-  border-left: 1px solid rgb(255 255 255 / 18%);
-}
-
 .reveal .slides > section.hero-cards .column h3 {
-  width: 100%;
-  margin: 0 0 20px;
-  color: #FFFFFF;
+  width: 100% !important;
+  margin: 0 0 20px !important;
+  color: #FFFFFF !important;
   font-size: 33px;
   font-weight: 500;
   letter-spacing: -.025em;
@@ -139,7 +168,7 @@ body:has(section.inverse.present) .reveal .progress {
 
 .reveal .slides > section.hero-cards .column p {
   margin: 0;
-  color: rgb(255 255 255 / 76%);
+  color: rgb(255 255 255 / 78%) !important;
   font-size: 22px;
   font-weight: 300;
   line-height: 1.42;
@@ -160,7 +189,7 @@ body:has(section.inverse.present) .reveal .progress {
 }
 
 .reveal .slides > section.code-pair .column h3 {
-  margin-bottom: 15px;
+  margin-bottom: 15px !important;
   font-size: 32px;
 }
 

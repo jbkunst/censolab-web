@@ -11,14 +11,14 @@ include-after-body: cover.html
 format:
   revealjs:
     brand: ../../_brand.yml
-    css: [slides.css, palette.css]
+    css: [slides.css, palette.css, examples.css]
     width: 1600
     height: 900
     margin: 0
     center: false
     center-title-slide: false
     controls: false
-    progress: false
+    progress: true
     slide-number: c/t
     transition: fade
     background-transition: fade
@@ -41,6 +41,34 @@ format:
 
 CensoLab reduce la distancia entre una pregunta y los datos que pueden responderla.
 
+## Cuatro cosas que CensoLab intenta cuidar. {.dark .hero-cards background-color="#0E4F5A"}
+
+:::: {.columns}
+::: {.column width="25%"}
+### Preguntar
+
+Partir desde lenguaje natural, no desde el nombre exacto de una tabla.
+:::
+
+::: {.column width="25%"}
+### Territorio
+
+Resolver regiones, comunas, localidades, zonas y manzanas.
+:::
+
+::: {.column width="25%"}
+### Evidencia
+
+Volver siempre a una consulta y a datos reproducibles.
+:::
+
+::: {.column width="25%"}
+### Visualizar
+
+Elegir texto, tabla, gráfico o mapa según la pregunta.
+:::
+::::
+
 ## Dos puertas al mismo dato. {.light}
 
 :::: {.columns}
@@ -59,11 +87,28 @@ Describir con palabras simples qué queremos saber y dónde.
 
 ::::
 
+## Un flujo que se puede mostrar de a poco. {.light .incremental-demo}
+
+::: {.incremental}
+
+- Primero, la persona escribe una pregunta.
+- Luego, CensoLab identifica el territorio.
+- Después, prepara una consulta reproducible.
+- Finalmente, decide cómo mostrar la respuesta.
+
+:::
+
 ## Una pregunta puede ser suficiente. {.prompt}
 
 > “Dame un perfil territorial de Isla de Maipo.”
 
 Texto · tabla · gráfico · mapa
+
+## También podemos usar fondos de slide. {.background-demo background-color="#0E4F5A"}
+
+Este slide usa el atributo `background-color` de Quarto/Reveal.
+
+Sirve para marcar secciones, pausas o cambios de ritmo sin crear otra plantilla.
 
 ## El modelo no consulta datos solo. {.statement .steps}
 
@@ -73,6 +118,44 @@ Texto · tabla · gráfico · mapa
 2. Construir la consulta.
 3. Obtener los datos.
 4. Elegir cómo mostrarlos.
+
+## Código en dos columnas. {.light .code-pair}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### UI
+
+```r
+ui <- fluidPage(
+  textInput(
+    "pregunta",
+    "¿Qué quieres saber?"
+  ),
+  actionButton(
+    "consultar",
+    "Preguntar"
+  ),
+  textOutput("respuesta")
+)
+```
+:::
+
+::: {.column width="50%"}
+### Server
+
+```r
+server <- function(input, output) {
+  observeEvent(input$consultar, {
+    output$respuesta <- renderText({
+      responder(input$pregunta)
+    })
+  })
+}
+```
+:::
+
+::::
 
 ## La interfaz puede ser mínima. {.light .flow}
 
@@ -89,11 +172,11 @@ La conversación sirve para coordinar el proceso, no para reemplazar la fuente.
 - El resultado proviene de datos reales.
 - La visualización conserva el contexto.
 
-## Lo importante no es el chat. {.statement .quote}
+## Lo importante no es el chat. {.statement .quote .dark}
 
 > Es hacer que preguntar por un territorio sea tan natural como explorarlo.
 
-## Sigamos explorando. {.closing}
+## Sigamos explorando. {.closing .dark}
 
 Preguntar · mirar · comparar
 

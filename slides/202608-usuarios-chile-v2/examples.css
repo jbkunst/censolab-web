@@ -12,7 +12,7 @@
 }
 
 body:has(section.dark.present) .reveal .progress,
-body:has(section.background-demo.present) .reveal .progress {
+body:has(section.inverse.present) .reveal .progress {
   background: rgb(255 255 255 / 18%);
   color: #A7CECC;
 }
@@ -28,13 +28,14 @@ body:has(section.background-demo.present) .reveal .progress {
   font-size: 31px;
 }
 
-/* Slide background demo: background-color is set in the QMD slide attribute. */
-.reveal .slides > section.background-demo {
-  padding: 170px 96px 72px;
+/* Inverse slide: same content slide, colours flipped.
+   The teal background itself comes from Quarto's background-color attribute. */
+.reveal .slides > section.inverse {
+  padding: 154px 96px 72px;
   color: #FFFFFF;
 }
 
-.reveal .slides > section.background-demo::before {
+.reveal .slides > section.inverse::before {
   top: 36px;
   left: 96px;
   width: 28px;
@@ -43,27 +44,40 @@ body:has(section.background-demo.present) .reveal .progress {
   opacity: .84;
 }
 
-.reveal .slides > section.background-demo h2 {
+.reveal .slides > section.inverse h2 {
   position: static;
   display: block;
-  width: 74%;
+  width: 78%;
   height: auto;
-  margin: 78px 0 42px;
+  margin: 30px 0 42px;
   color: #FFFFFF;
-  font-size: 76px;
+  font-size: 58px;
   font-weight: 500;
-  letter-spacing: -.048em;
-  line-height: .98;
+  letter-spacing: -.04em;
+  line-height: 1.02;
 }
 
-.reveal .slides > section.background-demo p,
-.reveal .slides > section.background-demo li {
-  width: 72%;
-  color: rgb(255 255 255 / 78%);
+.reveal .slides > section.inverse h3 {
+  width: 74%;
+  margin: 0 0 34px;
+  color: rgb(255 255 255 / 82%);
+  font-size: 37px;
+  font-weight: 300;
 }
 
-.reveal .slides > section.background-demo code {
+.reveal .slides > section.inverse p,
+.reveal .slides > section.inverse li {
+  color: rgb(255 255 255 / 82%);
+}
+
+.reveal .slides > section.inverse strong,
+.reveal .slides > section.inverse code {
   color: #FFFFFF;
+}
+
+.reveal .slides > section.inverse ul li::before {
+  background: #DDE9E8;
+  box-shadow: none;
 }
 
 /* Four hero cards, built only from Quarto's regular columns. */

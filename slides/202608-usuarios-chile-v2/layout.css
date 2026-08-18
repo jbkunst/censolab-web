@@ -20,3 +20,8 @@ body:has(.reveal .slides > section.present.dark) .reveal .slide-logo,
 body:has(.reveal .slides > section.present.inverse) .reveal .slide-logo {
   filter: brightness(0) invert(1) !important;
 }
+
+/* Large statement/quote content uses the same light weight as slide titles. */
+.reveal .slides > section.statement.quote blockquote p {
+  font-weight: 200 !important;
+}

@@ -33,24 +33,15 @@
   font-weight: 200 !important;
 }
 
-/* Let Quarto own the logo asset. The YAML provides the image;
-   CSS only decides where it sits. */
-.reveal .slide-logo {
-  position: fixed !important;
-  z-index: 40 !important;
-  top: 34px !important;
-  right: auto !important;
-  bottom: auto !important;
-  left: 48px !important;
-  width: 28px !important;
-  max-width: 28px !important;
-  height: 28px !important;
-  max-height: 28px !important;
-  margin: 0 !important;
-}
-
+/* Quarto owns logo position and scale. The YAML provides the teal logo;
+   only its colour adapts for full-teal slides. */
 body:has(#title-slide.present) .reveal .slide-logo {
   opacity: 0 !important;
+}
+
+body:has(section.dark.present) .reveal .slide-logo,
+body:has(section.inverse.present) .reveal .slide-logo {
+  filter: brightness(0) invert(1);
 }
 
 /* Remove any old CSS-painted logo image from slide pseudo-elements. */

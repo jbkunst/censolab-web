@@ -11,7 +11,7 @@ include-after-body: cover.html
 format:
   revealjs:
     brand: ../../_brand.yml
-    logo: ../../assets/brand/censolab-logo-teal.svg
+    logo: assets/brand/censolab-logo-teal.svg
     css: [slides.css, palette.css, examples.css, layout.css]
     width: 1600
     height: 900

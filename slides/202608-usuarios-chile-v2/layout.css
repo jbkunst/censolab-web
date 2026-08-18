@@ -18,8 +18,10 @@
   margin-left: 0 !important;
 }
 
-/* Quarto owns logo position and scale.
-   The YAML provides the teal SVG; CSS only switches colour for dark content. */
+/* Adaptive logo.
+   Quarto inserts one teal SVG via YAML. We only change its colour.
+   Default = teal. Dark/inverse/teal-background/title = white.
+   .logo-white and .logo-teal are explicit per-slide escape hatches. */
 .reveal .slide-logo {
   filter: none !important;
   opacity: 1 !important;
@@ -29,10 +31,13 @@
   box-shadow: none !important;
 }
 
-.reveal:has(.slides section.present:is(.dark, .inverse)) .slide-logo,
+.reveal:has(.slides section.present:is(.dark, .inverse, .logo-white, [data-background-color="#0E4F5A"])) .slide-logo,
 body:has(#title-slide.present) .reveal .slide-logo {
   filter: brightness(0) invert(1) !important;
-  opacity: 1 !important;
+}
+
+.reveal:has(.slides section.present.logo-teal) .slide-logo {
+  filter: none !important;
 }
 
 /* Progress is the only progress indicator. */

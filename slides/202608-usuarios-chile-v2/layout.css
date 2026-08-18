@@ -18,48 +18,26 @@
   margin-left: 0 !important;
 }
 
-/* Stable presentation chrome.
-   Do not switch the logo colour by slide: a small white tile keeps the teal mark
-   readable on light, dark, inverse and title slides alike. Quarto still controls
-   the native logo position and scale. */
-.reveal .slide-logo,
-.reveal:has(.slides section.present.dark) .slide-logo,
-.reveal:has(.slides section.present.inverse) .slide-logo {
+/* Quarto owns logo position and scale.
+   The YAML provides the teal SVG; CSS only switches colour for dark content. */
+.reveal .slide-logo {
   filter: none !important;
   opacity: 1 !important;
-  box-sizing: content-box;
-  padding: 5px;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 94%);
-  box-shadow: 0 0 0 1px rgb(14 79 90 / 10%);
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
+.reveal:has(.slides section.present:is(.dark, .inverse)) .slide-logo,
 body:has(#title-slide.present) .reveal .slide-logo {
+  filter: brightness(0) invert(1) !important;
   opacity: 1 !important;
 }
 
-/* Pagination is UI, not slide content: always use the same high-contrast treatment.
-   Bottom-left keeps it away from Quarto's native bottom-right logo. */
-.reveal .slide-number,
-body:has(#title-slide.present) .reveal .slide-number,
-body:has(section.light.present) .reveal .slide-number {
-  display: block !important;
-  z-index: 41 !important;
-  top: auto !important;
-  right: auto !important;
-  bottom: 12px !important;
-  left: 12px !important;
-  width: auto !important;
-  padding: 6px 9px !important;
-  border-radius: 999px;
-  background: rgb(14 79 90 / 94%) !important;
-  color: #FFFFFF !important;
-  font-family: "IBM Plex Sans", sans-serif !important;
-  font-size: 14px !important;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: .05em;
-  opacity: 1 !important;
+/* Progress is the only progress indicator. */
+.reveal .slide-number {
+  display: none !important;
 }
 
 /* Large statement/quote content uses the same light weight as slide titles. */

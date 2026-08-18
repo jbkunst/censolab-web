@@ -20,7 +20,7 @@ format:
     center-title-slide: false
     controls: false
     progress: true
-    slide-number: c/t
+    slide-number: false
     transition: fade
     background-transition: fade
     auto-stretch: false

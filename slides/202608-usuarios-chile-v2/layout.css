@@ -1,24 +1,65 @@
-/* Let RevealJS own the presentation geometry.
-   slides.css originally set .slides to position: relative, which keeps Reveal's
-   top/left positioning but changes the positioning model and shifts the deck.
-   Width and height continue to come from the RevealJS YAML (1600 x 900). */
+/* Safe RevealJS layout overrides.
+   Reveal owns the slide canvas geometry; custom CSS only handles presentation chrome. */
+
+/* Match Reveal's own geometry instead of hardcoding the authored 1600 x 900 size in CSS.
+   The authored size remains in the Quarto YAML and Reveal scales it uniformly. */
 .reveal .slides {
   position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  margin: auto !important;
 }
 
 .reveal .slides > section {
   margin-left: 0 !important;
 }
 
-/* Logo colour follows the active Reveal slide.
-   Default state is always the teal SVG from the Quarto YAML. */
-.reveal .slide-logo {
-  filter: none !important;
-}
-
+/* Stable presentation chrome.
+   Do not switch the logo colour by slide: a small white tile keeps the teal mark
+   readable on light, dark, inverse and title slides alike. Quarto still controls
+   the native logo position and scale. */
+.reveal .slide-logo,
 .reveal:has(.slides section.present.dark) .slide-logo,
 .reveal:has(.slides section.present.inverse) .slide-logo {
-  filter: brightness(0) invert(1) !important;
+  filter: none !important;
+  opacity: 1 !important;
+  box-sizing: content-box;
+  padding: 5px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 0 0 1px rgb(14 79 90 / 10%);
+}
+
+body:has(#title-slide.present) .reveal .slide-logo {
+  opacity: 1 !important;
+}
+
+/* Pagination is UI, not slide content: always use the same high-contrast treatment.
+   Bottom-left keeps it away from Quarto's native bottom-right logo. */
+.reveal .slide-number,
+body:has(#title-slide.present) .reveal .slide-number,
+body:has(section.light.present) .reveal .slide-number {
+  display: block !important;
+  z-index: 41 !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: 12px !important;
+  left: 12px !important;
+  width: auto !important;
+  padding: 6px 9px !important;
+  border-radius: 999px;
+  background: rgb(14 79 90 / 94%) !important;
+  color: #FFFFFF !important;
+  font-family: "IBM Plex Sans", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .05em;
+  opacity: 1 !important;
 }
 
 /* Large statement/quote content uses the same light weight as slide titles. */

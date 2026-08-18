@@ -10,14 +10,14 @@
   margin-left: 0 !important;
 }
 
-/* Logo colour follows only the current top-level slide.
+/* Logo colour follows the active Reveal slide.
    Default state is always the teal SVG from the Quarto YAML. */
 .reveal .slide-logo {
   filter: none !important;
 }
 
-body:has(.reveal .slides > section.present.dark) .reveal .slide-logo,
-body:has(.reveal .slides > section.present.inverse) .reveal .slide-logo {
+.reveal:has(.slides section.present.dark) .slide-logo,
+.reveal:has(.slides section.present.inverse) .slide-logo {
   filter: brightness(0) invert(1) !important;
 }
 

@@ -36,7 +36,7 @@ format:
 - Preparar filtros y cálculos.
 - Elegir cómo mirar el resultado.
 
-## La idea es más simple. {.statement .quote .dark}
+## La idea es más simple. {.statement .quote}
 
 > Preguntar. Mirar. Comparar.
 
@@ -190,7 +190,7 @@ La conversación sirve para coordinar el proceso, no para reemplazar la fuente.
 - El resultado proviene de datos reales.
 - La visualización conserva el contexto.
 
-## Lo importante no es el chat. {.statement .quote .dark}
+## Lo importante no es el chat. {.statement .quote}
 
 > Es hacer que preguntar por un territorio sea tan natural como explorarlo.
 

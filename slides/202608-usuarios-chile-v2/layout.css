@@ -13,13 +13,18 @@
 
 /* Quarto owns logo position and size. JS only toggles this class from the
    actual Reveal.getCurrentSlide(), avoiding fragile :has(.present) selectors. */
-.reveal .slide-logo {
+.reveal .slide-logo,
+body:has(#title-slide.present) .reveal .slide-logo {
   filter: none !important;
   opacity: 1 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
   transition: filter 120ms ease;
 }
 
-.reveal.cl-logo-white .slide-logo {
+.reveal.cl-logo-white .slide-logo,
+body:has(#title-slide.present) .reveal.cl-logo-white .slide-logo {
   filter: brightness(0) invert(1) !important;
 }
 

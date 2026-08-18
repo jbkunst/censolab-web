@@ -1,43 +1,26 @@
-/* Safe RevealJS layout overrides.
-   Reveal owns the slide canvas geometry; custom CSS only handles presentation chrome. */
+/* Small, safe overrides only.
+   RevealJS owns canvas size, transforms and positioning. */
 
-/* Match Reveal's own geometry instead of hardcoding the authored 1600 x 900 size in CSS.
-   The authored size remains in the Quarto YAML and Reveal scales it uniformly. */
+/* slides.css sets position: relative; Reveal expects absolute positioning.
+   Do not override width, height, top, left or transforms here. */
 .reveal .slides {
   position: absolute !important;
-  width: 100% !important;
-  height: 100% !important;
-  top: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  margin: auto !important;
 }
 
 .reveal .slides > section {
   margin-left: 0 !important;
 }
 
-/* Adaptive logo.
-   Quarto inserts one teal SVG via YAML. We only change its colour.
-   Default = teal. Dark/inverse/teal-background/title = white.
-   .logo-white and .logo-teal are explicit per-slide escape hatches. */
+/* Quarto owns logo position and size. JS only toggles this class from the
+   actual Reveal.getCurrentSlide(), avoiding fragile :has(.present) selectors. */
 .reveal .slide-logo {
   filter: none !important;
   opacity: 1 !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  transition: filter 120ms ease;
 }
 
-.reveal:has(.slides section.present:is(.dark, .inverse, .logo-white, [data-background-color="#0E4F5A"])) .slide-logo,
-body:has(#title-slide.present) .reveal .slide-logo {
+.reveal.cl-logo-white .slide-logo {
   filter: brightness(0) invert(1) !important;
-}
-
-.reveal:has(.slides section.present.logo-teal) .slide-logo {
-  filter: none !important;
 }
 
 /* Progress is the only progress indicator. */
@@ -45,7 +28,7 @@ body:has(#title-slide.present) .reveal .slide-logo {
   display: none !important;
 }
 
-/* Large statement/quote content uses the same light weight as slide titles. */
+/* Large statement/quote content keeps the light display weight. */
 .reveal .slides > section.statement.quote blockquote p {
   font-weight: 200 !important;
 }

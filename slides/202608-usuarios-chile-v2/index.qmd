@@ -7,6 +7,7 @@ date-format: MMMM YYYY
 draft: true
 resources:
   - cover.js
+  - logo-sync.js
 include-after-body: cover.html
 format:
   revealjs:
@@ -42,7 +43,7 @@ format:
 
 CensoLab reduce la distancia entre una pregunta y los datos que pueden responderla.
 
-## Cuatro cosas que CensoLab intenta cuidar. {.inverse .hero-cards background-color="#0E4F5A"}
+## Cuatro cosas que CensoLab intenta cuidar. {.inverse .hero-cards}
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -105,7 +106,7 @@ Describir con palabras simples qué queremos saber y dónde.
 
 Texto · tabla · gráfico · mapa
 
-## Un dato que abre la conversación. {.inverse .metric-slide background-color="#0E4F5A"}
+## Un dato que abre la conversación. {.inverse .metric-slide}
 
 ::: {.metric}
 ::: {.metric-value}
@@ -119,14 +120,14 @@ casos evaluados
 Un punto de partida para aprender, corregir y ampliar la batería.
 :::
 
-## La misma slide, invertida. {.inverse background-color="#0E4F5A"}
+## La misma slide, invertida. {.inverse}
 
 ### Para cambiar el ritmo sin cambiar la estructura.
 
 - Fondo teal.
 - Título y contenido en blanco.
 - Los mismos márgenes y jerarquía del resto de la presentación.
-- El color de fondo lo define Quarto con `background-color`.
+- La clase `.inverse` define la variante visual.
 
 ## El modelo no consulta datos solo. {.statement .steps}
 
@@ -194,7 +195,7 @@ La conversación sirve para coordinar el proceso, no para reemplazar la fuente.
 
 > Es hacer que preguntar por un territorio sea tan natural como explorarlo.
 
-## Sigamos explorando. {.inverse .closing background-color="#0E4F5A"}
+## Sigamos explorando. {.inverse .closing}
 
 Preguntar · mirar · comparar
 

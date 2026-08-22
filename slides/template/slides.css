@@ -66,25 +66,6 @@
   line-height: 1;
 }
 
-.reveal .slide-number {
-  z-index: 20;
-  top: 37px !important;
-  right: 76px !important;
-  bottom: auto !important;
-  left: auto !important;
-  width: auto;
-  padding: 0;
-  background: transparent;
-  color: rgb(255 255 255 / 56%);
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: .08em;
-}
-
-body:has(#title-slide.present) .reveal .slide-number {
-  opacity: 0;
-}
-
 /* Keep the existing first slide and animated map. */
 .cl-cover-map {
   position: absolute;
@@ -418,10 +399,6 @@ body:has(#title-slide.present) .reveal .slide-number {
   color: #5A686C;
 }
 
-body:has(section.light.present) .reveal .slide-number {
-  color: rgb(14 79 90 / 55%);
-}
-
 .reveal .columns {
   gap: 74px;
   margin-top: 74px;
@@ -536,32 +513,6 @@ body:has(section.light.present) .reveal .slide-number {
   margin-top: 70px;
   color: #69777B;
   font-size: 25px;
-}
-
-/* Closing is intentionally almost empty. */
-.reveal .slides > section.closing {
-  padding-top: 228px;
-}
-
-.reveal .slides > section.closing h2 {
-  width: 80%;
-  margin-top: 120px;
-  font-size: 92px;
-  font-weight: 600;
-}
-
-.reveal .slides > section.closing > p {
-  margin: 0 0 30px;
-  color: rgb(255 255 255 / 58%);
-  font-size: 29px;
-  font-weight: 300;
-}
-
-.reveal .slides > section.closing a {
-  color: var(--cl-aqua);
-  font-size: 27px;
-  font-weight: 500;
-  text-decoration: none;
 }
 
 .maplibregl-control-container {

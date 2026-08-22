@@ -13,8 +13,8 @@
   Colour rhythm
   -------------
   Cover: existing animated map.
-  Opening + closing: full CensoLab teal.
-  Body: pale paper / white with a restrained teal title bar.
+  Content slides: pale paper with teal typography.
+  Body: pale paper / white with teal typography.
   The QMD stays semantic; this file does the visual work.
 */
 
@@ -23,7 +23,7 @@
   color: var(--cl-ink);
 }
 
-/* ---------- Body slides: quiet paper + title bar ---------- */
+/* ---------- Body slides: quiet paper + teal typography ---------- */
 
 .reveal .slides > section:not(#title-slide) {
   padding: 154px 96px 72px;
@@ -35,16 +35,10 @@
   background: var(--cl-white);
 }
 
-/* One simple teal bar. Logo is supplied by Quarto via YAML. */
+/* No title banner. Logo is supplied by Quarto via YAML. */
 .reveal .slides > section:not(#title-slide)::before {
-  position: absolute;
-  inset: 0 0 auto 0;
-  display: block;
-  width: 100%;
-  height: 108px;
-  background: var(--cl-teal);
-  content: "";
-  opacity: 1;
+  display: none;
+  content: none;
 }
 
 .reveal .slides > section:not(#title-slide)::after {
@@ -63,8 +57,9 @@
   height: 108px;
   margin: 0;
   align-items: center;
-  color: #FFFFFF;
-  font-size: 43px;
+  border-bottom: 2px solid rgb(14 79 90 / 60%);
+  color: var(--cl-teal);
+  font-size: 50px;
   font-weight: 400;
   letter-spacing: -.032em;
   line-height: 1.05;
@@ -87,6 +82,11 @@
 
 .reveal .slides > section:not(#title-slide) strong {
   color: var(--cl-ink);
+}
+
+.reveal .slides > section:not(#title-slide) a,
+.reveal .slides > section:not(#title-slide) a strong {
+  color: var(--cl-teal);
 }
 
 .reveal .slides > section:not(#title-slide) code {
@@ -144,104 +144,70 @@
   color: var(--cl-teal);
 }
 
-/* ---------- Full-colour moments ---------- */
+/* ---------- Section slides ---------- */
 
-.reveal .slides > section.dark,
-.reveal .slides > section.closing {
-  padding: 150px 96px 72px;
-  background:
-    radial-gradient(circle at 88% 12%, rgb(255 255 255 / 7%), transparent 30%),
-    linear-gradient(135deg, var(--cl-teal) 0%, var(--cl-teal-deep) 100%);
-  color: #FFFFFF;
+.reveal .slides > section.section-slide:not(#title-slide) {
+  display: flex !important;
+  box-sizing: border-box;
+  padding: 0 120px !important;
+  flex-direction: column;
+  align-items: flex-start !important;
+  justify-content: center;
+  background: var(--cl-teal);
 }
 
-/* No pseudo-element logo here; Quarto owns the logo element. */
-.reveal .slides > section.dark::before,
-.reveal .slides > section.closing::before {
+/* Optional photo beneath the teal veil. Set --section-image on the slide. */
+.reveal .slides > section.section-slide.has-image:not(#title-slide) {
+  background: transparent;
+}
+
+body.cl-section-active.cl-section-has-image,
+body.cl-section-active.cl-section-has-image .reveal,
+.reveal.cl-section-active.cl-section-has-image {
+  background:
+    linear-gradient(rgb(14 79 90 / 86%), rgb(14 79 90 / 86%)),
+    var(--active-section-image) center / cover no-repeat !important;
+}
+
+body.cl-section-active,
+body.cl-section-active .reveal,
+.reveal.cl-section-active {
+  background: var(--cl-teal) !important;
+}
+
+.reveal .slides > section.section-slide:not(#title-slide)::before,
+.reveal .slides > section.section-slide:not(#title-slide)::after {
   display: none;
   content: none;
 }
 
-.reveal .slides > section.dark h2,
-.reveal .slides > section.closing h2 {
+.reveal .slides > section.section-slide:not(#title-slide) h2 {
   position: static;
   display: block;
-  width: 82%;
+  width: 48%;
   height: auto;
-  margin: 72px 0 42px;
-  color: #FFFFFF;
-  font-size: 76px;
-  font-weight: 500;
-  letter-spacing: -.048em;
-  line-height: .98;
+  margin: 0 auto 0 0;
+  border: 0;
+  color: var(--cl-white);
+  font-size: 92px;
+  font-weight: 200 !important;
+  letter-spacing: -.055em;
+  line-height: .95;
+  text-align: left;
 }
 
-.reveal .slides > section.dark h3,
-.reveal .slides > section.closing h3 {
+.reveal .slides > section.section-slide:not(#title-slide) .section-subtitle {
+  width: 48%;
+  margin: 28px 0 0;
+  text-align: left;
+}
+
+.reveal .slides > section.section-slide:not(#title-slide) .section-subtitle p {
+  margin: 0;
   color: rgb(255 255 255 / 72%);
+  font-size: 34px;
+  font-weight: 300;
+  letter-spacing: -.02em;
+  line-height: 1.2;
 }
 
-.reveal .slides > section.dark p,
-.reveal .slides > section.dark li,
-.reveal .slides > section.closing p,
-.reveal .slides > section.closing li {
-  color: rgb(255 255 255 / 78%);
-}
-
-.reveal .slides > section.dark strong,
-.reveal .slides > section.closing strong {
-  color: #FFFFFF;
-}
-
-.reveal .slides > section.dark ul li::before,
-.reveal .slides > section.closing ul li::before {
-  background: #DDE9E8;
-}
-
-.reveal .slides > section.dark ul li:nth-child(2)::before {
-  background: #A7CECC;
-}
-
-.reveal .slides > section.dark ul li:nth-child(3)::before {
-  background: #78AFB2;
-}
-
-.reveal .slides > section.dark ul li:nth-child(4)::before {
-  background: #EAF2F1;
-}
-
-.reveal .slides > section.dark blockquote p,
-.reveal .slides > section.closing blockquote p {
-  color: #FFFFFF;
-}
-
-.reveal .slides > section.dark.quote > p:last-child {
-  color: rgb(255 255 255 / 57%);
-}
-
-.reveal .slides > section.dark.quote blockquote {
-  margin-top: 80px;
-}
-
-.reveal .slides > section.dark.quote blockquote p {
-  font-size: 66px;
-  font-weight: 500;
-}
-
-.reveal .slides > section.closing {
-  padding-top: 185px;
-}
-
-.reveal .slides > section.closing h2 {
-  margin-top: 120px;
-  font-size: 86px;
-}
-
-.reveal .slides > section.closing > p {
-  color: rgb(255 255 255 / 72%);
-}
-
-.reveal .slides > section.closing a {
-  color: #FFFFFF;
-  text-decoration-color: rgb(255 255 255 / 38%);
-}

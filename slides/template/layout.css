@@ -28,11 +28,6 @@ body:has(#title-slide.present) .reveal.cl-logo-white .slide-logo {
   filter: brightness(0) invert(1) !important;
 }
 
-/* Progress is the only progress indicator. */
-.reveal .slide-number {
-  display: none !important;
-}
-
 /* Large statement/quote content keeps the light display weight. */
 .reveal .slides > section.statement.quote blockquote p {
   font-weight: 200 !important;

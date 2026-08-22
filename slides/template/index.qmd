@@ -8,6 +8,9 @@ draft: true
 resources:
   - cover.js
   - logo-sync.js
+  - ../../assets/slides/region-03.jpg
+  - ../../assets/slides/region-05.jpg
+  - ../../assets/slides/region-09.jpg
 include-after-body: cover.html
 format:
   revealjs:
@@ -29,7 +32,7 @@ format:
     hash: true
 ---
 
-## Los datos están ahí. {.statement .dark}
+## Los datos están ahí. {.statement}
 
 ### Llegar a ellos todavía cuesta.
 
@@ -44,7 +47,7 @@ format:
 
 CensoLab reduce la distancia entre una pregunta y los datos que pueden responderla.
 
-## Cuatro cosas que CensoLab intenta cuidar. {.inverse .hero-cards}
+## Cuatro cosas que CensoLab intenta cuidar. {.hero-cards}
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -107,28 +110,11 @@ Describir con palabras simples qué queremos saber y dónde.
 
 Texto · tabla · gráfico · mapa
 
-## Un dato que abre la conversación. {.inverse .metric-slide}
+## Cómo funciona {.section-slide .has-image style="--section-image: url('../../assets/slides/region-03.jpg');"}
 
-::: {.metric}
-::: {.metric-value}
-10
+::: {.section-subtitle}
+De la pregunta a los datos: territorio, consulta y visualización.
 :::
-
-::: {.metric-label}
-casos evaluados
-:::
-
-Un punto de partida para aprender, corregir y ampliar la batería.
-:::
-
-## La misma slide, invertida. {.inverse}
-
-### Para cambiar el ritmo sin cambiar la estructura.
-
-- Fondo teal.
-- Título y contenido en blanco.
-- Los mismos márgenes y jerarquía del resto de la presentación.
-- La clase `.inverse` define la variante visual.
 
 ## El modelo no consulta datos solo. {.statement .steps}
 
@@ -144,9 +130,9 @@ Un punto de partida para aprender, corregir y ampliar la batería.
 :::: {.columns}
 
 ::: {.column width="50%"}
-### UI
-
 ```r
+# ui.R
+
 ui <- fluidPage(
   textInput(
     "pregunta",
@@ -162,9 +148,9 @@ ui <- fluidPage(
 :::
 
 ::: {.column width="50%"}
-### Server
-
 ```r
+# server.R
+
 server <- function(input, output) {
   observeEvent(input$consultar, {
     output$respuesta <- renderText({
@@ -185,6 +171,34 @@ server <- function(input, output) {
 
 La conversación sirve para coordinar el proceso, no para reemplazar la fuente.
 
+## Código completo en una columna. {.light .code-full}
+
+```r
+# helper_report_territorial.R
+
+crear_reporte_territorial <- function(pregunta, territorio) {
+  consulta <- construir_consulta(
+    pregunta = pregunta,
+    territorio = territorio
+  )
+
+  datos <- obtener_datos(consulta)
+
+  list(
+    territorio = territorio,
+    consulta = consulta,
+    datos = datos,
+    visualizacion = crear_visualizacion(datos)
+  )
+}
+```
+
+## Evidencia {.section-slide .has-image style="--section-image: url('../../assets/slides/region-09.jpg');"}
+
+::: {.section-subtitle}
+Respuestas reproducibles, transparentes y conectadas a la fuente.
+:::
+
 ## Cada respuesta vuelve a la evidencia. {.statement}
 
 - El territorio queda identificado.
@@ -196,8 +210,10 @@ La conversación sirve para coordinar el proceso, no para reemplazar la fuente.
 
 > Es hacer que preguntar por un territorio sea tan natural como explorarlo.
 
-## Sigamos explorando. {.inverse .closing}
+## Sigamos explorando. {.section-slide .has-image style="--section-image: url('../../assets/slides/region-05.jpg');"}
 
+::: {.section-subtitle}
 Preguntar · mirar · comparar
 
 [censolab.cl](https://censolab.cl)
+:::

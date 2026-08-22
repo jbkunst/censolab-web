@@ -157,7 +157,7 @@
 }
 
 /* Optional photo beneath the teal veil. Set --section-image on the slide. */
-.reveal .slides > section.section-slide.has-image:not(#title-slide) {
+.reveal .slides > section.has-image:not(#title-slide) {
   background: transparent;
 }
 
@@ -208,6 +208,6 @@ body.cl-section-active .reveal,
   font-size: 34px;
   font-weight: 300;
   letter-spacing: -.02em;
-  line-height: 1.2;
+  line-height: 1.35;
 }
 

@@ -32,6 +32,15 @@ format:
     hash: true
 ---
 
+## Programa {.section-slide .has-image style="--section-image: url('../../assets/slides/region-09.jpg');"}
+
+::: {.section-subtitle}
+01 · Presentación<br>
+02 · Aspectos técnicos<br>
+03 · ellmer<br>
+04 · Shiny + ellmer
+:::
+
 ## Los datos están ahí. {.statement}
 
 ### Llegar a ellos todavía cuesta.
@@ -192,6 +201,30 @@ crear_reporte_territorial <- function(pregunta, territorio) {
   )
 }
 ```
+
+## Código con líneas destacadas. {.light .code-full}
+
+```{.r code-line-numbers="2-5|7|9-14"}
+crear_perfil <- function(territorio, pregunta) {
+  consulta <- construir_consulta(
+    territorio = territorio,
+    pregunta = pregunta
+  )
+
+  datos <- obtener_datos(consulta)
+
+  list(
+    territorio = territorio,
+    datos = datos,
+    grafico = crear_grafico(datos),
+    mapa = crear_mapa(datos)
+  )
+}
+```
+
+## Imagen como contenido.
+
+![](../../assets/slides/region-05.jpg){.slide-image fig-alt="Paisaje utilizado como ejemplo visual"}
 
 ## Evidencia {.section-slide .has-image style="--section-image: url('../../assets/slides/region-09.jpg');"}
 

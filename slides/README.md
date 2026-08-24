@@ -45,6 +45,8 @@ Así, los cambios visuales comunes se realizan una sola vez.
 
 Las imágenes propias deben declararse en `resources` dentro del YAML. Los ejemplos, aplicaciones y murales específicos permanecen en la carpeta de su presentación.
 
+Las aplicaciones Shinylive se exportan después del render de Quarto mediante `R/export_shinylive_apps.R`. Las diapositivas las muestran con un iframe y no procesan bloques `{shinylive-r}` durante cada preview.
+
 La extensión `codefrag` se conserva localmente por ahora para que cada presentación siga siendo autocontenida. La función `code_block()` también permanece en cada QMD porque recibe rutas relativas al archivo que la utiliza.
 
 ## Nueva presentación

@@ -39,8 +39,6 @@ format:
     code-annotations: select
 revealjs-plugins:
   - codefrag
-filters:
-  - shinylive
 ---
 
 ```{r}
@@ -69,20 +67,6 @@ code_block <- function(path, descriptions = NULL) {
   cat(fence, paste(code, collapse = "\n"), "```", "", notes, sep = "\n")
 }
 
-# Inserta una app completa en un bloque Shinylive sin duplicar su código en el
-# QMD. La ruta debe ser relativa a este archivo y el chunk debe usar
-# `results: asis`.
-shinylive_app <- function(path, viewer_height = 620) {
-  code <- readLines(path, encoding = "UTF-8", warn = FALSE)
-  cat(
-    "```{shinylive-r}",
-    "#| standalone: true",
-    sprintf("#| viewerHeight: %d", viewer_height),
-    paste(code, collapse = "\n"),
-    "```",
-    sep = "\n"
-  )
-}
 ```
 
 ## Programa {.section-slide .has-image style="--section-image: url('/assets/slides/regions/14.jpg');"}
@@ -257,10 +241,21 @@ Geografía, consistencia y evidencia en cada respuesta.
    Dar contexto sobre la información visible mediante un resumen de los datos y una imagen del gráfico.
 :::
 
-## 1 · Anatomía de Shiny {.code-pair}
+## 1 · Aplicación básica
 
-:::: {.columns}
-::: {.column width="52%"}
+<!--
+La app se exporta como sitio estático con `Rscript R/export_shinylive_apps.R`.
+GitHub Actions la publica antes de desplegar `_site`; el QMD solo la presenta.
+-->
+<iframe
+  src="https://censolab.cl/slides/202608-taller-usuarios-R/apps/app-01/"
+  title="App 01 · Aplicación básica de Shiny"
+  loading="eager"
+  style="width: 100%; height: 680px; border: 0; border-radius: 18px; background: white;"
+></iframe>
+
+## 1 · Anatomía de Shiny {.code-full}
+
 ```{r}
 #| results: asis
 code_block("apps/app-01/app.R", c(
@@ -269,15 +264,6 @@ code_block("apps/app-01/app.R", c(
   "17-25" = "El server conecta esos elementos mediante reactividad."
 ))
 ```
-:::
-
-::: {.column width="48%"}
-```{r}
-#| results: asis
-shinylive_app("apps/app-01/app.R")
-```
-:::
-::::
 
 ## 2 · Explorador manual {.code-full .code-small}
 

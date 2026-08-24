@@ -35,6 +35,9 @@ jobs:
       - name: Render site
         run: quarto render --profile production
 
+      - name: Export Shinylive apps
+        run: Rscript R/export_shinylive_apps.R
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

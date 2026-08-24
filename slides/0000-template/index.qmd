@@ -4,11 +4,12 @@ subtitle: Una frase breve que explique su propósito.
 author: Nombre · Organización
 date: today
 date-format: MMMM YYYY
-draft: true
+draft: false
 resources:
   - assets/cover.js
   - assets/logo-sync.js
   - ../../assets/slides/regions/01.jpg
+  - ../../assets/slides/regions/05.jpg
   - ../../assets/slides/regions/08.jpg
   - ../../assets/slides/regions/10.jpg
 include-after-body: assets/cover.html
@@ -96,6 +97,27 @@ Texto de apoyo para la segunda dimensión.
 
 > **Flujo secundario:** validación → `artefacto verificable` → publicación.
 
+## Tarjetas incrementales {.center}
+
+<!-- `fragment` pertenece a RevealJS y hace aparecer cada tarjeta por separado. -->
+<div class="cards" style="--cards: 3" data-flow data-center>
+<article class="fragment">
+  <small>01 · Inicio</small>
+  <h3>Preparar</h3>
+  <p>Reunir los insumos necesarios.</p>
+</article>
+<article class="fragment">
+  <small>02 · Desarrollo</small>
+  <h3>Procesar</h3>
+  <p>Aplicar la lógica del proyecto.</p>
+</article>
+<article class="fragment">
+  <small>03 · Cierre</small>
+  <h3>Publicar</h3>
+  <p>Compartir un resultado verificable.</p>
+</article>
+</div>
+
 ## Tarjetas sin flujo
 
 <!-- Sin `data-center`, el contenido se alinea arriba. Sin `data-flow`, no hay flechas. -->
@@ -123,12 +145,63 @@ code_block("assets/examples/example.R", c(
 ))
 ```
 
+## Código en dos columnas {.code-pair}
+
+:::: {.columns}
+::: {.column width="50%"}
+```r
+# interfaz.R
+ui <- fluidPage(
+  textInput("consulta", "¿Qué quieres saber?"),
+  actionButton("enviar", "Consultar"),
+  textOutput("respuesta")
+)
+```
+:::
+
+::: {.column width="50%"}
+```r
+# servidor.R
+server <- function(input, output) {
+  observeEvent(input$enviar, {
+    output$respuesta <- renderText({
+      responder(input$consulta)
+    })
+  })
+}
+```
+:::
+::::
+
+## Código con líneas destacadas {.code-full}
+
+```{.r code-line-numbers="2-5|7|9-13"}
+crear_resultado <- function(consulta) {
+  parametros <- preparar_consulta(
+    texto = consulta,
+    limite = 100
+  )
+
+  datos <- obtener_datos(parametros)
+
+  list(
+    datos = datos,
+    resumen = resumir(datos),
+    grafico = visualizar(datos)
+  )
+}
+```
+
 ## Código largo {.code-full .code-small}
 
 ```{r}
 #| results: asis
 code_block("assets/examples/example.R")
 ```
+
+## Imagen como contenido
+
+![](../../assets/slides/regions/05.jpg){.slide-image fig-alt="Paisaje utilizado como ejemplo visual"}
 
 ## Cierre con imagen {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/10.jpg');"}
 

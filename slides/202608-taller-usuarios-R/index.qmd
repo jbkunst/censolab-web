@@ -1,0 +1,523 @@
+---
+title: CensoLab
+subtitle: Plataforma abierta de exploración de datos geográficos y censales con inteligencia artificial.
+author: Grupo de usuari@s de R · Santiago de Chile
+date: 2026-08-01
+date-format: MMMM YYYY
+draft: true
+resources:
+  - assets/cover.js
+  - assets/logo-sync.js
+  - ../../assets/slides/regions/02.jpg
+  - ../../assets/slides/regions/04.jpg
+  - ../../assets/slides/regions/05.jpg
+  - ../../assets/slides/regions/07.jpg
+  - ../../assets/slides/regions/09.jpg
+  - ../../assets/slides/regions/11.jpg
+  - ../../assets/slides/regions/13.jpg
+  - ../../assets/slides/regions/14.jpg
+include-after-body: assets/cover.html
+format:
+  revealjs:
+    brand: ../../_brand.yml
+    theme: [brand, styles/theme.scss]
+    logo: /assets/brand/censolab-logo-teal.svg
+    css: [styles/slides.css, styles/code.css]
+    width: 1600
+    height: 900
+    margin: 0
+    center: false
+    center-title-slide: false
+    controls: false
+    progress: true
+    slide-number: false
+    transition: fade
+    background-transition: fade
+    auto-stretch: false
+    hash: true
+    code-overflow: scroll
+    code-block-height: 680px
+    code-annotations: select
+revealjs-plugins:
+  - codefrag
+---
+
+```{r}
+#| include: false
+# Lee un archivo de código R y lo inserta en la presentación como un bloque
+# Markdown. Si recibe `descriptions`, también agrega anotaciones numeradas para
+# explicar rangos específicos de líneas durante la presentación.
+#
+# Requisitos para que funcione:
+# - El archivo indicado en `path` debe existir, usando una ruta relativa a este QMD.
+# - El chunk debe usar `results: asis` al llamar la función, para que Quarto
+#   interprete el Markdown generado en vez de mostrarlo como texto.
+# - `descriptions` debe ser un vector nombrado: los nombres son rangos de líneas
+#   (por ejemplo, "2-5") y los valores contienen las explicaciones.
+# - Las líneas indicadas deben existir en el archivo leído.
+code_block <- function(path, descriptions = NULL) {
+  code <- readLines(path, encoding = "UTF-8", warn = FALSE)
+  if (is.null(descriptions)) return(cat("```r", paste(code, collapse = "\n"), "```", sep = "\n"))
+  ranges <- names(descriptions)
+  first_lines <- as.integer(sub("-.*", "", ranges))
+  code[first_lines] <- paste(code[first_lines], sprintf("# <%d>", seq_along(descriptions)))
+  fence <- sprintf('```{.r code-line-numbers="|%s"}', paste(ranges, collapse = "|"))
+  # Quarto usa el primer número para vincular la nota con su marcador. El
+  # segundo se conserva dentro del contenido visible del tooltip.
+  notes <- sprintf("%d. **%d.** %s", seq_along(descriptions), seq_along(descriptions), descriptions)
+  cat(fence, paste(code, collapse = "\n"), "```", "", notes, sep = "\n")
+}
+```
+
+## Programa {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/14.jpg');"}
+
+::: {.section-subtitle}
+01 · Problema<br>
+02 · Funcionalidades & Demo<br>
+03 · Arquitectura<br>
+04 · Desafíos y calidad del dato<br>
+05 · Taller
+:::
+
+## Problema {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/02.jpg');"}
+
+::: {.section-subtitle}
+Los datos están ahí. Llegar a ellos todavía cuesta.
+:::
+
+## Funcionalidades & Demo {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/04.jpg');"}
+
+::: {.section-subtitle}
+Preguntar, explorar y visualizar el territorio.
+:::
+
+## Arquitectura {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/05.jpg');"}
+
+::: {.section-subtitle}
+Componentes con responsabilidades claras.
+:::
+
+## Tres componentes, cada uno con una función. {.center}
+
+<div class="cards" style="--cards: 3" data-flow data-center aria-label="Arquitectura general de CensoLab">
+<article>
+  <small>01 · Datos</small>
+  <h3>censo2024-duckdb</h3>
+  <p>Prepara y documenta los datos.</p>
+  <code>DuckDB → MotherDuck</code>
+</article>
+<article>
+  <small>02 · Aplicación</small>
+  <h3>censolab</h3>
+  <p>Consulta datos y coordina tools.</p>
+  <code>Shiny + CensoBot</code>
+</article>
+<article>
+  <small>03 · Web</small>
+  <h3>censolab-web</h3>
+  <p>Publica el sitio y los resultados de evaluación.</p>
+  <code>Quarto + GitHub Pages</code>
+</article>
+</div>
+
+## Paquetes principales por componente {.center}
+
+<div class="cards" style="--cards: 3" aria-label="Paquetes principales de cada componente">
+<article>
+  <small>01 · Datos</small>
+  <img src="assets/hex/wall-data.png" alt="Paquetes principales del componente Datos">
+</article>
+<article>
+  <small>02 · Aplicación</small>
+  <img src="assets/hex/wall-application.png" alt="Paquetes principales del componente Aplicación">
+</article>
+<article>
+  <small>03 · Sitio web</small>
+  <img src="assets/hex/wall-web.png" alt="Paquetes principales del componente Sitio web">
+</article>
+</div>
+
+
+## 01 · Componente Datos
+
+<div class="cards" style="--cards: 4" data-flow aria-label="Pipeline del componente de datos">
+<article>
+  <small>01</small>
+  <h3>Fuentes</h3>
+  <p>Censo 2024, cartografía, catastro y puntos de interés.</p>
+</article>
+<article>
+  <small>02</small>
+  <h3>Configuración</h3>
+  <p>YAML versionado define archivos, rutas y opciones.</p>
+</article>
+<article>
+  <small>03</small>
+  <h3>Pipeline R</h3>
+  <p>Descarga, integra, enriquece y simplifica geometrías.</p>
+</article>
+<article>
+  <small>04</small>
+  <h3>DuckDB</h3>
+  <p>Datos, diccionarios y jerarquía territorial. Al final, genera una copia compacta validada para cargar manualmente a MotherDuck.</p>
+</article>
+</div>
+
+
+## 02 · Componente Aplicación
+
+:::: {.columns}
+::: {.column width="50%"}
+### Cómo funciona
+
+- **Datos:** DuckDB local o MotherDuck remoto, siempre en modo de solo lectura.
+- **Interfaz:** {shiny}, {bslib}, {mapgl}, {highcharter} y {reactable}.
+- **Agente:** {ellmer} + {shinychat}, con contexto y tools especializadas.
+- **Respuesta verificable:** mapas, gráficos, tablas e informes generados desde consultas y código.
+:::
+
+::: {.column width="50%"}
+### Actualización y despliegue
+
+Las ramas separan los cambios en validación de la versión pública.
+
+`feature/*` → `dev` → **CensoLabDev**
+
+- Los cambios en `dev` despliegan automáticamente el entorno de validación.
+
+`dev` → `main` → **CensoLab**
+
+- Los cambios en `main` despliegan automáticamente la versión estable y pública.
+:::
+::::
+
+## 03 · Componente Sitio web
+
+:::: {.columns}
+::: {.column width="50%"}
+### Sitio y publicación
+
+- Sitio construido con **Quarto**.
+- Publicación automática en **GitHub Pages**.
+- Reúne la presentación, documentación y páginas públicas del proyecto.
+:::
+
+::: {.column width="50%"}
+### Resultados de evaluación
+
+- El repositorio de la aplicación genera evaluaciones con `{vitals}` como un subproducto de su desarrollo.
+- El sitio publica los resultados exportados de esas evaluaciones.
+- Quarto los convierte en un resumen público de cobertura y desempeño.
+:::
+::::
+
+## Desafíos y calidad del dato {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/07.jpg');"}
+
+::: {.section-subtitle}
+Geografía, consistencia y evidencia en cada respuesta.
+:::
+
+## Taller {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/09.jpg');"}
+
+::: {.section-subtitle}
+{ellmer} + {shiny} + {shinychat}.
+:::
+
+## {shiny} · Cinco aplicaciones, un recorrido.
+
+::: {.incremental}
+1. **Ejemplo básico**  
+   La estructura de una aplicación {shiny}: interfaz, servidor y reactividad.
+2. **Consulta tradicional**  
+   Buscar, seleccionar y visualizar una serie usando {bcchr}.
+3. **Chat sin tools**  
+   Integrar {ellmer} con {shinychat}, todavía sin conexión al dashboard.
+4. **Primera tool**  
+   Permitir que el chat busque series y actualice la aplicación.
+5. **Tool mejorada**  
+   Dar contexto sobre la información visible mediante un resumen de los datos y una imagen del gráfico.
+:::
+
+## 1 · Anatomía de Shiny {.code-full}
+
+```{r}
+#| results: asis
+code_block("app-00/app.R", c(
+  "1-3" = "Los paquetes aportan los componentes de la aplicación.",
+  "5-15" = "La UI declara inputs y outputs.",
+  "17-25" = "El server conecta esos elementos mediante reactividad."
+))
+```
+
+## 2 · Explorador manual {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("app-10/app.R", c(
+  "7" = "El catálogo versionado evita descargar metadata en cada búsqueda.",
+  "11-20" = "La búsqueda local devuelve primero las series vigentes.",
+  "24-38" = "La UI expone búsqueda, selección, rango, gráfico y tabla.",
+  "47-79" = "Los controles preparan la consulta sin descargar observaciones.",
+  "81-104" = "Sólo el botón llama `get_series()` y actualiza los outputs."
+))
+```
+
+## 3 · Chat sin tools {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("app-11/app.R", c(
+  "7-24" = "La UI integra `chat_ui()` y conserva las dos cards.",
+  "30-33" = "El chat declara que no conoce el dashboard.",
+  "35-38" = "El observer conecta mensajes y respuestas; aún no hay tools."
+))
+```
+
+## 4 · Chat orientador {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("app-12/app.R", c(
+  "34-35" = "Dos valores reactivos representan la vista.",
+  "37-46" = "`buscar_series()` devuelve alternativas desde el catálogo local.",
+  "48-57" = "`actualizar_dashboard()` descarga y reemplaza el estado reactivo.",
+  "59-71" = "Título, gráfico y tabla reaccionan al mismo estado.",
+  "76-90" = "Registrar las funciones las convierte en capacidades del modelo."
+))
+```
+
+## 5 · La tool también observa {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("app-13/app.R", c(
+  "48-53" = "La tool conserva la actualización de app-12.",
+  "54-61" = "Los mismos datos producen extremos, fechas y promedio.",
+  "63-69" = "El gráfico vuelve al modelo como contenido visual.",
+  "91-99" = "La descripción comunica que puede interpretar ambos retornos."
+))
+```
+
+## Progresión del taller {.center}
+
+`manual` → `chat` → `tools` → `datos + imagen`
+
+## Sigamos conversando y explorando. {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/13.jpg');"}
+
+::: {.section-subtitle}
+Gracias por asistir
+:::
+
+
+## Los datos están ahí. {.center}
+
+### Llegar a ellos todavía cuesta.
+
+- Encontrar la tabla correcta.
+- Entender la geografía.
+- Preparar filtros y cálculos.
+- Elegir cómo mirar el resultado.
+
+## La idea es más simple. {.center}
+
+> Preguntar. Mirar. Comparar.
+
+CensoLab reduce la distancia entre una pregunta y los datos que pueden responderla.
+
+## Cuatro cosas que CensoLab intenta cuidar.
+
+<div class="cards" style="--cards: 4">
+<article>
+  <small>01</small>
+  <h3>Preguntar</h3>
+  <p>Partir desde lenguaje natural, no desde el nombre exacto de una tabla.</p>
+</article>
+<article>
+  <small>02</small>
+  <h3>Territorio</h3>
+  <p>Resolver regiones, comunas, localidades, zonas y manzanas.</p>
+</article>
+<article>
+  <small>03</small>
+  <h3>Evidencia</h3>
+  <p>Volver siempre a una consulta y a datos reproducibles.</p>
+</article>
+<article>
+  <small>04</small>
+  <h3>Visualizar</h3>
+  <p>Elegir texto, tabla, gráfico o mapa según la pregunta.</p>
+</article>
+</div>
+
+## Dos puertas al mismo dato.
+
+:::: {.columns}
+
+::: {.column width="48%"}
+### Explorar
+
+Navegar por territorios, indicadores, mapas y comparaciones.
+:::
+
+::: {.column width="48%"}
+### Preguntar
+
+Describir con palabras simples qué queremos saber y dónde.
+:::
+
+::::
+
+## Un flujo que se puede mostrar de a poco.
+
+::: {.incremental}
+
+- Primero, la persona escribe una pregunta.
+- Luego, CensoLab identifica el territorio.
+- Después, prepara una consulta reproducible.
+- Finalmente, decide cómo mostrar la respuesta.
+
+:::
+
+## El modelo no consulta datos solo. {.center}
+
+### Usa herramientas pequeñas y explícitas.
+
+<div class="cards" style="--cards: 4" data-flow>
+<article>
+  <small>01</small>
+  <h3>Territorio</h3>
+  <p>Resolver el lugar mencionado.</p>
+</article>
+<article>
+  <small>02</small>
+  <h3>Consulta</h3>
+  <p>Construir una consulta reproducible.</p>
+</article>
+<article>
+  <small>03</small>
+  <h3>Datos</h3>
+  <p>Obtener resultados acotados.</p>
+</article>
+<article>
+  <small>04</small>
+  <h3>Salida</h3>
+  <p>Elegir cómo mostrarlos.</p>
+</article>
+</div>
+
+## Código en dos columnas. {.code-pair}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```r
+# ui.R
+
+ui <- fluidPage(
+  textInput(
+    "pregunta",
+    "¿Qué quieres saber?"
+  ),
+  actionButton(
+    "consultar",
+    "Preguntar"
+  ),
+  textOutput("respuesta")
+)
+```
+:::
+
+::: {.column width="50%"}
+```r
+# server.R
+
+server <- function(input, output) {
+  observeEvent(input$consultar, {
+    output$respuesta <- renderText({
+      responder(input$pregunta)
+    })
+  })
+}
+```
+:::
+
+::::
+
+## La interfaz puede ser mínima.
+
+### La complejidad queda detrás.
+
+<div class="cards" style="--cards: 4" data-flow>
+<article>
+  <small>01</small>
+  <h3>Pregunta</h3>
+</article>
+<article>
+  <small>02</small>
+  <h3>Tools</h3>
+</article>
+<article>
+  <small>03</small>
+  <h3>Datos</h3>
+</article>
+<article>
+  <small>04</small>
+  <h3>Visualización</h3>
+</article>
+</div>
+
+La conversación sirve para coordinar el proceso, no para reemplazar la fuente.
+
+## Código completo en una columna. {.code-full}
+
+```r
+# helper_report_territorial.R
+
+crear_reporte_territorial <- function(pregunta, territorio) {
+  consulta <- construir_consulta(
+    pregunta = pregunta,
+    territorio = territorio
+  )
+
+  datos <- obtener_datos(consulta)
+
+  list(
+    territorio = territorio,
+    consulta = consulta,
+    datos = datos,
+    visualizacion = crear_visualizacion(datos)
+  )
+}
+```
+
+## Código con líneas destacadas. {.code-full}
+
+```{.r code-line-numbers="2-5|7|9-14"}
+crear_perfil <- function(territorio, pregunta) {
+  consulta <- construir_consulta(
+    territorio = territorio,
+    pregunta = pregunta
+  )
+
+  datos <- obtener_datos(consulta)
+
+  list(
+    territorio = territorio,
+    datos = datos,
+    grafico = crear_grafico(datos),
+    mapa = crear_mapa(datos)
+  )
+}
+```
+
+## Imagen como contenido.
+
+![](../../assets/slides/regions/05.jpg){.slide-image fig-alt="Paisaje utilizado como ejemplo visual"}
+
+## Cada respuesta vuelve a la evidencia. {.center}
+
+- El territorio queda identificado.
+- La consulta se puede reproducir.
+- El resultado proviene de datos reales.
+- La visualización conserva el contexto.
+

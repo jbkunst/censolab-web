@@ -55,6 +55,32 @@ code_block <- function(path, descriptions = NULL) {
 }
 ```
 
+## Personalizaciones del template
+
+:::: {.columns}
+::: {.column width="50%"}
+### Estructura visual
+
+- `.section-slide`: crea una portada de sección.
+- `.has-image` y `--section-image`: agregan una imagen de fondo.
+- `.section-subtitle`: presenta la bajada de una sección.
+- `.center`: centra verticalmente una diapositiva cuando se necesita.
+- `logo-sync.js`: sincroniza el logo, el color y la imagen con la sección activa.
+:::
+
+::: {.column width="50%"}
+### Contenido e interacción
+
+- `.cards` y `--cards`: definen tarjetas y su número de columnas.
+- `data-flow`, `data-center` y `aria-current`: controlan flechas, alineación y énfasis.
+- `.incremental` es de Quarto; `.fragment`, de RevealJS.
+- `.code-full`, `.code-small` y `.code-pair`: ajustan la presentación del código.
+- `cover.js`: controla el mapa animado de la portada.
+:::
+::::
+
+Las imágenes y scripts utilizados deben declararse en `resources` dentro del YAML.
+
 ## Sección con imagen {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/01.jpg');"}
 
 ::: {.section-subtitle}

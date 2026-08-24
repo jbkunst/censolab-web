@@ -1,0 +1,137 @@
+---
+title: Título de la presentación
+subtitle: Una frase breve que explique su propósito.
+author: Nombre · Organización
+date: today
+date-format: MMMM YYYY
+draft: true
+resources:
+  - assets/cover.js
+  - assets/logo-sync.js
+  - ../../assets/slides/regions/01.jpg
+  - ../../assets/slides/regions/08.jpg
+  - ../../assets/slides/regions/10.jpg
+include-after-body: assets/cover.html
+format:
+  revealjs:
+    brand: ../../_brand.yml
+    theme: [brand, styles/theme.scss]
+    logo: /assets/brand/censolab-logo-teal.svg
+    css: [styles/slides.css, styles/code.css]
+    width: 1600
+    height: 900
+    margin: 0
+    center: false
+    center-title-slide: false
+    controls: false
+    progress: true
+    slide-number: false
+    transition: fade
+    background-transition: fade
+    auto-stretch: false
+    hash: true
+    code-overflow: scroll
+    code-block-height: 680px
+    code-annotations: select
+revealjs-plugins:
+  - codefrag
+---
+
+```{r}
+#| include: false
+# Inserta un archivo R como Markdown y, opcionalmente, sincroniza rangos de
+# líneas con notas numeradas. La ruta debe ser relativa a este archivo QMD y
+# el chunk que llama la función debe usar `results: asis`.
+code_block <- function(path, descriptions = NULL) {
+  code <- readLines(path, encoding = "UTF-8", warn = FALSE)
+  if (is.null(descriptions)) return(cat("```r", paste(code, collapse = "\n"), "```", sep = "\n"))
+  ranges <- names(descriptions)
+  first_lines <- as.integer(sub("-.*", "", ranges))
+  code[first_lines] <- paste(code[first_lines], sprintf("# <%d>", seq_along(descriptions)))
+  fence <- sprintf('```{.r code-line-numbers="|%s"}', paste(ranges, collapse = "|"))
+  notes <- sprintf("%d. **%d.** %s", seq_along(descriptions), seq_along(descriptions), descriptions)
+  cat(fence, paste(code, collapse = "\n"), "```", "", notes, sep = "\n")
+}
+```
+
+## Sección con imagen {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/01.jpg');"}
+
+::: {.section-subtitle}
+Una frase breve para presentar el bloque siguiente.
+:::
+
+## Lista incremental
+
+::: {.incremental}
+
+- Primera idea.
+- Segunda idea.
+- Tercera idea.
+
+:::
+
+## Contenido en dos columnas
+
+:::: {.columns}
+::: {.column width="50%"}
+### Primera dimensión
+
+Texto de apoyo para la primera dimensión.
+:::
+
+::: {.column width="50%"}
+### Segunda dimensión
+
+Texto de apoyo para la segunda dimensión.
+:::
+::::
+
+## Diagrama de arquitectura reutilizable {.center}
+
+<div class="cards" style="--cards: 3" data-flow data-center aria-label="Ejemplo de arquitectura con tres componentes">
+<article><small>01 · Entrada</small><h3>Fuente</h3><p>Prepara la información.</p><code>archivos + API</code></article>
+<article aria-current="true"><small>02 · Proceso</small><h3>Aplicación</h3><p>Aplica la lógica del proyecto.</p><code>código + servicios</code></article>
+<article><small>03 · Salida</small><h3>Publicación</h3><p>Entrega el resultado.</p><code>web + reportes</code></article>
+</div>
+
+> **Flujo secundario:** validación → `artefacto verificable` → publicación.
+
+## Tarjetas sin flujo
+
+<!-- Sin `data-center`, el contenido se alinea arriba. Sin `data-flow`, no hay flechas. -->
+<div class="cards" style="--cards: 4">
+<article><small>01</small><h3>Primero</h3><p>Descripción breve del primer concepto.</p></article>
+<article><small>02</small><h3>Segundo</h3><p>Una explicación puede ocupar más de una línea.</p></article>
+<article aria-current="true"><small>03</small><h3>Actual</h3><p><code>aria-current="true"</code> destaca una tarjeta.</p></article>
+<article><small>04</small><h3>Cuarto</h3><p>El componente ocupa todo el ancho disponible.</p></article>
+</div>
+
+## Cita Markdown {.center}
+
+> Una cita se escribe con Markdown estándar y no necesita una clase propia.
+
+Un párrafo opcional puede aportar contexto debajo de la cita.
+
+## Código anotado {.code-full}
+
+```{r}
+#| results: asis
+code_block("assets/examples/example.R", c(
+  "1" = "El paquete aporta los componentes de la aplicación.",
+  "3-7" = "La interfaz declara entradas, acciones y resultados.",
+  "9-18" = "El servidor conecta esos elementos mediante reactividad."
+))
+```
+
+## Código largo {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("assets/examples/example.R")
+```
+
+## Cierre con imagen {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/10.jpg');"}
+
+::: {.section-subtitle}
+Una conclusión concreta.
+:::

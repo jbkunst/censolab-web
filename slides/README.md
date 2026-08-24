@@ -30,7 +30,7 @@ Así, los cambios visuales comunes se realizan una sola vez.
 ## Convenciones disponibles
 
 - `.section-slide`: portada de sección.
-- `.has-image` y `--section-image`: imagen de fondo de una sección.
+- `.has-image` y `--section-image`: imagen de fondo de una sección. La URL visual debe ser absoluta desde el sitio, por ejemplo `url('/assets/slides/regions/01.jpg')`.
 - `.section-subtitle`: bajada de una portada de sección.
 - `.center`: centrado vertical opcional.
 - `.cards` y `--cards`: tarjetas y número de columnas.

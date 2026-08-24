@@ -67,7 +67,7 @@ code_block <- function(path, descriptions = NULL) {
 }
 ```
 
-## Programa {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/14.jpg');"}
+## Programa {.section-slide .has-image style="--section-image: url('/assets/slides/regions/14.jpg');"}
 
 ::: {.section-subtitle}
 01 · Problema<br>
@@ -77,19 +77,19 @@ code_block <- function(path, descriptions = NULL) {
 05 · Taller
 :::
 
-## Problema {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/02.jpg');"}
+## Problema {.section-slide .has-image style="--section-image: url('/assets/slides/regions/02.jpg');"}
 
 ::: {.section-subtitle}
 Los datos están ahí. Llegar a ellos todavía cuesta.
 :::
 
-## Funcionalidades & Demo {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/04.jpg');"}
+## Funcionalidades & Demo {.section-slide .has-image style="--section-image: url('/assets/slides/regions/04.jpg');"}
 
 ::: {.section-subtitle}
 Preguntar, explorar y visualizar el territorio.
 :::
 
-## Arquitectura {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/05.jpg');"}
+## Arquitectura {.section-slide .has-image style="--section-image: url('/assets/slides/regions/05.jpg');"}
 
 ::: {.section-subtitle}
 Un conjunto de componentes que colaboran entre sí.
@@ -212,13 +212,13 @@ Las ramas separan los cambios en validación de la versión pública.
 </article>
 </div>
 
-## Desafíos y calidad del dato {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/07.jpg');"}
+## Desafíos y calidad del dato {.section-slide .has-image style="--section-image: url('/assets/slides/regions/07.jpg');"}
 
 ::: {.section-subtitle}
 Geografía, consistencia y evidencia en cada respuesta.
 :::
 
-## Taller {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/09.jpg');"}
+## Taller {.section-slide .has-image style="--section-image: url('/assets/slides/regions/09.jpg');"}
 
 ::: {.section-subtitle}
 {ellmer} + {shiny} + {shinychat}.
@@ -303,7 +303,7 @@ code_block("apps/app-05/app.R", c(
 
 `manual` → `chat` → `tools` → `datos + imagen`
 
-## Sigamos conversando y explorando. {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/13.jpg');"}
+## Sigamos conversando y explorando. {.section-slide .has-image style="--section-image: url('/assets/slides/regions/13.jpg');"}
 
 ::: {.section-subtitle}
 Gracias por asistir

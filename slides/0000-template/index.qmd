@@ -53,18 +53,32 @@ code_block <- function(path, descriptions = NULL) {
 }
 ```
 
-## Personalizaciones del template
+## Personalizaciones · Infraestructura compartida
+
+- `assets/slides/styles/` contiene el tema, los componentes y los estilos de código.
+- `cover.html` carga los scripts compartidos mediante `include-after-body`.
+- `cover.js` controla el mapa animado de la portada.
+- `section-sync.js` sincroniza el logo, el color y la imagen con la sección activa.
+- Los cambios realizados en estos archivos se aplican a todas las presentaciones.
+
+```yaml
+include-after-body: ../../assets/slides/cover.html
+format:
+  revealjs:
+    theme: [brand, ../../assets/slides/styles/theme.scss]
+    css: [../../assets/slides/styles/slides.css, ../../assets/slides/styles/code.css]
+```
+
+## Personalizaciones · Clases y componentes
 
 :::: {.columns}
 ::: {.column width="50%"}
 ### Estructura visual
 
-- `assets/slides/styles/`: contiene los estilos compartidos por todas las presentaciones.
 - `.section-slide`: crea una portada de sección.
 - `.has-image` y `--section-image`: agregan una imagen de fondo.
 - `.section-subtitle`: presenta la bajada de una sección.
 - `.center`: centra verticalmente una diapositiva cuando se necesita.
-- `section-sync.js`: sincroniza el logo, el color y la imagen con la sección activa.
 :::
 
 ::: {.column width="50%"}
@@ -74,13 +88,12 @@ code_block <- function(path, descriptions = NULL) {
 - `data-flow`, `data-center` y `aria-current`: controlan flechas, alineación y énfasis.
 - `.incremental` es de Quarto; `.fragment`, de RevealJS.
 - `.code-full`, `.code-small` y `.code-pair`: ajustan la presentación del código.
-- `cover.js`: controla el mapa animado de la portada.
 :::
 ::::
 
-Las imágenes y scripts utilizados deben declararse en `resources` dentro del YAML.
+Las imágenes propias de cada presentación deben declararse en `resources` dentro del YAML.
 
-## Sección con imagen {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/01.jpg');"}
+## Sección con imagen {.section-slide .has-image style="--section-image: url('/assets/slides/regions/01.jpg');"}
 
 ::: {.section-subtitle}
 Una frase breve para presentar el bloque siguiente.
@@ -228,7 +241,7 @@ code_block("assets/examples/example.R")
 
 ![](../../assets/slides/regions/05.jpg){.slide-image fig-alt="Paisaje utilizado como ejemplo visual"}
 
-## Cierre con imagen {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/10.jpg');"}
+## Cierre con imagen {.section-slide .has-image style="--section-image: url('/assets/slides/regions/10.jpg');"}
 
 ::: {.section-subtitle}
 Una conclusión concreta.

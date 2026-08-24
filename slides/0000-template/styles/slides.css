@@ -560,7 +560,7 @@ body:has(#title-slide.present) .reveal .slide-logo { filter: none !important; }
 .reveal .progress {
   z-index: 30;
   display: block;
-  height: 4px;
+  height: 8px;
   background: rgb(14 79 90 / 12%);
   color: var(--cl-teal);
 }

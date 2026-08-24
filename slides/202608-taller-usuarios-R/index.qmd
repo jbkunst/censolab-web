@@ -97,22 +97,22 @@ Preguntar, explorar y visualizar el territorio.
 Componentes con responsabilidades claras.
 :::
 
-## Tres componentes, cada uno con una función. {.center}
+## Tres repositorios, cada uno con una función. {.center}
 
 <div class="cards" style="--cards: 3" data-flow data-center aria-label="Arquitectura general de CensoLab">
-<article>
+<article class="fragment">
   <small>01 · Datos</small>
   <h3>censo2024-duckdb</h3>
   <p>Prepara y documenta los datos.</p>
   <code>DuckDB → MotherDuck</code>
 </article>
-<article>
+<article class="fragment">
   <small>02 · Aplicación</small>
   <h3>censolab</h3>
   <p>Consulta datos y coordina tools.</p>
   <code>Shiny + CensoBot</code>
 </article>
-<article>
+<article class="fragment">
   <small>03 · Web</small>
   <h3>censolab-web</h3>
   <p>Publica el sitio y los resultados de evaluación.</p>
@@ -120,51 +120,26 @@ Componentes con responsabilidades claras.
 </article>
 </div>
 
-## Paquetes principales por componente {.center}
+## 01 · Datos
 
-<div class="cards" style="--cards: 3" aria-label="Paquetes principales de cada componente">
-<article>
-  <small>01 · Datos</small>
-  <img src="assets/hex/wall-data.png" alt="Paquetes principales del componente Datos">
-</article>
-<article>
-  <small>02 · Aplicación</small>
-  <img src="assets/hex/wall-application.png" alt="Paquetes principales del componente Aplicación">
-</article>
-<article>
-  <small>03 · Sitio web</small>
-  <img src="assets/hex/wall-web.png" alt="Paquetes principales del componente Sitio web">
-</article>
-</div>
+::: {.incremental}
 
+1. **Fuentes**  
+   Censo 2024, cartografía, catastro y puntos de interés.
 
-## 01 · Componente Datos
+2. **Configuración**  
+   YAML versionado define archivos, rutas y opciones.
 
-<div class="cards" style="--cards: 4" data-flow aria-label="Pipeline del componente de datos">
-<article>
-  <small>01</small>
-  <h3>Fuentes</h3>
-  <p>Censo 2024, cartografía, catastro y puntos de interés.</p>
-</article>
-<article>
-  <small>02</small>
-  <h3>Configuración</h3>
-  <p>YAML versionado define archivos, rutas y opciones.</p>
-</article>
-<article>
-  <small>03</small>
-  <h3>Pipeline R</h3>
-  <p>Descarga, integra, enriquece y simplifica geometrías.</p>
-</article>
-<article>
-  <small>04</small>
-  <h3>DuckDB</h3>
-  <p>Datos, diccionarios y jerarquía territorial. Al final, genera una copia compacta validada para cargar manualmente a MotherDuck.</p>
-</article>
-</div>
+3. **Pipeline R**  
+   Descarga, integra, enriquece y simplifica geometrías.
+
+4. **DuckDB**  
+   Organiza los datos y genera una copia compacta validada para cargar en MotherDuck.
+
+:::
 
 
-## 02 · Componente Aplicación
+## 02 · Aplicación
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -191,7 +166,7 @@ Las ramas separan los cambios en validación de la versión pública.
 :::
 ::::
 
-## 03 · Componente Sitio web
+## 03 · Sitio web
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -210,6 +185,23 @@ Las ramas separan los cambios en validación de la versión pública.
 - Quarto los convierte en un resumen público de cobertura y desempeño.
 :::
 ::::
+
+## Paquetes principales por componente {.center}
+
+<div class="cards" style="--cards: 3" aria-label="Paquetes principales de cada componente">
+<article>
+  <small>01 · Datos</small>
+  <img src="assets/hex/wall-data.png" alt="Paquetes principales del componente Datos">
+</article>
+<article>
+  <small>02 · Aplicación</small>
+  <img src="assets/hex/wall-application.png" alt="Paquetes principales del componente Aplicación">
+</article>
+<article>
+  <small>03 · Sitio web</small>
+  <img src="assets/hex/wall-web.png" alt="Paquetes principales del componente Sitio web">
+</article>
+</div>
 
 ## Desafíos y calidad del dato {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/07.jpg');"}
 

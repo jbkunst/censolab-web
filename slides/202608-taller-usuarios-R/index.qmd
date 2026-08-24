@@ -241,16 +241,27 @@ Geografía, consistencia y evidencia en cada respuesta.
    Dar contexto sobre la información visible mediante un resumen de los datos y una imagen del gráfico.
 :::
 
+
 ## 1 · Aplicación básica
 
-<!--
-La app se exporta como sitio estático con `Rscript R/export_shinylive_apps.R`.
-GitHub Actions la publica antes de desplegar `_site`; el QMD solo la presenta.
--->
+
+```{r}
+#| eval: false
+#| include: false
+# Convierte la App 01 en archivos estáticos que pueden publicarse
+# junto con el resto del sitio y mostrarse después mediante un iframe.
+shinylive::export(
+  appdir = "slides/202608-taller-usuarios-R/apps/app-01",
+  destdir = "_site/slides/202608-taller-usuarios-R/apps/app-01"
+)
+```
+
+
 <iframe
   src="https://censolab.cl/slides/202608-taller-usuarios-R/apps/app-01/"
   title="App 01 · Aplicación básica de Shiny"
   loading="eager"
+  scrolling="no"
   style="width: 100%; height: 680px; border: 0; border-radius: 18px; background: white;"
 ></iframe>
 

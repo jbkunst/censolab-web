@@ -6,8 +6,6 @@ date: 2026-08-01
 date-format: MMMM YYYY
 draft: false
 resources:
-  - assets/cover.js
-  - assets/logo-sync.js
   - ../../assets/slides/regions/02.jpg
   - ../../assets/slides/regions/04.jpg
   - ../../assets/slides/regions/05.jpg
@@ -16,13 +14,13 @@ resources:
   - ../../assets/slides/regions/11.jpg
   - ../../assets/slides/regions/13.jpg
   - ../../assets/slides/regions/14.jpg
-include-after-body: assets/cover.html
+include-after-body: ../../assets/slides/cover.html
 format:
   revealjs:
     brand: ../../_brand.yml
-    theme: [brand, styles/theme.scss]
+    theme: [brand, ../../assets/slides/styles/theme.scss]
     logo: /assets/brand/censolab-logo-teal.svg
-    css: [styles/slides.css, styles/code.css]
+    css: [../../assets/slides/styles/slides.css, ../../assets/slides/styles/code.css]
     width: 1600
     height: 900
     margin: 0

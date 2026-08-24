@@ -6,19 +6,17 @@ date: today
 date-format: MMMM YYYY
 draft: false
 resources:
-  - assets/cover.js
-  - assets/logo-sync.js
   - ../../assets/slides/regions/01.jpg
   - ../../assets/slides/regions/05.jpg
   - ../../assets/slides/regions/08.jpg
   - ../../assets/slides/regions/10.jpg
-include-after-body: assets/cover.html
+include-after-body: ../../assets/slides/cover.html
 format:
   revealjs:
     brand: ../../_brand.yml
-    theme: [brand, styles/theme.scss]
+    theme: [brand, ../../assets/slides/styles/theme.scss]
     logo: /assets/brand/censolab-logo-teal.svg
-    css: [styles/slides.css, styles/code.css]
+    css: [../../assets/slides/styles/slides.css, ../../assets/slides/styles/code.css]
     width: 1600
     height: 900
     margin: 0
@@ -61,11 +59,12 @@ code_block <- function(path, descriptions = NULL) {
 ::: {.column width="50%"}
 ### Estructura visual
 
+- `assets/slides/styles/`: contiene los estilos compartidos por todas las presentaciones.
 - `.section-slide`: crea una portada de sección.
 - `.has-image` y `--section-image`: agregan una imagen de fondo.
 - `.section-subtitle`: presenta la bajada de una sección.
 - `.center`: centra verticalmente una diapositiva cuando se necesita.
-- `logo-sync.js`: sincroniza el logo, el color y la imagen con la sección activa.
+- `section-sync.js`: sincroniza el logo, el color y la imagen con la sección activa.
 :::
 
 ::: {.column width="50%"}

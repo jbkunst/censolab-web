@@ -243,7 +243,7 @@ Geografía, consistencia y evidencia en cada respuesta.
 
 ```{r}
 #| results: asis
-code_block("app-00/app.R", c(
+code_block("apps/app-01/app.R", c(
   "1-3" = "Los paquetes aportan los componentes de la aplicación.",
   "5-15" = "La UI declara inputs y outputs.",
   "17-25" = "El server conecta esos elementos mediante reactividad."
@@ -254,7 +254,7 @@ code_block("app-00/app.R", c(
 
 ```{r}
 #| results: asis
-code_block("app-10/app.R", c(
+code_block("apps/app-02/app.R", c(
   "7" = "El catálogo versionado evita descargar metadata en cada búsqueda.",
   "11-20" = "La búsqueda local devuelve primero las series vigentes.",
   "24-38" = "La UI expone búsqueda, selección, rango, gráfico y tabla.",
@@ -267,7 +267,7 @@ code_block("app-10/app.R", c(
 
 ```{r}
 #| results: asis
-code_block("app-11/app.R", c(
+code_block("apps/app-03/app.R", c(
   "7-24" = "La UI integra `chat_ui()` y conserva las dos cards.",
   "30-33" = "El chat declara que no conoce el dashboard.",
   "35-38" = "El observer conecta mensajes y respuestas; aún no hay tools."
@@ -278,7 +278,7 @@ code_block("app-11/app.R", c(
 
 ```{r}
 #| results: asis
-code_block("app-12/app.R", c(
+code_block("apps/app-04/app.R", c(
   "34-35" = "Dos valores reactivos representan la vista.",
   "37-46" = "`buscar_series()` devuelve alternativas desde el catálogo local.",
   "48-57" = "`actualizar_dashboard()` descarga y reemplaza el estado reactivo.",
@@ -291,8 +291,8 @@ code_block("app-12/app.R", c(
 
 ```{r}
 #| results: asis
-code_block("app-13/app.R", c(
-  "48-53" = "La tool conserva la actualización de app-12.",
+code_block("apps/app-05/app.R", c(
+  "48-53" = "La tool conserva la actualización de la aplicación 4.",
   "54-61" = "Los mismos datos producen extremos, fechas y promedio.",
   "63-69" = "El gráfico vuelve al modelo como contenido visual.",
   "91-99" = "La descripción comunica que puede interpretar ambos retornos."

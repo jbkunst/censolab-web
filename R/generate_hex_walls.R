@@ -22,7 +22,7 @@ groups <- list(
     "shiny", "bslib", "ellmer", "shinychat", "mapgl", "highcharter",
     "reactable"
   ),
-  web = c("quarto", "ggplot2")
+  web = c("quarto", "vitals", "ggplot2")
 )
 
 # Coordenadas en unidades de ancho y avance vertical de cada sticker.
@@ -38,7 +38,8 @@ layouts <- list(
     c(0, 2), c(1, 2), c(2, 2)
   ),
   web = rbind(
-    c(0, 0), c(1, 0)
+    c(0.5, 0),
+    c(0, 1), c(1, 1)
   )
 )
 
@@ -54,7 +55,8 @@ manual_logos <- c(
   reactable = "https://r-graph-gallery.com/img/r-package-img/reactable.png",
   bslib = "https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/bslib.png",
   dplyr = "https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/dplyr.png",
-  quarto = "https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/quarto.png"
+  quarto = "https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/quarto.png",
+  vitals = "https://vitals.tidyverse.org/logo.png"
 )
 
 find_installed_logo <- function(package) {
@@ -105,6 +107,11 @@ prepare_sticker <- function(package, group) {
         logo_image <- image_read(temporary_logo)
         if (package == "mapgl") {
           logo_image <- image_trim(logo_image)
+        }
+        if (package == "vitals") {
+          # El archivo oficial contiene un píxel aislado en el borde izquierdo.
+          logo_image <- image_crop(logo_image, "233x277+7+0") |>
+            image_trim()
         }
         image_write(logo_image, output, format = "png")
         file.exists(output) && file.size(output) > 0
@@ -171,7 +178,15 @@ make_wall <- function(files, output, coords, sticker_width = 260) {
   image_write(wall, output, format = "png")
 }
 
-for (group in names(groups)) {
+selected_groups <- commandArgs(trailingOnly = TRUE)
+if (!length(selected_groups)) selected_groups <- names(groups)
+
+unknown_groups <- setdiff(selected_groups, names(groups))
+if (length(unknown_groups)) {
+  stop("Grupos desconocidos: ", paste(unknown_groups, collapse = ", "))
+}
+
+for (group in selected_groups) {
   files <- vapply(groups[[group]], prepare_sticker, character(1), group = group)
   make_wall(
     files,

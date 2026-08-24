@@ -18,6 +18,7 @@ include-after-body: ../../assets/slides/cover.html
 format:
   revealjs:
     brand: ../../_brand.yml
+    embed-resources: false
     theme: [brand, ../../assets/slides/styles/theme.scss]
     logo: /assets/brand/censolab-logo-teal.svg
     css: [../../assets/slides/styles/slides.css, ../../assets/slides/styles/code.css]

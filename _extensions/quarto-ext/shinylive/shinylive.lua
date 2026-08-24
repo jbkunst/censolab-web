@@ -424,9 +424,23 @@ return {
       ensureLanguageSetup(language)
 
       -- Convert code block to JSON string in the same format as app.json.
+      local codeblock_command = quarto_cli_path
+      local codeblock_args = { "run", codeblockScript, language }
+
+      -- Quarto 1.10 bundled with Positron on Windows forwards `--v8-flags`
+      -- twice when `quarto run` is called recursively from a Lua filter.
+      -- Calling its bundled Deno directly avoids that local-only failure.
+      if pandoc.system.os == "mingw32" then
+        codeblock_command = pandoc.path.join({
+          pandoc.path.directory(quarto_cli_path),
+          "tools", "x86_64", "deno.exe"
+        })
+        codeblock_args = { "run", "--allow-all", codeblockScript, language }
+      end
+
       local parsedCodeblockJson = pandoc.pipe(
-        quarto_cli_path,
-        { "run", codeblockScript, language },
+        codeblock_command,
+        codeblock_args,
         el.text
       )
 

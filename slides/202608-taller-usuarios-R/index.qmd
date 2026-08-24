@@ -94,10 +94,12 @@ Preguntar, explorar y visualizar el territorio.
 ## Arquitectura {.section-slide .has-image style="--section-image: url('../../assets/slides/regions/05.jpg');"}
 
 ::: {.section-subtitle}
-Componentes con responsabilidades claras.
+Un conjunto de componentes que colaboran entre sí.
 :::
 
-## Tres repositorios, cada uno con una función. {.center}
+## Tres componentes, tres repositorios. {.center}
+
+Cada componente se administra y documenta en un repositorio propio.
 
 <div class="cards" style="--cards: 3" data-flow data-center aria-label="Arquitectura general de CensoLab">
 <article class="fragment">
@@ -115,7 +117,7 @@ Componentes con responsabilidades claras.
 <article class="fragment">
   <small>03 · Web</small>
   <h3>censolab-web</h3>
-  <p>Publica el sitio y los resultados de evaluación.</p>
+  <p>Publica el sitio y los resultados de evaluación a CensoBot.</p>
   <code>Quarto + GitHub Pages</code>
 </article>
 </div>
@@ -125,16 +127,25 @@ Componentes con responsabilidades claras.
 ::: {.incremental}
 
 1. **Fuentes**  
-   Censo 2024, cartografía, catastro y puntos de interés.
+   Censo 2024, cartografía censal y establecimientos de educación y salud.
 
 2. **Configuración**  
-   YAML versionado define archivos, rutas y opciones.
+   Un archivo YAML versionado define las fuentes, las rutas y las opciones del proceso.
+
+   ```yaml
+   # censo_config.yml
+   sources:
+     microdatos:
+       url: https://storage.googleapis.com/bktdescargascenso2024/viv_hog_per_censo2024.zip
+   options:
+     simplify_geometry: true
+   ```
 
 3. **Pipeline R**  
-   Descarga, integra, enriquece y simplifica geometrías.
+   Usa las especificaciones YAML para descargar, integrar y enriquecer los datos; además, simplifica geometrías y genera diccionarios, *metadatos* y *contexto* de uso.
 
 4. **DuckDB**  
-   Organiza los datos y genera una copia compacta validada para cargar en MotherDuck.
+   Base portable, sin un servidor que administrar y orientada a cálculos analíticos. Se puede publicar en MotherDuck para consultarla remotamente.
 
 :::
 
@@ -148,7 +159,7 @@ Componentes con responsabilidades claras.
 - **Datos:** DuckDB local o MotherDuck remoto, siempre en modo de solo lectura.
 - **Interfaz:** {shiny}, {bslib}, {mapgl}, {highcharter} y {reactable}.
 - **Agente:** {ellmer} + {shinychat}, con contexto y tools especializadas.
-- **Respuesta verificable:** mapas, gráficos, tablas e informes generados desde consultas y código.
+- **Formatos de resultado:** mapas, gráficos, tablas e informes generados mediante código ejecutado sobre los datos.
 :::
 
 ::: {.column width="50%"}

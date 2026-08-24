@@ -4,7 +4,7 @@ library(forecast)
 
 # user interface ----------------------------------------------------------
 ui <- page_sidebar(
-  title = "App 00 · Widgets y outputs",
+  title = "App 01 · Widgets y outputs",
   sidebar = sidebar(
     textInput("title", "Título", value = "Pasajeros aéreos"),
     sliderInput("n", "Cantidad de puntos", min = 24, max = 144, value = 48, step = 24),

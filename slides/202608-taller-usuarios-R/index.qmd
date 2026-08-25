@@ -262,8 +262,8 @@ Integrando {ellmer} y {shinychat} paso a paso.
 #| results: asis
 code_block("apps/app-01/app.R", c(
   "1-3" = "Los paquetes aportan los componentes de la aplicación.",
-  "6-15" = "La UI declara inputs y outputs, definiendo su lugar en la interfaz.",
-  "17-26" = "El servidor contiene la lógica que coordina inputs y outputs."
+  "6-16" = "La UI declara inputs y outputs, definiendo su lugar en la interfaz.",
+  "18-27" = "El servidor contiene la lógica que coordina inputs y outputs."
 ))
 ```
 

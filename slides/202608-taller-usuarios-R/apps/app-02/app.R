@@ -97,7 +97,7 @@ server <- function(input, output) {
     req(datos_actuales())
     transform(datos_actuales(), date = format(date, "%Y-%m-%d"))
   }, striped = TRUE, hover = TRUE)
-  
+
 }
 
 shinyApp(ui, server)

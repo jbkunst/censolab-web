@@ -10,8 +10,8 @@ candidatos |>
 
 codigo <- "F049.DES.TAS.INE9.10.M"
 
-candidatos |> 
-  filter(series_id == codigo) |> 
+candidatos |>
+  filter(series_id == codigo) |>
   select(spanish_title, series_id, frequency)
 
 

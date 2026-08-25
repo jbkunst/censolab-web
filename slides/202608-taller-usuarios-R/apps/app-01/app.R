@@ -20,7 +20,8 @@ server <- function(input, output, session) {
 
   output$plot <- renderPlot({
     fun <- if (input$forecast) forecast::forecast else identity
-    plot(fun(head(AirPassengers, input$n)), col = "#0E4F5A", lwd = 2, xlab = NULL, ylab = "Pasajeros (miles)")
+    plot(fun(head(AirPassengers, input$n)), col = "#0E4F5A", lwd = 2,
+      xlab = NULL, ylab = "Pasajeros (miles)")
   })
 }
 

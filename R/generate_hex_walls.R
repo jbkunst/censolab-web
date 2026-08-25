@@ -20,7 +20,7 @@ groups <- list(
   data = c("duckdb", "arrow", "dplyr"),
   application = c(
     "shiny", "bslib", "ellmer", "shinychat", "mapgl", "highcharter",
-    "reactable"
+    "reactable", "sf"
   ),
   web = c("quarto", "vitals", "ggplot2")
 )
@@ -35,7 +35,7 @@ layouts <- list(
   application = rbind(
     c(1, 0),
     c(0.5, 1), c(1.5, 1), c(2.5, 1),
-    c(0, 2), c(1, 2), c(2, 2)
+    c(0, 2), c(1, 2), c(2, 2), c(3, 2)
   ),
   web = rbind(
     c(0.5, 0),
@@ -129,7 +129,11 @@ prepare_sticker <- function(package, group) {
   logo <- find_installed_logo(package)
 
   if (!is.na(logo)) {
-    image_read(logo) |>
+    logo_image <- image_read(logo)
+    if (package == "sf") {
+      logo_image <- image_transparent(logo_image, "white", fuzz = 2)
+    }
+    logo_image |>
       image_resize("600x600>") |>
       image_write(output, format = "png")
   } else {

@@ -159,7 +159,7 @@ Cada componente se administra y documenta en un repositorio propio.
    Interfaz centrada en el mapa para explorar indicadores por nivel territorial mediante mapas, gráficos y tablas.
 
 2. **Agente**<br>
-   Guiado por un prompt de comportamiento y restricciones, utiliza herramientas para consultar datos, responder preguntas y representar resultados en la interfaz.
+   Interpreta preguntas sobre indicadores y territorios, consulta los datos mediante herramientas y presenta los resultados como mapas, gráficos, tablas o informes dentro de la aplicación.
 
 3. **Comparador**<br>
    Permite contrastar indicadores entre distintos territorios mediante visualizaciones coordinadas.

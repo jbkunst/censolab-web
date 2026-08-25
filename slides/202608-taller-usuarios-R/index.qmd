@@ -131,7 +131,7 @@ Cada componente se administra y documenta en un repositorio propio.
    Censo 2024, cartografía censal y establecimientos de educación y salud.
 
 2. **Configuración**  
-   Archivos YAML versionados definen las fuentes, las rutas y las opciones de cada etapa del proceso.
+   Un YAML versionado define fuentes, rutas y opciones.
 
    ```yaml
    # censo_config.yml
@@ -143,10 +143,10 @@ Cada componente se administra y documenta en un repositorio propio.
    ```
 
 3. **Pipeline R**  
-   Usa las especificaciones YAML para descargar, integrar y enriquecer los datos, simplificar geometrías y generar diccionarios, *metadatos* y *contexto* de uso.
+   Descarga, integra y enriquece datos; simplifica geometrías y genera metadatos y contexto.
 
 4. **DuckDB**  
-   Base de datos analítica y portable, sin un servidor que administrar y con soporte para datos geoespaciales mediante la extensión `spatial`. Puede publicarse en MotherDuck para consultarla de forma remota.
+   Base analítica portable, sin servidor y con soporte geoespacial. Puede publicarse en MotherDuck para consultas remotas.
 
 :::
 
@@ -165,7 +165,7 @@ Cada componente se administra y documenta en un repositorio propio.
    Permite contrastar indicadores entre distintos territorios mediante visualizaciones coordinadas.
 
 4. **Perfil territorial**<br>
-   Resume los principales indicadores inspirado en *DataChile*, además de poder navegar por niveles de la jerarquía geográfica, .
+   Resume los principales indicadores inspirado en *DataChile*, además de poder navegar por niveles de la jerarquía geográfica.
 :::
 
 ## 02 · Aplicación&nbsp;<span style="color: #6aaab2;">/&nbsp;Despliegue</span> {.center}
@@ -226,7 +226,9 @@ Geografía, consistencia y evidencia en cada respuesta.
 {ellmer} + {shiny} + {shinychat}
 :::
 
-## {shiny} · Cinco aplicaciones: de una app básica a un chat con tools
+## {shiny} · Cinco aplicaciones
+
+Integrando {ellmer} y {shinychat} paso a paso.
 
 ::: {.incremental}
 1. **Ejemplo básico**  

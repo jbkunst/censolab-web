@@ -49,12 +49,13 @@ svg <- sprintf(
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#6AAAB2"/>
     </marker>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400&amp;display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&amp;display=swap");
       text { font-family: "IBM Plex Sans", sans-serif; font-weight: 300; fill: #202326; }
       .group { fill: #F2F7F7; stroke: #6AAAB2; stroke-width: 2; }
       .group-title { fill: #0E4F5A; font-size: 18px; text-anchor: middle; }
       .node { fill: #FFFFFF; stroke: #0E4F5A; stroke-width: 2; }
       .node-text { font-size: 20px; text-anchor: middle; dominant-baseline: middle; }
+      .branch-label { font-weight: 600; }
       .edge { fill: none; stroke: #6AAAB2; stroke-width: 2; marker-end: url(#arrow); }
       .edge.return { stroke-dasharray: 5 4; }
       .edge-label { fill: #4D6266; font-size: 17px; text-anchor: middle; }
@@ -78,7 +79,7 @@ svg <- sprintf(
   <text class="node-text" x="120" y="273">feature/b</text>
 
   <rect class="node" x="330" y="170" width="80" height="70"/>
-  <text class="node-text" x="370" y="205">dev</text>
+  <text class="node-text branch-label" x="370" y="205">dev</text>
 
   <rect class="environment" x="535" y="153" width="104" height="104" rx="5"/>
   %s
@@ -88,7 +89,7 @@ svg <- sprintf(
   <text class="node-text" x="820" y="205">Validación</text>
 
   <rect class="node" x="1140" y="170" width="90" height="70"/>
-  <text class="node-text" x="1185" y="205">main</text>
+  <text class="node-text branch-label" x="1185" y="205">main</text>
 
   <rect class="environment" x="1330" y="153" width="104" height="104" rx="5"/>
   %s
@@ -128,12 +129,13 @@ vertical_svg <- sprintf(
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#6AAAB2"/>
     </marker>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400&amp;display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&amp;display=swap");
       text { font-family: "IBM Plex Sans", sans-serif; font-weight: 300; fill: #202326; }
       .group { fill: #F2F7F7; stroke: #6AAAB2; stroke-width: 2; }
       .group-title { fill: #0E4F5A; font-size: 17px; text-anchor: middle; }
       .node { fill: #FFFFFF; stroke: #0E4F5A; stroke-width: 2; }
       .node-text { font-size: 19px; text-anchor: middle; dominant-baseline: middle; }
+      .branch-label { font-weight: 600; }
       .edge { fill: none; stroke: #6AAAB2; stroke-width: 2; marker-end: url(#arrow); }
       .edge.return { stroke-dasharray: 5 4; }
       .edge-label { fill: #4D6266; font-size: 15px; }
@@ -150,7 +152,7 @@ vertical_svg <- sprintf(
   <rect class="group" x="75" y="175" width="470" height="370" rx="5"/>
   <text class="group-title" x="155" y="202">VALIDACIÓN</text>
   <rect class="node" x="265" y="230" width="90" height="58"/>
-  <text class="node-text" x="310" y="259">dev</text>
+  <text class="node-text branch-label" x="310" y="259">dev</text>
   <rect class="environment" x="258" y="330" width="104" height="104" rx="5"/>
   %s
   <text class="environment-label" x="310" y="424">DEV</text>
@@ -160,7 +162,7 @@ vertical_svg <- sprintf(
   <rect class="group" x="75" y="575" width="470" height="170" rx="5"/>
   <text class="group-title" x="170" y="602">PUBLICACIÓN</text>
   <rect class="node" x="155" y="650" width="90" height="58"/>
-  <text class="node-text" x="200" y="679">main</text>
+  <text class="node-text branch-label" x="200" y="679">main</text>
   <rect class="environment" x="375" y="627" width="104" height="104" rx="5"/>
   %s
 

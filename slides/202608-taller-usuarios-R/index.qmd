@@ -170,7 +170,7 @@ Cada componente se administra y documenta en un repositorio propio.
 
 ## 02 · Aplicación&nbsp;<span style="color: #6aaab2;">/&nbsp;Despliegue</span> {.center}
 
-- Los cambios se validan primero en **CensoLabDev** y luego se promueven a `main` para publicar **CensoLab**.
+- Los cambios integrados en `dev` publican **CensoLabDev** para su validación; luego se promueven a `main` para publicar **CensoLab**.
 - Existen dos versiones de la aplicación alojadas en **Posit Connect Cloud**, con despliegues automáticos para ambos entornos.
 
 <!-- Ejecuta R/generate_deployment_flow.R desde la raíz del repositorio para regenerar este SVG. -->

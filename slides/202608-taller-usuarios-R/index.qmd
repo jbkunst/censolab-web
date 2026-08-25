@@ -104,7 +104,7 @@ Cada componente se administra y documenta en un repositorio propio.
 <div class="cards" style="--cards: 3" data-flow data-center aria-label="Arquitectura general de CensoLab">
 <article class="fragment">
   <small>01 · Datos</small>
-  <h3>censo2024-duckdb</h3>
+  <h3>censo-db</h3>
   <p>Prepara y documenta los datos.</p>
   <code>DuckDB → MotherDuck</code>
 </article>
@@ -245,18 +245,7 @@ Geografía, consistencia y evidencia en cada respuesta.
 ## 1 · Aplicación básica
 
 
-```{r}
-#| eval: false
-#| include: false
-# Convierte la App 01 en archivos estáticos que pueden publicarse
-# junto con el resto del sitio y mostrarse después mediante un iframe.
-shinylive::export(
-  appdir = "slides/202608-taller-usuarios-R/apps/app-01",
-  destdir = "_site/slides/202608-taller-usuarios-R/apps/app-01"
-)
-```
-
-
+<!-- GitHub Actions ejecuta R/export_shinylive_apps.R después de renderizar el sitio para generar y publicar la versión Shinylive de esta aplicación. -->
 <iframe
   src="https://censolab.cl/slides/202608-taller-usuarios-R/apps/app-01/"
   title="App 01 · Aplicación básica de Shiny"
@@ -271,8 +260,8 @@ shinylive::export(
 #| results: asis
 code_block("apps/app-01/app.R", c(
   "1-3" = "Los paquetes aportan los componentes de la aplicación.",
-  "6-15" = "La UI declara inputs y outputs.",
-  "17-25" = "El server conecta esos elementos mediante reactividad."
+  "6-15" = "La UI declara inputs y outputs, definiendo su lugar en la interfaz.",
+  "17-25" = "El server está la lógica de como iteranctuan inputs y outputs."
 ))
 ```
 
@@ -281,11 +270,10 @@ code_block("apps/app-01/app.R", c(
 ```{r}
 #| results: asis
 code_block("apps/app-02/app.R", c(
-  "7" = "El catálogo versionado evita descargar metadata en cada búsqueda.",
-  "9-19" = "La búsqueda local devuelve primero las series vigentes.",
-  "21-36" = "La UI expone búsqueda, selección, rango, gráfico y tabla.",
-  "40-72" = "Los controles preparan la consulta sin descargar observaciones.",
-  "74-97" = "Sólo el botón llama `get_series()` y actualiza los outputs."
+  "7-19" = "Definimos un catálogo y una función para hacer búsquedas sobre él.",
+  "22-36" = "La UI expone inputs (búsqueda, selección y rango) y outputs (título, gráfico y tabla).",
+  "40-85" = "Definimos la lógica reactiva para desplegar los inputs y ejecutar la consulta.",
+  "87-99" = "Definimos el contenido de cada output (título, gráfico y tabla)."
 ))
 ```
 

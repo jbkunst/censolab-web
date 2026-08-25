@@ -11,7 +11,7 @@ ui <- page_sidebar(
     checkboxInput("forecast", "Mostrar pronóstico", value = FALSE)
   ),
   h2(textOutput("plot_title")),
-  plotOutput("plot", height = "320px")
+  plotOutput("plot", height = "240px")
 )
 
 # server ------------------------------------------------------------------

@@ -97,7 +97,7 @@ El Censo, una gran fuente para conocernos.
 - Educación
 - Migración
 - Ocupación
-- **…y muchos más**
+- …y muchos más
 :::
 
 ::: {.column width="50%"}
@@ -107,7 +107,7 @@ El Censo, una gran fuente para conocernos.
 - Regiones
 - Comunas
 - Unidades territoriales pequeñas
-- **…y otras escalas territoriales**
+- …y otras escalas territoriales
 :::
 ::::
 
@@ -124,7 +124,7 @@ El Censo, una gran fuente para conocernos.
   <small>Opción 02</small>
   <h3>Microdatos y bases públicas</h3>
   <p>Mucho más flexibles, pero requieren software y conocimientos técnicos.</p>
-  <code>R · Python · SQL</code>
+  <code>R · Python · SQL · GIS</code>
 </article>
 <div class="fragment" style="grid-column: 2; grid-row: 1; text-align: center; padding: 40px 26px; border-radius: 16px;">
   <img src="/assets/brand/censolab-logo-teal.svg" alt="Logo de CensoLab" style="width: 180px; margin: 0 auto 20px;">

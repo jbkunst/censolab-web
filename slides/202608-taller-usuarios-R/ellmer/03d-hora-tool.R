@@ -1,11 +1,10 @@
-hora_santiago <- function() format(Sys.time(), tz = "America/Santiago", usetz = TRUE)
+hora_chile <- function() format(Sys.time(), tz = "America/Santiago", usetz = TRUE)
 
-hora_santiago <- tool(
-  hora_santiago,
-  description = "Devuelve la fecha y hora actuales en Santiago de Chile."
+hora_chile <- tool(
+  hora_chile,
+  description = "Devuelve la fecha y hora actuales en Chile."
 )
 
-chat$register_tool(hora_santiago)
+chat$register_tool(hora_chile)
 
-# Esta función parece simple pero le da mucho poder
 chat$chat("¿qué hora es?")

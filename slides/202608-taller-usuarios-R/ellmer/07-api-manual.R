@@ -1,15 +1,12 @@
-# ¿Cómo consultamos la API del Banco Central "a mano"?
-candidatos <- resolve_series(
-  "desocupacion",
+# Antes de crear tools, consultamos una serie a mano.
+desocupacion <- resolve_series(
+  "desocupacion nacional",
   frequency = "MONTHLY"
 )
 
-serie <- "F049.DES.TAS.INE9.10.M"
+serie_desocupacion <- "F049.DES.TAS.INE9.10.M"
+serie_desocupacion |> describe_series()
 
-serie |>
-  describe_series()
-
-desempleo <- get_series(
-  serie,
-  from = "2020-01-01"
+datos_desocupacion <- get_series(
+  serie_desocupacion
 )

@@ -67,16 +67,16 @@ chat$chat("en una frase") # tiene memoria
 
 chat$chat("¿qué hora es?") # no está actualizado
 
-hora_santiago <- function() {
+hora_chile <- function() {
   format(Sys.time(), tz = "America/Santiago", usetz = TRUE)
 }
 
-hora_santiago <- tool(
-  hora_santiago,
-  description = "Devuelve la fecha y hora actuales en Santiago de Chile."
+hora_chile <- tool(
+  hora_chile,
+  description = "Devuelve la fecha y hora actuales en Chile."
 )
 
-chat$register_tool(hora_santiago)
+chat$register_tool(hora_chile)
 
 # Esta función parece simple pero le da mucho poder
 chat$chat("¿qué hora es?")
@@ -127,8 +127,8 @@ bot_generico$chat(pregunta_desocupacion)
 numero_insights <- 2L
 
 contexto <- glue(
-  "Estoy en un taller sobre R en santiago de chile. La audiencia necesita una explicación ",
-  "breve y accesible."
+  "La audiencia necesita comprender la evolución de la desocupación en Chile ",
+  "sin requerir conocimientos previos de economía laboral."
 )
 
 instruccion_insights <- glue(
@@ -137,7 +137,7 @@ instruccion_insights <- glue(
 )
 
 prompt_analisis <- interpolate_file(
-  "R/prompt_desocupacion.md",
+  "slides/202608-taller-usuarios-R/ellmer/prompt_desocupacion.md",
   contexto = contexto,
   instruccion_insights = instruccion_insights
 )
@@ -162,23 +162,32 @@ bot_laboral$chat(pregunta_desocupacion)
 
 # 3. Tool calling ---------------------------------------------------------
 
-# PASO 0: ¿cómo consultamos la API del Banco Central "a mano"?
-candidatos <- resolve_series(
-  "desocupacion",
+# PASO 0: hacemos a mano el recorrido buscar -> validar -> descargar.
+desocupacion <- resolve_series(
+  "desocupacion nacional",
   frequency = "MONTHLY"
 )
 
-serie <- "F049.DES.TAS.INE9.10.M"
+serie_desocupacion <- "F049.DES.TAS.INE9.10.M"
+serie_desocupacion |> describe_series()
 
-serie |> 
-  describe_series()
-
-desempleo <- get_series(
-  serie,
+datos_desocupacion <- get_series(
+  serie_desocupacion,
   from = "2020-01-01"
 )
 
-plot_series(desempleo)
+pib <- resolve_series(
+  "pib volumen",
+  frequency = "QUARTERLY"
+)
+
+serie_pib <- "F032.PIB.FLU.R.CLP.EP18.Z.Z.0.T"
+serie_pib |> describe_series()
+
+datos_pib <- get_series(
+  serie_pib,
+  from = "2020-01-01"
+)
 
 # PASO 1: tool mínima. Solo una función sin argumentos y una descripción.
 # El modelo no decide nada: solo puede pedir "la serie de desocupación".
@@ -202,20 +211,16 @@ chat_minimo$chat("¿Cómo ha evolucionado la desocupación en Chile desde 2020?"
 
 # PASO 2: agregar argumentos. type_string() documenta cada argumento para
 # que el modelo sepa qué valores poner.
-descargar_serie <- function(series_id, from = "2020-01-01") {
-  get_series(series_id, from = from)
+descargar_serie <- function(series_id) {
+  get_series(series_id)
 }
 
 tool_serie <- tool(
   descargar_serie,
-  description = "Descarga una serie mensual del Banco Central de Chile.",
+  description = "Descarga una serie del Banco Central de Chile.",
   arguments = list(
     series_id = type_string(
       "Identificador exacto de la serie, p. ej. F049.DES.TAS.INE9.10.M"
-    ),
-    from = type_string(
-      "Fecha de inicio en formato AAAA-MM-DD",
-      required = FALSE
     )
   )
 )
@@ -225,22 +230,20 @@ chat_con_args$register_tool(tool_serie)
 
 # Ahora el modelo elige los argumentos a partir de la petición
 chat_con_args$chat(
-  "Descarga la serie F049.DES.TAS.INE9.10.M desde 2015 y cuéntame qué ves."
+  paste(
+    "Descarga el PIB en volumen",
+    "F032.PIB.FLU.R.CLP.EP18.Z.Z.0.T desde 2020 y cuéntame qué ves."
+  )
 )
 
-# PASO 3: ¿y si no conozco el identificador? "Quiero imacec", a secas.
-# Hay varias series de imacec (original, desestacionalizada, anual...).
+# PASO 3: ¿y si no conocemos el identificador exacto del PIB?
 # El chat solo tiene la tool de descarga: NO puede buscar en el catálogo.
-chat_ambiguo <- chat_openai(echo = TRUE)
-chat_ambiguo$register_tool(tool_serie)
+chat_sin_busqueda <- chat_openai(echo = TRUE)
+chat_sin_busqueda$register_tool(tool_serie)
 
-# Callejón sin salida: o inventa un identificador (alucinación) o nos
-# pide el ID exacto... que es justo lo que no conocemos.
-# OJO (verificado en pruebas): con "imacec" el contraste es débil, porque
-# el modelo se sabe de memoria los IDs del imacec y pregunta igual.
-# Con series menos famosas (p. ej. "depósitos a plazo en UF") sí queda
-# en evidencia: no puede buscar y queda atrapado pidiendo el código.
-chat_ambiguo$chat("Quiero datos de los depósitos a plazo en UF.")
+chat_sin_busqueda$chat(
+  "Quiero analizar el PIB trimestral en volumen desde 2020."
+)
 
 # PASO 4: agregar la tool de búsqueda + una instrucción de comportamiento.
 # Ahora la aclaración viene FUNDADA: opciones reales del catálogo.
@@ -250,7 +253,13 @@ resolver_serie <- tool(
   description = "Busca candidatos en el catálogo de series del Banco Central.",
   arguments = list(
     query = type_string("Una a tres palabras significativas"),
-    frequency = type_string("Frecuencia de la serie", required = FALSE),
+    frequency = type_string(
+      paste(
+        "Frecuencia del catálogo. Valores válidos:",
+        "DAILY, MONTHLY, QUARTERLY o ANNUAL"
+      ),
+      required = FALSE
+    ),
     token = type_ignore(),
     verbose = type_ignore()
   )
@@ -269,30 +278,24 @@ describir_serie <- tool(
   )
 )
 
-prompt_aclaracion <- glue(
+prompt_tools <- glue(
   "Eres un asistente para consultar series del Banco Central de Chile. ",
-  "Si la petición del usuario es ambigua, busca candidatos con ",
-  "resolve_series, muestra las opciones con su nombre y cobertura, y ",
-  "PREGUNTA al usuario cuál prefiere. Nunca elijas una serie por tu ",
-  "cuenta ni inventes identificadores. Antes de descargar, valida el ",
+  "Busca candidatos con resolve_series y usa la frecuencia del catálogo. ",
+  "Nunca inventes identificadores. Antes de descargar, valida el ",
   "identificador con describe_series."
 )
 
-chat_aclarador <- chat_openai(
-  system_prompt = prompt_aclaracion,
+chat_tools <- chat_openai(
+  system_prompt = prompt_tools,
   echo = TRUE
 )
-chat_aclarador$register_tool(resolver_serie)
-chat_aclarador$register_tool(describir_serie)
-chat_aclarador$register_tool(tool_serie)
+chat_tools$register_tool(resolver_serie)
+chat_tools$register_tool(describir_serie)
+chat_tools$register_tool(tool_serie)
 
-# Ahora la pregunta trae opciones concretas del catálogo, no una
-# pregunta vacía ni una promesa falsa de buscar.
-chat_aclarador$chat("Quiero datos de los depósitos a plazo en UF.")
-
-# Detalle para comentar si ocurre en vivo: en las pruebas el modelo
-# intentó frequency = "M", bcchr respondió con un error, y el modelo se
-# autocorrigió a "MONTHLY". Eso es el TOOL LOOP:
+# Provocamos un error real y reproducible. bcchr rechaza "TRIMESTRAL",
+# el error vuelve al historial y el modelo corrige a "QUARTERLY".
+# Eso es el TOOL LOOP:
 #   1. el modelo responde con una solicitud de tool (no con texto);
 #   2. ellmer ejecuta la función de R por nosotros;
 #   3. el resultado -o el ERROR- se agrega como un turno más al historial
@@ -302,87 +305,13 @@ chat_aclarador$chat("Quiero datos de los depósitos a plazo en UF.")
 # Documentación: vignette("tool-calling", package = "ellmer") y la
 # referencia de Chat: https://ellmer.tidyverse.org/reference/Chat.html
 
-# El usuario responde en el siguiente turno, con más especificación,
-# y la conversación va convergiendo. Así se construye un sistema:
-# turno a turno, acotando la ambigüedad.
-chat_aclarador$chat(
-  "La de saldos, mensual. Descárgala desde 2020."
+chat_tools$chat(
+  glue(
+    "Busca el PIB en volumen desde 2020. ",
+    "En el primer intento usa frequency = 'TRIMESTRAL'."
+  )
 )
 
-# PASO 5: una línea de prompt ordena la salida.
-# Mismo chat, mismas tools; solo cambia el system prompt.
-prompt_resumen <- glue(
-  "Eres un asistente para consultar series del Banco Central de Chile. ",
-  "Cuando descargues una serie, resúmela en exactamente dos insights ",
-  "breves, con cifras de la propia serie. Nada más."
-)
-
-chat_resumen <- chat_openai(
-  system_prompt = prompt_resumen,
-  echo = TRUE
-)
-chat_resumen$register_tool(tool_serie)
-
-chat_resumen$chat("Descarga F049.DES.TAS.INE9.10.M desde 2020.")
-
-# PASO 6: escalar. Un catálogo de series en YAML + pmap con VARIOS
-# argumentos: un chat por serie, cada uno descarga y resume.
-catalogo <- read_yaml("R/series_bcch.yml")$series
-
-# safely(): si una serie falla, el reporte no cae; el error queda
-# registrado en la sección correspondiente.
-resumir_serie <- safely(function(series_id, nombre, unidad, desde) {
-  chat <- chat_openai(system_prompt = prompt_resumen, echo = FALSE)
-  chat$register_tool(tool_serie)
-
-  resumen <- chat$chat(glue(
-    "Descarga {series_id} desde {desde}."
-  ))
-
-  glue("## {nombre}\n\nIdentificador: {series_id} ({unidad})\n\n{resumen}\n")
-})
-
-# pmap necesita una lista de ARGUMENTOS: transpose() convierte la lista de
-# series en una lista de campos (todos los series_id juntos, etc.), y cada
-# campo entra como un argumento distinto de resumir_serie().
-resultados <- catalogo |>
-  transpose() |>
-  pmap(resumir_serie)
-
-secciones <- map_chr(resultados, function(r) {
-  if (is.null(r$error)) {
-    r$result
-  } else {
-    glue("## Serie no disponible\n\nError: {conditionMessage(r$error)}\n")
-  }
-})
-
-# PASO 7: un segundo chat, sin tools, actúa como EDITOR.
-# Las tools dan datos; los prompts dan roles. Componer chats especializados
-# es el salto de "consulta" a "sistema".
-prompt_editor <- glue(
-  "Eres el editor de un informe económico breve. Recibirás resúmenes de ",
-  "series del Banco Central de Chile. Escribe una síntesis ejecutiva de ",
-  "tres líneas que conecte los hallazgos entre series, sin agregar ",
-  "cifras nuevas ni recomendaciones."
-)
-
-chat_editor <- chat_openai(system_prompt = prompt_editor, echo = FALSE)
-
-sintesis <- chat_editor$chat(
-  paste(secciones, collapse = "\n")
-)
-
-encabezado <- glue(
-  "# Resumen de series del Banco Central de Chile\n\n",
-  "Generado el {format(Sys.Date())} con ellmer + bcchr.\n"
-)
-
-writeLines(
-  c(encabezado, "\n## Síntesis ejecutiva\n", sintesis, "\n", secciones),
-  "reporte_series.md"
-)
-
-# Cierre: con un buen prompt (bloque 2) y tools bien descritas (bloque 3)
-# se construyen sistemas: chat + tool + pmap + chat editor es un pipeline
-# completo, y cada pieza es chica y testeable por separado.
+# Cierre conceptual: prompts = conducta; tools = capacidades. Al coordinar
+# piezas pequeñas, especializadas y verificables pasamos de una conversación
+# a un sistema. La composición se esboza en las slides, sin agregar más código.

@@ -534,7 +534,9 @@ code_block("ellmer/05-prompt-parametrizado.R", c(
 ))
 ```
 
-::: {.fragment style="max-height: 300px; overflow-y: auto;"}
+<br>
+
+::: {.fragment style="max-height: 400px; overflow-y: auto;"}
 ```default
 # Rol
 Eres analista del mercado laboral chileno
@@ -587,32 +589,32 @@ seguido de una mejora parcial...
 Misma pregunta, distinto comportamiento: dos insights, una interpretación, del **país correcto**. Pero **se equivocó**: el trimestre con la mayor tasa fue <span style="color: var(--cl-teal); font-weight: 700;">mayo-julio (13,1%)</span>. Cifras plausibles, pero no verificables. Ahí entra el tool calling.
 :::
 
-## 3 · Tool calling [A mano]{.title-detail} {.code-full .code-small}
+## 3 · Tool calling [A mano]{.title-detail} {.code-small}
+
+**Nosotros** buscamos, elegimos y descargamos la serie.
 
 ```{r}
-#| label: ellmer-api-manual
-#| results: asis
-code_block("ellmer/07-api-manual.R", c(
-  "2-5" = "Buscamos la desocupación en el catálogo mensual.",
-  "7-8" = "Validamos el identificador elegido.",
-  "10-12" = "Descargamos los datos de la serie."
-))
+#| label: ellmer-api-manual-knitr
+#| cache: true
+#| echo: true
+#| output-location: fragment
+#| message: false
+#| warning: false
+library(bcchr)
+library(dplyr)
+token <- Sys.getenv("BCCH_TOKEN")
+
+candidatos <- resolve_series("desocupación INE", token = token)
+candidatos |>
+  select(series_id, frequency, spanish_title) |>
+  print(n = 5)
+
+codigo <- "F049.DES.TAS.INE9.10.M"
+
+datos <- get_series(codigo, from = "2025-01-01", token = token)
+
+print(datos, n = 1)
 ```
-
-::: {.fragment}
-**Salida**
-
-```default
-# A tibble: 196 × 4
-  series_id               date        value status_code
-  <chr>                   <date>      <dbl> <chr>
-  F049.DES.TAS.INE9.10.M  2010-03-01   9.23 OK
-  F049.DES.TAS.INE9.10.M  2010-04-01   8.84 OK
-  …
-```
-
-Hasta aquí, **nosotros** buscamos, elegimos y descargamos la serie. Ahora convertiremos esa consulta en una tool.
-:::
 
 ## 3 · Tool calling [Tool mínima]{.title-detail} {.code-full .code-small}
 

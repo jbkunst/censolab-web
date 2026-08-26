@@ -4,13 +4,8 @@ series:
     nombre: Tasa de desocupación nacional
     unidad: porcentaje
     desde: "2020-01-01"
-  imacec:
-    series_id: F032.IMC.IND.Z.Z.EP18.Z.Z.0.M
-    nombre: Imacec, serie original
-    unidad: índice 2018=100
+  pib:
+    series_id: F032.PIB.FLU.R.CLP.EP18.Z.Z.0.T
+    nombre: PIB, volumen a precios del año anterior encadenado
+    unidad: miles de millones de pesos encadenados
     desde: "2020-01-01"
-  remuneraciones:
-    series_id: G049.RMM.IND.INE23.R.M
-    nombre: Índice real de remuneraciones, serie empalmada
-    unidad: índice 2023=100
-    desde: "2023-01-01"

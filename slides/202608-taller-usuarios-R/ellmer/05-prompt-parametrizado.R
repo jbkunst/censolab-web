@@ -11,7 +11,7 @@ instruccion_insights <- glue(
 )
 
 prompt_analisis <- interpolate_file(
-  "R/prompt_desocupacion.md",
+  "prompts/prompt_desocupacion.md",
   contexto = contexto,
   instruccion_insights = instruccion_insights
 )

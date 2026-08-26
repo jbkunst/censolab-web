@@ -1,6 +1,4 @@
-hora_santiago <- function() {
-  format(Sys.time(), tz = "America/Santiago", usetz = TRUE)
-}
+hora_santiago <- function() format(Sys.time(), tz = "America/Santiago", usetz = TRUE)
 
 hora_santiago <- tool(
   hora_santiago,

@@ -1,1 +1,1 @@
-chat$chat("en una frase") # tiene memoria
+chat$chat("en una frase")

@@ -43,12 +43,6 @@ revealjs-plugins:
 
 ## Programa {.section-slide .has-image style="--section-image: url('/assets/slides/regions/14.jpg');"}
 
-<style>
-.reveal .slides > section.code-full pre > code.sourceCode {
-  max-height: var(--code-max-height, 600px);
-}
-</style>
-
 ```{r}
 #| label: setup-code-block
 #| include: false

@@ -78,6 +78,7 @@ format:
 - `.section-slide`: crea una portada de sección.
 - `.has-image` y `--section-image`: agregan una imagen de fondo.
 - `.section-subtitle`: presenta la bajada de una sección.
+- `.title-detail`: agrega un contexto secundario al título, con separador y espaciado.
 - `.center`: centra verticalmente una diapositiva cuando se necesita.
 :::
 
@@ -92,6 +93,10 @@ format:
 ::::
 
 Las imágenes propias de cada presentación deben declararse en `resources` dentro del YAML.
+
+## Título con contexto [Funcionamiento]{.title-detail}
+
+Usa `[Texto]{.title-detail}` al final del título para agregar el separador, el espacio y el color automáticamente.
 
 ## Sección con imagen {.section-slide .has-image style="--section-image: url('/assets/slides/regions/01.jpg');"}
 

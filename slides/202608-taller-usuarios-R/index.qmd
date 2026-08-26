@@ -41,6 +41,12 @@ revealjs-plugins:
   - codefrag
 ---
 
+<style>
+.reveal .slides > section.code-full pre > code.sourceCode {
+  max-height: var(--code-max-height, 600px);
+}
+</style>
+
 ```{r}
 #| label: setup-code-block
 #| include: false
@@ -55,9 +61,12 @@ revealjs-plugins:
 # - `descriptions` debe ser un vector nombrado: los nombres son rangos de líneas
 #   (por ejemplo, "2-5") y los valores contienen las explicaciones.
 # - Las líneas indicadas deben existir en el archivo leído.
-code_block <- function(path, descriptions = NULL) {
+code_block <- function(path, descriptions = NULL, replacements = NULL) {
   path <- file.path(dirname(knitr::current_input(dir = TRUE)), path)
   code <- readLines(path, encoding = "UTF-8", warn = FALSE)
+  for (source in names(replacements)) {
+    code <- gsub(source, replacements[[source]], code, fixed = TRUE)
+  }
   if (is.null(descriptions)) return(cat("```r", paste(code, collapse = "\n"), "```", sep = "\n"))
   ranges <- names(descriptions)
   first_lines <- as.integer(sub("-.*", "", ranges))
@@ -379,8 +388,8 @@ code_block("ellmer/01-setup.R", c(
 #| label: ellmer-chat-object
 #| results: asis
 code_block("ellmer/02-chat.R", c(
-  "1-8" = "El vocabulario mínimo para hablar de modelos de lenguaje.",
-  "10" = "Creamos el chat. Es un objeto R6 mutable porque una conversación tiene estado: el historial de turnos.",
+  "1-8" = "Elementos básicos para entender cómo interactuamos con modelos de lenguaje",
+  "10" = "Creamos el chat ¿Qué es?",
   "12" = "La clase lo delata."
 ))
 ```
@@ -428,37 +437,34 @@ dimensión biológica, cultural y social.
 ```
 :::
 
-## 1 · Configuración [No está actualizado]{.title-detail} {.code-full}
+## 1 · Configuración [No está actualizado]{.title-detail} {.code-full .code-small}
 
-```{r}
-#| label: ellmer-time-no-tool
-#| results: asis
-code_block("ellmer/03c-hora-sin-tool.R")
+```r
+chat$chat("¿qué hora es?")
 ```
 
 ::: {.fragment}
-**Salida**
-
 ```default
-No puedo ver la hora de tu dispositivo...
+No puedo ver la hora de tu dispositivo.
 ```
 :::
 
 ::: {.fragment}
-```{r}
-#| label: ellmer-time-tool
-#| results: asis
-code_block("ellmer/03d-hora-tool.R")
+```r
+hora_chile <- tool(
+  function() format(Sys.time(), tz = "America/Santiago"),
+  description = "Devuelve la fecha y hora actuales en Chile."
+)
+chat$register_tool(hora_chile)
+chat$chat("¿qué hora es?")
 ```
 :::
 
 ::: {.fragment}
-**Salida**
-
 ```default
-◯ [tool call] hora_santiago()
-● #> 2026-08-25 15:47:55 -04
-En Santiago de Chile son las 15:47.
+◯ [tool call] hora_chile()
+● #> 2026-08-26 13:40:57 -04
+En Chile son las 13:40:57.
 ```
 :::
 
@@ -470,7 +476,7 @@ En Santiago de Chile son las 15:47.
 code_block("ellmer/04-prompt-generico.R", c(
   "1-4" = "La pregunta: tasa de desocupación nacional en 2020, con cifras y descripción.",
   "6" = "Un chat sin system prompt: sin rol ni formato.",
-  "8" = "Resultado esperado: respuesta larga, sin foco, con cifras no verificables."
+  "8" = "Resultado esperado: respuesta larga y..."
 ))
 ```
 
@@ -478,15 +484,15 @@ code_block("ellmer/04-prompt-generico.R", c(
 **Salida**
 
 ```default
-En 2020, la tasa de desocupación nacional en Colombia mostró un
-fuerte deterioro como consecuencia de la pandemia...
-- Promedio anual 2020: 15,9%
-- Promedio anual 2019: 10,5%
-- Abril y mayo: la tasa superó el 20%...
-(cierre del año: cerca de 13%-14%)
+Durante 2020, la tasa de desocupación nacional en Argentina mostró
+un fuerte deterioro por el impacto de la pandemia...
+- 1er trimestre: 10,4%
+- 2do trimestre: 13,1%
+- 3er trimestre: 11,7%
+- 4to trimestre: 11,0%
 ```
 
-Respuesta larga, sin foco, con cifras no verificables... y del **país equivocado**.
+Respuesta larga, con cifras no verificables... y de *otro país*.
 :::
 
 ## 2 · Prompt [Anatomía de un buen prompt]{.title-detail} {.code-full}
@@ -513,29 +519,45 @@ Analiza los datos y destaca sus variaciones más importantes
 No incluyas introducción, conclusión, recomendaciones ni contenido adicional.
 ```
 
-## 2 · Prompt [Parametrizar con interpolate_file()]{.title-detail} {.code-full .code-small}
+## 2 · Prompt [Parametrizar con interpolate_file()]{.title-detail} {.code-full .code-small style="--code-max-height: 250px;"}
 
 ```{r}
 #| label: ellmer-prompt-parameterized
 #| results: asis
 code_block("ellmer/05-prompt-parametrizado.R", c(
-  "1-11" = "Los parámetros se controlan desde el código y se inyectan en `{{contexto}}` e `{{instruccion_insights}}`.",
-  "13-17" = "`interpolate_file()` reemplaza las variables `{{...}}` del .md con valores de R.",
-  "19" = "El prompt final, listo para usar como system prompt."
+  "1-11" = "Construimos el contexto y el formato con `glue()`.",
+  "13-17" = "Los insertamos en el archivo Markdown.",
+  "19" = "Imprimimos el system prompt resultante."
+), replacements = c(
+  "slides/202608-taller-usuarios-R/ellmer/prompt_desocupacion.md" =
+    "prompt/prompt_desocupacion.md"
 ))
 ```
 
-::: {.fragment}
-**Salida**
-
+::: {.fragment style="max-height: 300px; overflow-y: auto;"}
 ```default
 # Rol
 Eres analista del mercado laboral chileno
+
 # Contexto
-Estoy en un taller sobre R en santiago de chile...
+La audiencia necesita comprender la evolución de la desocupación en
+Chile sin requerir conocimientos previos de economía laboral.
+
+# Tarea
+Analiza los datos y destaca sus variaciones más importantes
+
+# Evidencia y límites
+- Prioriza los datos entregados y los resultados de las herramientas disponibles.
+- Puedes usar conocimiento general para aportar contexto, indicando cuando una
+  cifra sea aproximada o no pueda verificarse.
+- Distingue los datos observados de la interpretación y evita afirmar causalidad
+  sin evidencia suficiente.
+
 # Formato
-Entrega exactamente 2 insights breves y una propuesta de
-interpretación en una sola frase. Nada más.
+Entrega exactamente 2 insights breves y una propuesta de interpretación
+en una sola frase. Nada más.
+
+No incluyas introducción, conclusión, recomendaciones ni contenido adicional.
 ```
 :::
 
@@ -555,14 +577,14 @@ code_block("ellmer/06-bot-laboral.R", c(
 
 ```default
 1) La tasa de desocupación nacional subió con fuerza durante 2020 y
-   alcanzó su punto más alto entre junio-agosto, cuando llegó a 13,1%...
+   pasó de 8,2% en enero-marzo a un máximo de 13,1% en julio-septiembre...
 2) Hacia el cierre de 2020 la desocupación mostró una baja gradual,
-   ubicándose en 10,8% en octubre-diciembre...
+   llegando a 10,3% en octubre-diciembre...
 Esto sugiere que 2020 estuvo marcado por un shock laboral intenso
 seguido de una mejora parcial...
 ```
 
-Misma pregunta, distinto comportamiento: dos insights, una interpretación, del **país correcto**. Pero **se equivocó**: el trimestre con la mayor tasa fue <span style="color: var(--cl-teal); font-weight: 700;">mayo-julio (13,1%)</span> y el cierre de octubre-diciembre fue <span style="color: var(--cl-teal); font-weight: 700;">10,3%</span>. Cifras plausibles, pero no verificables — ahí entra el tool calling.
+Misma pregunta, distinto comportamiento: dos insights, una interpretación, del **país correcto**. Pero **se equivocó**: el trimestre con la mayor tasa fue <span style="color: var(--cl-teal); font-weight: 700;">mayo-julio (13,1%)</span>. Cifras plausibles, pero no verificables. Ahí entra el tool calling.
 :::
 
 ## 3 · Tool calling [A mano]{.title-detail} {.code-full .code-small}
@@ -571,10 +593,9 @@ Misma pregunta, distinto comportamiento: dos insights, una interpretación, del 
 #| label: ellmer-api-manual
 #| results: asis
 code_block("ellmer/07-api-manual.R", c(
-  "2-5" = "Buscamos candidatos en el catálogo por palabra y frecuencia.",
-  "7" = "Elegimos el identificador exacto: tasa de desocupación nacional, no ajustada.",
-  "9-10" = "Validamos qué es la serie.",
-  "12-15" = "Descargamos los datos desde 2020."
+  "2-5" = "Buscamos la desocupación en el catálogo mensual.",
+  "7-8" = "Validamos el identificador elegido.",
+  "10-12" = "Descargamos los datos de la serie."
 ))
 ```
 
@@ -582,16 +603,15 @@ code_block("ellmer/07-api-manual.R", c(
 **Salida**
 
 ```default
-# A tibble: 54 × 9
-  query        series_id          frequency
-  desocupacion F049.DES.TAS.INE9… MONTHLY
-  … (53 filas más)
-
-# A tibble: 78 × 4
-  series_id           date        value
-  F049.DES.TAS.INE9…  2020-07-01  13.1
-  … (77 filas más)
+# A tibble: 196 × 4
+  series_id               date        value status_code
+  <chr>                   <date>      <dbl> <chr>
+  F049.DES.TAS.INE9.10.M  2010-03-01   9.23 OK
+  F049.DES.TAS.INE9.10.M  2010-04-01   8.84 OK
+  …
 ```
+
+Hasta aquí, **nosotros** buscamos, elegimos y descargamos la serie. Ahora convertiremos esa consulta en una tool.
 :::
 
 ## 3 · Tool calling [Tool mínima]{.title-detail} {.code-full .code-small}
@@ -600,10 +620,10 @@ code_block("ellmer/07-api-manual.R", c(
 #| label: ellmer-tool-minimal
 #| results: asis
 code_block("ellmer/08-tool-minima.R", c(
-  "1-3" = "Una función sin argumentos: la serie está cableada.",
+  "1-3" = "La serie está fijada en el código",
   "5-8" = "`tool()` la envuelve con su descripción.",
   "10-11" = "Un chat nuevo, con la tool registrada.",
-  "13" = "El modelo decide cuándo llamarla."
+  "13-18" = "El modelo decide llamar la tool y luego interpreta sus datos."
 ))
 ```
 
@@ -611,83 +631,116 @@ code_block("ellmer/08-tool-minima.R", c(
 **Salida**
 
 ```default
-◯ [tool call] desocupacion_desde_2020()
-- Inicio de 2020: 7,4%–8,2%
-- Máximo: 13,1% en julio de 2020
-- 2021: cierra el año en 7,2%
-- 2022–2025: entre 8% y 9%
-- Último dato: 9,44% en junio de 2026
+◯ [tool call] desocupacion_full()
+● datos desde marzo de 2010
+
+1. 2020: salto abrupto desde 7,4% hasta un máximo de 13,1%.
+2. 2021: recuperación marcada; cierra cerca de 7,2%.
+3. 2022: estabilización alrededor de 8%.
+4. 2023–2025: persistencia entre 8% y 9%.
+5. 2026: nuevo aumento, hasta 9,44%.
 ```
 
-Limitación evidente: si quiero **otra serie u otro período**, esta tool no sirve.
+La tool hace dos cosas: entrega **datos actuales** y permite construir una **respuesta congruente con ellos**. Pero solo conoce una serie.
 :::
 
 ## 3 · Tool calling [Con argumentos]{.title-detail} {.code-full .code-small}
 
-```{r}
-#| label: ellmer-tool-arguments
-#| results: asis
-code_block("ellmer/09-tool-args.R", c(
-  "1-3" = "La función ahora recibe la serie y la fecha de inicio.",
-  "4-16" = "`type_string()` documenta cada argumento para que el modelo sepa qué valores poner.",
-  "17-21" = "Un chat con la tool registrada; la petición menciona 2015, no 2020."
-))
+```r
+descargar_serie <- function(series_id) {
+  get_series(series_id)
+}
+
+tool_serie <- tool(
+  descargar_serie,
+  description = "Descarga una serie del Banco Central de Chile.",
+  arguments = list(
+    series_id = type_string(
+      "Identificador exacto de la serie, p. ej. F049.DES.TAS.INE9.10.M"
+    )
+  )
+)
+
+chat_con_args <- chat_openai(echo = TRUE)
+chat_con_args$register_tool(tool_serie)
+
+pregunta_pib <- glue(
+  "Analiza el PIB trimestral en volumen de Chile desde 2020 y describe sus principales etapas."
+)
+
+# El chat puede descargar, pero no buscar el identificador correcto.
+chat_con_args$chat(pregunta_pib)
 ```
 
 ::: {.fragment}
-**Salida**
-
 ```default
-◯ [tool call] descargar_serie(series_id = "F049.DES.TAS.INE9.10.M",
-                               from = "2015-01-01")
-Máximo del período: 13,09% en jul-2020. Último dato: 9,44% en jun-2026.
+◯ [tool call] descargar_serie(
+    series_id = "F032.PIB.FLU.R.CLP.TRI.Z.Z.0.T"
+  )
+■ [tool error] Error de la API del Banco Central.
 ```
 
-El modelo **elige los argumentos** a partir de la petición: convirtió "desde 2015" en `from = "2015-01-01"`.
+El modelo **inventó el identificador**: puede descargar, pero no sabe buscar en el catálogo.
 :::
 
-## 3 · Tool calling [Callejón sin salida]{.title-detail} {.code-full}
+## 3 · Tool calling [Misma pregunta, más tools]{.title-detail} {.code-full .code-small}
 
-```{r}
-#| label: ellmer-dead-end
-#| results: asis
-code_block("ellmer/10-callejon.R", c(
-  "2-3" = "El chat solo tiene la tool de descarga.",
-  "6" = "Una petición ambigua, sin identificador."
-))
+La misma `pregunta_pib`, en un chat nuevo:
+
+```r
+chat_tools <- chat_openai(echo = TRUE)
+chat_tools$register_tool(resolver_serie)   # buscar
+chat_tools$register_tool(describir_serie) # inspeccionar
+chat_tools$register_tool(tool_serie)      # descargar
+chat_tools$chat(pregunta_pib)
 ```
 
 ::: {.fragment}
-**Salida**
-
 ```default
-¿De qué dato exacto de "depósitos a plazo en UF" hablas?
-Puede referirse a tasas de interés, montos, captaciones nuevas...
-necesito al menos una de estas precisiones:
-1. qué variable buscas,
-2. desde qué fecha,
-3. y si la quieres mensual o diaria.
+◯ [tool call] resolve_series("PIB volumen", frequency = "QUARTERLY")
+◯ [tool call] descargar_serie("F032.PIB.FLU.R.CLP.EP18.Z.Z.1.T")
+
+1. Choque pandémico y desplome abrupto: 2020.
+2. Recuperación acelerada: 2021.
+3. Ajuste y estancamiento: 2022.
+4. Recuperación lenta y crecimiento moderado: 2023–2026.
 ```
 
-Callejón sin salida: pide precisiones, pero **no puede ofrecer opciones reales** — no puede buscar en el catálogo.
+Ahora encuentra una serie válida y fundamenta la respuesta en sus datos.
 :::
 
-## 3 · Tool calling [Buscar y validar]{.title-detail} {.code-full .code-small}
+::: {.fragment}
+La pregunta y el chat base son idénticos. Solo cambia lo que el modelo **puede hacer**.
+:::
 
-```{r}
-#| label: ellmer-search-validate
-#| results: asis
-code_block("ellmer/11-buscar-validar.R", c(
-  "1-7" = "La tool de búsqueda: el modelo puede explorar el catálogo.",
-  "8-9" = "`type_ignore()` oculta `token` y `verbose`: R los resuelve, no el modelo.",
-  "13-21" = "La tool de validación confirma el identificador antes de descargar.",
-  "24-39" = "El prompt fija la conducta —mostrar opciones reales y PREGUNTAR, nunca inventar— y el chat registra las tres tools."
-))
+## 3 · Tool calling [Fallar y recuperarse]{.title-detail} {.code-full .code-small}
+
+```r
+chat_iteracion$chat(
+  glue(
+    "Busca el PIB en volumen desde 2020. ",
+    "En el primer intento usa frequency = 'TRIMESTRAL'."
+  )
+)
 ```
+
+::: {.fragment}
+```default
+◯ [tool call] resolve_series("pib volumen", frequency = "TRIMESTRAL")
+■ [tool error] Frecuencia inválida.
+
+◯ [tool call] resolve_series("pib volumen", frequency = "QUARTERLY")
+◯ [tool call] describe_series("F032.PIB.FLU.R.CLP.EP18.Z.Z.0.T")
+◯ [tool call] descargar_serie("F032.PIB.FLU.R.CLP.EP18.Z.Z.0.T")
+● datos descargados correctamente
+```
+
+El error también es información: vuelve al historial y permite que el modelo **corrija el argumento y continúe**.
+:::
 
 ## 3 · Tool calling [El tool loop, por dentro]{.title-detail} {.center}
 
-El modelo no ejecuta R directamente: `{ellmer}` ejecuta la función y devuelve el resultado al **mismo objeto `Chat`**. El ciclo continúa hasta producir una respuesta final.
+El modelo elige la tool y sus argumentos; `{ellmer}` coordina su ejecución en R y devuelve el resultado o error. El ciclo se repite hasta obtener una respuesta final.
 
 ```{dot}
 //| label: tool-loop-diagram
@@ -727,7 +780,7 @@ digraph tool_loop {
   ];
 
   request [label="El modelo solicita\nuna tool"];
-  execute [label="ellmer ejecuta\nla función de R"];
+  execute [label="ellmer coordina\nla ejecución en R"];
   history [label="El resultado o error\nentra al historial", fillcolor="#F2F7F7"];
   decide [label="El modelo\ndecide", shape=diamond, fillcolor="#F2F7F7", color="#6AAAB2"];
   answer [label="Respuesta para\nel usuario", fillcolor="#0E4F5A", fontcolor="#FFFFFF"];
@@ -740,140 +793,75 @@ digraph tool_loop {
 }
 ```
 
-## 3 · Tool calling [Aclaración fundada]{.title-detail} {.code-full}
+## 3 · Tool calling [Especializar la conducta]{.title-detail} {.code-full .code-small style="--code-max-height: 145px;"}
 
-```{r}
-#| label: ellmer-clarification
-#| results: asis
-code_block("ellmer/12-aclaracion.R", c(
-  "1" = "La misma petición ambigua del callejón sin salida.",
-  "5" = "El usuario precisa en el siguiente turno."
-))
+```r
+prompt_analista <- glue(
+  "Eres un analista económico senior.",
+  "Basa el análisis en las tools.",
+  "Prefiere una serie desestacionalizada.",
+  "No confundas flujo de producción",
+  "con stock de riqueza.",
+  "Resume la evolución en 4 a 6 etapas."
+)
 ```
 
 ::: {.fragment}
-**Salida**
+```r
+chat_analista <- chat_openai(system_prompt = prompt_analista)
+chat_analista$register_tool(resolver_serie)
+chat_analista$register_tool(describir_serie)
+chat_analista$register_tool(tool_serie)
 
-```default
-◯ [tool call] resolve_series("depósitos plazo UF")  → []   sin resultados
-◯ [tool call] resolve_series("depósitos UF")        → []   reintenta
-◯ [tool call] resolve_series("plazo UF")            → candidatos
-◯ [tool call] resolve_series("depósitos a plazo")   → candidatos
-
-El modelo ofrece opciones reales del catálogo y pregunta cuál prefiere.
-
---- segundo turno: "La de saldos, mensual. Descárgala desde 2020." ---
-◯ describe_series(...)    valida el identificador
-◯ descargar_serie(...)    descarga los datos
+chat_analista$chat("Analiza el PIB en volumen e identifica etapas.")
 ```
-
-El loop en acción: la búsqueda devuelve **cero resultados**, ese resultado vuelve al historial y el modelo **reintenta**. Luego ofrece opciones reales; en el segundo turno, valida y descarga.
 :::
 
-## 3 · Tool calling [Una línea de prompt]{.title-detail} {.code-full}
-
-```{r}
-#| label: ellmer-prompt-summary
-#| results: asis
-code_block("ellmer/13-prompt-resumen.R", c(
-  "2-6" = "Mismo chat, mismas tools; solo cambia el system prompt.",
-  "8-12" = "Otro chat, otra conducta.",
-  "14" = "La misma descarga de siempre."
-))
-```
-
-::: {.fragment}
-**Salida**
-
+::: {.fragment style="max-height: 260px; overflow-y: auto;"}
 ```default
-◯ [tool call] descargar_serie("F049.DES.TAS.INE9.10.M", from = "2020-01-01")
-• La serie subió de 7.44 en 2020-01 a un máximo de 13.09 en 2020-07,
-  un alza de 5.65 puntos.
-• El último dato es 9.44 en 2026-06, sobre 8.05 en 2025-12.
-```
+◯ [tool call] resolve_series(
+    query = "PIB volumen desestacionalizado", frequency = "QUARTERLY"
+  )
+◯ [tool call] describe_series(
+    series_id = "F032.PIB.FLU.R.CLP.EP18.Z.Z.1.T"
+  )
+◯ [tool call] descargar_serie(
+    series_id = "F032.PIB.FLU.R.CLP.EP18.Z.Z.1.T"
+  )
 
-Exactamente **dos insights, con cifras de la propia serie**. Nada más.
+Serie trimestral desestacionalizada, 1996T1–2026T2:
+
+1. Expansión fuerte y posterior freno: 1996T1–1999T2.
+2. Recuperación y expansión prolongada: 1999T3–2008T2.
+3. Caída y recuperación posterior: 2008T2–2013T4.
+4. Crecimiento bajo o meseta ascendente: 2014T1–2019T3.
+5. Doble shock y fuerte volatilidad: 2019T4–2022T1.
+6. Estancamiento relativo y avance acotado: 2022T2–2026T2.
+```
 :::
 
-## 3 · Tool calling [El catálogo]{.title-detail}
+## De una conversación a un sistema {.center}
 
-Un YAML versionado define las series del reporte.
-
-```yaml
-series:
-  desocupacion:
-    series_id: F049.DES.TAS.INE9.10.M
-    nombre: Tasa de desocupación nacional
-    unidad: porcentaje
-    desde: "2020-01-01"
-  imacec:
-    series_id: F032.IMC.IND.Z.Z.EP18.Z.Z.0.M
-    nombre: Imacec, serie original
-    unidad: índice 2018=100
-    desde: "2020-01-01"
-  remuneraciones:
-    series_id: G049.RMM.IND.INE23.R.M
-    nombre: Índice real de remuneraciones, serie empalmada
-    unidad: índice 2023=100
-    desde: "2023-01-01"
-```
-
-## 3 · Tool calling [Un chat por serie]{.title-detail} {.code-full .code-small}
-
-```{r}
-#| label: ellmer-pipeline
-#| results: asis
-code_block("ellmer/14-pipeline.R", c(
-  "1" = "El catálogo versionado entra como datos.",
-  "4-13" = "Cada serie obtiene su propio chat: descarga y resume.",
-  "15-19" = "`transpose()` + `pmap()`: un chat por serie.",
-  "21-27" = "`map_chr()` extrae cada resultado y convierte los errores en una sección legible."
-))
-```
+<div class="cards" style="--cards: 3" data-flow data-center aria-label="Composición conceptual de un sistema con chats y herramientas">
+<article class="fragment">
+  <small>01 · Conducta</small>
+  <h3>Prompt</h3>
+  <p>Define el rol, los límites y la forma de responder.</p>
+</article>
+<article class="fragment">
+  <small>02 · Capacidad</small>
+  <h3>Tools</h3>
+  <p>Permiten buscar, validar y consultar datos reales.</p>
+</article>
+<article class="fragment">
+  <small>03 · Composición</small>
+  <h3>Sistema</h3>
+  <p>Combina piezas pequeñas y especializadas en un flujo verificable.</p>
+</article>
+</div>
 
 ::: {.fragment}
-**Salida**
-
-```default
-## Tasa de desocupación nacional
-Identificador: F049.DES.TAS.INE9.10.M (porcentaje)
-• Máximo de 13.0912 en 2020-07…
-
-## Imacec, serie original
-Identificador: F032.IMC.IND.Z.Z.EP18.Z.Z.0.M (índice 2018=100)
-• Mínimo de 85.009 en 2020-07; máximo de 129.2022 en 2025-12…
-
-## Índice real de remuneraciones, serie empalmada
-• Sube de 99.6505 en 2023-01 a 110.2155 en 2026-06…
-```
-
-`secciones` contiene tres textos independientes, uno por serie. Si una consulta falla, conserva una sección con el error y el pipeline continúa.
-:::
-
-## 3 · Tool calling [El chat editor]{.title-detail} {.code-full .code-small}
-
-```{r}
-#| label: ellmer-chat-editor
-#| results: asis
-code_block("ellmer/15-chat-editor.R", c(
-  "3-8" = "El editor no tiene tools: solo un rol.",
-  "10" = "Un chat más, especializado.",
-  "12-14" = "Recibe `secciones` y escribe la síntesis.",
-  "16-24" = "Une encabezado, síntesis y secciones en `reporte_series.md`: el artefacto final."
-))
-```
-
-::: {.fragment}
-**Salida**
-
-```default
-La desocupación se deterioró a mediados de 2020 y volvió a subir hacia
-2026-06; en paralelo, el Imacec cayó en 2020-07 y luego avanzó con
-fuerza; desde 2023, las remuneraciones reales suben, con la actividad
-mejorando sin normalización plena de la desocupación.
-```
-
-chat + tool + pmap + chat editor: **un pipeline completo** que produce `reporte_series.md`, y cada pieza es chica y testeable por separado.
+Así se construye CensoLab: no con un prompt gigante, sino coordinando **conducta y capacidades**.
 :::
 
 ## {shiny} · Cinco aplicaciones

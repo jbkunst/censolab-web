@@ -1,8 +1,8 @@
 numero_insights <- 2L
 
 contexto <- glue(
-  "Estoy en un taller sobre R en santiago de chile. La audiencia necesita una explicación ",
-  "breve y accesible."
+  "La audiencia necesita comprender la evolución de la desocupación en Chile ",
+  "sin requerir conocimientos previos de economía laboral."
 )
 
 instruccion_insights <- glue(
@@ -11,7 +11,7 @@ instruccion_insights <- glue(
 )
 
 prompt_analisis <- interpolate_file(
-  "prompts/prompt_desocupacion.md",
+  "slides/202608-taller-usuarios-R/ellmer/prompt_desocupacion.md",
   contexto = contexto,
   instruccion_insights = instruccion_insights
 )

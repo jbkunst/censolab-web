@@ -427,6 +427,18 @@
   line-height: 1.05;
 }
 
+/* Secondary context inside a slide title, including its separator. */
+.reveal .slides > section:not(#title-slide) h2 .title-detail {
+  color: var(--cl-teal-soft);
+  white-space: nowrap;
+}
+
+.reveal .slides > section:not(#title-slide) h2 .title-detail::before {
+  content: "/";
+  display: inline-block;
+  margin: 0 .24em;
+}
+
 .reveal .slides > section:not(#title-slide) h3 {
   width: 74%;
   margin: 20px 0 36px;

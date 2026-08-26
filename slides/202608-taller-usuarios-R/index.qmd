@@ -55,7 +55,12 @@ revealjs-plugins:
 # - `descriptions` debe ser un vector nombrado: los nombres son rangos de líneas
 #   (por ejemplo, "2-5") y los valores contienen las explicaciones.
 # - Las líneas indicadas deben existir en el archivo leído.
+.libPaths(Sys.getenv("R_LIBS_USER"))
 code_block <- function(path, descriptions = NULL) {
+  # Resuelve la ruta relativa a este QMD, sin importar el working directory.
+  root <- rprojroot::find_root(rprojroot::is_git_root)
+  qmd_dir <- file.path(root, "slides/202608-taller-usuarios-R")
+  path <- file.path(qmd_dir, path)
   code <- readLines(path, encoding = "UTF-8", warn = FALSE)
   if (is.null(descriptions)) return(cat("```r", paste(code, collapse = "\n"), "```", sep = "\n"))
   ranges <- names(descriptions)
@@ -83,14 +88,101 @@ code_block <- function(path, descriptions = NULL) {
 ## Problema {.section-slide .has-image style="--section-image: url('/assets/slides/regions/02.jpg');"}
 
 ::: {.section-subtitle}
-Los datos están ahí. Llegar a ellos todavía cuesta.
+El Censo, una gran fuente para conocernos.
 :::
+
+## Atributos y escalas
+
+:::: {.columns}
+::: {.column width="50%"}
+### Atributos
+
+- Edad
+- Educación
+- Migración
+- Ocupación
+:::
+
+::: {.column width="50%"}
+### Escalas
+
+- País
+- Regiones
+- Comunas
+- Unidades territoriales pequeñas
+:::
+::::
+
+## ¿Cómo aprovecharlo? {.center}
+
+<div class="cards" style="--cards: 3; grid-template-columns: 1fr 1.2fr 1fr; align-items: center; margin-top: 60px;" aria-label="Dos formas de aprovechar el Censo, con CensoLab entre ambas">
+<article class="fragment">
+  <small>Opción 01</small>
+  <h3>Productos predefinidos</h3>
+  <p>Simples de usar, pero limitados a cruces y resultados ya preparados.</p>
+  <code>Excel · presentaciones · documentos</code>
+</article>
+<article class="fragment">
+  <small>Opción 02</small>
+  <h3>Microdatos y bases públicas</h3>
+  <p>Mucho más flexibles, pero requieren software y conocimientos técnicos.</p>
+  <code>R · Python · SQL</code>
+</article>
+<div class="fragment" style="grid-column: 2; grid-row: 1; text-align: center; padding: 40px 26px; border-radius: 16px;">
+  <img src="/assets/brand/censolab-logo-teal.svg" alt="Logo de CensoLab" style="width: 180px; margin: 0 auto 20px;">
+  <h3 style="margin: 0; color: var(--cl-teal); font-size: 52px;">CensoLab</h3>
+  <p style="margin: 10px 0 0; font-size: 26px;">En esta tierra de nadie.</p>
+</div>
+</div>
+
+## ¿Qué queríamos construir?
+
+::: {.incremental}
+
+1. **Aprovechar el microdato**
+   Conservar la granularidad, sin que se pierda por un intermediario.
+
+2. **Integrar la información**
+   Reunir los datos en un mismo entorno.
+
+3. **Visualizar y analizar**
+   Con herramientas de visualización y análisis a disposición del usuario.
+
+4. **Acompañar la exploración** *(principio)*
+   Capaz de acompañar una búsqueda que no siempre sigue un camino lineal, como el pensamiento.
+
+:::
+
+##  {.section-slide .has-image style="--section-image: url('/assets/slides/regions/11.jpg');"}
+
+<p style="position: absolute; right: 70px; bottom: 130px; width: 72%; margin: 0; color: #FFFFFF; font-family: 'IBM Plex Sans', sans-serif; font-size: 82px; font-weight: 200 !important; letter-spacing: -0.035em; line-height: 1.02; text-align: right;">
+Una herramienta <strong style="color: inherit; font-weight: 400;">simple</strong> y <strong style="color: inherit; font-weight: 400;">flexible</strong>, capaz de moverse según la <strong style="color: inherit; font-weight: 400;">imaginación</strong> del usuario.
+</p>
 
 ## Funcionalidades & Demo {.section-slide .has-image style="--section-image: url('/assets/slides/regions/04.jpg');"}
 
 ::: {.section-subtitle}
 Preguntar, explorar y visualizar el territorio.
 :::
+
+## Demo en vivo
+
+<div style="position: relative; width: 100%; height: 680px;">
+  <iframe
+    src="https://censolab.cl/app/"
+    title="CensoLab · Plataforma de exploración de datos censales"
+    loading="eager"
+    scrolling="no"
+    style="width: 100%; height: 100%; border: 0; border-radius: 18px; background: white; pointer-events: none;"
+  ></iframe>
+  <a
+    href="https://censolab.cl/app/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Abrir CensoLab en una pestaña nueva"
+    style="position: absolute; inset: 0; border-radius: 18px;"
+  ></a>
+</div>
 
 ## Arquitectura {.section-slide .has-image style="--section-image: url('/assets/slides/regions/05.jpg');"}
 
@@ -151,7 +243,7 @@ Cada componente se administra y documenta en un repositorio propio.
 :::
 
 
-## 02 · Aplicación&nbsp;<span style="color: #6aaab2;">/&nbsp;Funcionamiento</span> {.center}
+## 02 · Aplicación [Funcionamiento]{.title-detail} {.center}
 
 ::: {.incremental}
 
@@ -168,7 +260,7 @@ Cada componente se administra y documenta en un repositorio propio.
    Resume los principales indicadores inspirado en *DataChile*, además de poder navegar por niveles de la jerarquía geográfica.
 :::
 
-## 02 · Aplicación&nbsp;<span style="color: #6aaab2;">/&nbsp;Despliegue</span> {.center}
+## 02 · Aplicación [Despliegue]{.title-detail} {.center}
 
 - Los cambios integrados en `dev` publican **CensoLabDev** para su validación; luego se promueven a `main` para publicar **CensoLab**.
 - Existen dos versiones de la aplicación alojadas en **Posit Connect Cloud**, con despliegues automáticos para ambos entornos.
@@ -224,6 +316,487 @@ Geografía, consistencia y evidencia en cada respuesta.
 
 ::: {.section-subtitle}
 {ellmer} + {shiny} + {shinychat}
+:::
+
+## {ellmer}
+
+Prompts y tool calling, paso a paso.
+
+::: {.incremental}
+1. **Configuración**
+   Credenciales, el objeto `chat` y su estado.
+2. **Prompt**
+   De un prompt genérico a uno estructurado y parametrizado.
+3. **Tool calling**
+   Darle herramientas al modelo para consultar datos reales.
+:::
+
+::: {.fragment}
+<p style="font-size: 30px; line-height: 1.35; border-left: 4px solid var(--cl-teal); padding-left: 20px; margin-top: 40px;">Con un buen <strong>prompt</strong> (conducta) y <strong>tools</strong> bien descritas (capacidad) se construyen sistemas: pipelines de chats especializados que consultan datos reales y producen artefactos.</p>
+:::
+
+## 1 · Configuración [Credenciales]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/01-setup.R", c(
+  "1-4" = "Las credenciales viven en `.Renviron`, fuera del código, y R las lee al inicio de la sesión.",
+  "6-8" = "Verificamos que la clave de OpenAI esté disponible.",
+  "10-12" = "Lo mismo para el token del Banco Central de Chile."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+[1] TRUE
+[1] TRUE
+```
+:::
+
+## 1 · Configuración [El objeto chat]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/02-chat.R", c(
+  "1-8" = "El vocabulario mínimo para hablar de modelos de lenguaje.",
+  "10" = "Creamos el chat. Es un objeto R6 mutable porque una conversación tiene estado: el historial de turnos.",
+  "12" = "La clase lo delata."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+[1] "Chat" "R6"
+```
+:::
+
+## 1 · Configuración [El chat conversa]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/03a-antropologia.R")
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+La antropología es la ciencia que estudia al ser humano de manera
+integral: su origen, evolución, cultura, sociedad, lenguaje y formas
+de vida, tanto en el pasado como en el presente...
+```
+:::
+
+::: {.fragment}
+```{r}
+#| results: asis
+code_block("ellmer/03b-frase.R")
+```
+:::
+
+::: {.fragment}
+**Salida**
+
+```default
+La antropología es la ciencia que estudia al ser humano en su
+dimensión biológica, cultural y social.
+```
+:::
+
+## 1 · Configuración [No está actualizado]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/03c-hora-sin-tool.R")
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+No puedo ver la hora de tu dispositivo...
+```
+:::
+
+::: {.fragment}
+```{r}
+#| results: asis
+code_block("ellmer/03d-hora-tool.R")
+```
+:::
+
+::: {.fragment}
+**Salida**
+
+```default
+◯ [tool call] hora_santiago()
+● #> 2026-08-25 15:47:55 -04
+En Santiago de Chile son las 15:47.
+```
+:::
+
+## 2 · Prompt [Prompt genérico]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/04-prompt-generico.R", c(
+  "1-4" = "La pregunta: tasa de desocupación nacional en 2020, con cifras y descripción.",
+  "6" = "Un chat sin system prompt: sin rol ni formato.",
+  "8" = "Resultado esperado: respuesta larga, sin foco, con cifras no verificables."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+En 2020, la tasa de desocupación nacional en Colombia mostró un
+fuerte deterioro como consecuencia de la pandemia...
+- Promedio anual 2020: 15,9%
+- Promedio anual 2019: 10,5%
+- Abril y mayo: la tasa superó el 20%...
+(cierre del año: cerca de 13%-14%)
+```
+
+Respuesta larga, sin foco, con cifras no verificables... y del **país equivocado**.
+:::
+
+## 2 · Prompt [Anatomía de un buen prompt]{.title-detail} {.code-full}
+
+`prompts/prompt_desocupacion.md`:
+
+```{.markdown code-line-numbers="|1-2|4-5|7-8|10-13|15-17"}
+# Rol
+Eres analista del mercado laboral chileno
+
+# Contexto
+{{contexto}}
+
+# Tarea
+Analiza los datos y destaca sus variaciones más importantes
+
+# Evidencia y límites
+- Prioriza los datos entregados y los resultados de las herramientas disponibles.
+- Puedes usar conocimiento general, indicando cuando una cifra sea aproximada o no verificable.
+- Distingue los datos observados de la interpretación; evita afirmar causalidad sin evidencia.
+
+# Formato
+{{instruccion_insights}}
+No incluyas introducción, conclusión, recomendaciones ni contenido adicional.
+```
+
+## 2 · Prompt [Parametrizar con interpolate_file()]{.title-detail} {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("ellmer/05-prompt-parametrizado.R", c(
+  "1-11" = "Los parámetros se controlan desde el código y se inyectan en `{{contexto}}` e `{{instruccion_insights}}`.",
+  "13-17" = "`interpolate_file()` reemplaza las variables `{{...}}` del .md con valores de R.",
+  "19" = "El prompt final, listo para usar como system prompt."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+# Rol
+Eres analista del mercado laboral chileno
+# Contexto
+Estoy en un taller sobre R en santiago de chile...
+# Formato
+Entrega exactamente 2 insights breves y una propuesta de
+interpretación en una sola frase. Nada más.
+```
+:::
+
+## 2 · Prompt [Misma pregunta, otro comportamiento]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/06-bot-laboral.R", c(
+  "1-3" = "El prompt parametrizado entra como system prompt.",
+  "5" = "La misma pregunta del prompt genérico."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+1) La tasa de desocupación nacional subió con fuerza durante 2020 y
+   alcanzó su punto más alto entre junio-agosto, cuando llegó a 13,1%...
+2) Hacia el cierre de 2020 la desocupación mostró una baja gradual,
+   ubicándose en 10,8% en octubre-diciembre...
+Esto sugiere que 2020 estuvo marcado por un shock laboral intenso
+seguido de una mejora parcial...
+```
+
+Misma pregunta, distinto comportamiento: dos insights, una interpretación, del **país correcto**. Pero **se equivocó**: el trimestre con la mayor tasa fue <span style="color: var(--cl-teal); font-weight: 700;">mayo-julio (13,1%)</span> y el cierre de octubre-diciembre fue <span style="color: var(--cl-teal); font-weight: 700;">10,3%</span>. Cifras plausibles, pero no verificables — ahí entra el tool calling.
+:::
+
+## 3 · Tool calling [A mano]{.title-detail} {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("ellmer/07-api-manual.R", c(
+  "2-5" = "Buscamos candidatos en el catálogo por palabra y frecuencia.",
+  "7" = "Elegimos el identificador exacto: tasa de desocupación nacional, no ajustada.",
+  "9-10" = "Validamos qué es la serie.",
+  "12-15" = "Descargamos los datos desde 2020."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+# A tibble: 54 × 9
+  query        series_id          frequency
+  desocupacion F049.DES.TAS.INE9… MONTHLY
+  … (53 filas más)
+
+# A tibble: 78 × 4
+  series_id           date        value
+  F049.DES.TAS.INE9…  2020-07-01  13.1
+  … (77 filas más)
+```
+:::
+
+## 3 · Tool calling [Tool mínima]{.title-detail} {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("ellmer/08-tool-minima.R", c(
+  "1-3" = "Una función sin argumentos: la serie está cableada.",
+  "5-8" = "`tool()` la envuelve con su descripción.",
+  "10-11" = "Un chat nuevo, con la tool registrada.",
+  "13" = "El modelo decide cuándo llamarla."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+◯ [tool call] desocupacion_desde_2020()
+- Inicio de 2020: 7,4%–8,2%
+- Máximo: 13,1% en julio de 2020
+- 2021: cierra el año en 7,2%
+- 2022–2025: entre 8% y 9%
+- Último dato: 9,44% en junio de 2026
+```
+
+Limitación evidente: si quiero **otra serie u otro período**, esta tool no sirve.
+:::
+
+## 3 · Tool calling [Con argumentos]{.title-detail} {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("ellmer/09-tool-args.R", c(
+  "1-3" = "La función ahora recibe la serie y la fecha de inicio.",
+  "4-16" = "`type_string()` documenta cada argumento para que el modelo sepa qué valores poner.",
+  "17-21" = "Un chat con la tool registrada; la petición menciona 2015, no 2020."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+◯ [tool call] descargar_serie(series_id = "F049.DES.TAS.INE9.10.M",
+                               from = "2015-01-01")
+Máximo del período: 13,09% en jul-2020. Último dato: 9,44% en jun-2026.
+```
+
+El modelo **elige los argumentos** a partir de la petición: convirtió "desde 2015" en `from = "2015-01-01"`.
+:::
+
+## 3 · Tool calling [Callejón sin salida]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/10-callejon.R", c(
+  "2-3" = "El chat solo tiene la tool de descarga.",
+  "6" = "Una petición ambigua, sin identificador."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+¿De qué dato exacto de "depósitos a plazo en UF" hablas?
+Puede referirse a tasas de interés, montos, captaciones nuevas...
+necesito al menos una de estas precisiones:
+1. qué variable buscas,
+2. desde qué fecha,
+3. y si la quieres mensual o diaria.
+```
+
+Callejón sin salida: pide precisiones, pero **no puede ofrecer opciones reales** — no puede buscar en el catálogo.
+:::
+
+## 3 · Tool calling [Buscar y validar]{.title-detail} {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("ellmer/11-buscar-validar.R", c(
+  "1-7" = "La tool de búsqueda: el modelo puede explorar el catálogo.",
+  "8-9" = "`type_ignore()` oculta `token` y `verbose`: R los resuelve, no el modelo.",
+  "13-21" = "La tool de validación confirma el identificador antes de descargar.",
+  "24-39" = "El prompt fija la conducta —mostrar opciones reales y PREGUNTAR, nunca inventar— y el chat registra las tres tools."
+))
+```
+
+## 3 · Tool calling [El tool loop, por dentro]{.title-detail}
+
+```{mermaid}
+flowchart LR
+  A["1 · El modelo solicita<br/>una tool"] --> B["2 · ellmer ejecuta<br/>la función de R"]
+  B --> C["3 · Resultado o error<br/>entra al historial"]
+  C -->|ellmer reenvía la conversación| D{"4 · El modelo<br/>decide"}
+  D -->|otra tool| A
+  D -->|respuesta final| E["Texto para<br/>el usuario"]
+```
+
+El ciclo ocurre dentro del **mismo objeto `Chat`**: el historial conserva cada solicitud, resultado y error. Termina cuando el modelo responde con texto.
+
+## 3 · Tool calling [Aclaración fundada]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/12-aclaracion.R", c(
+  "1" = "La misma petición ambigua del callejón sin salida.",
+  "5" = "El usuario precisa en el siguiente turno."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+◯ [tool call] resolve_series("depósitos plazo UF")  → []   sin resultados
+◯ [tool call] resolve_series("depósitos UF")        → []   reintenta
+◯ [tool call] resolve_series("plazo UF")            → candidatos
+◯ [tool call] resolve_series("depósitos a plazo")   → candidatos
+
+El modelo ofrece opciones reales del catálogo y pregunta cuál prefiere.
+
+--- segundo turno: "La de saldos, mensual. Descárgala desde 2020." ---
+◯ describe_series(...)    valida el identificador
+◯ descargar_serie(...)    descarga los datos
+```
+
+El loop en acción: la búsqueda devuelve **cero resultados**, ese resultado vuelve al historial y el modelo **reintenta**. Luego ofrece opciones reales; en el segundo turno, valida y descarga.
+:::
+
+## 3 · Tool calling [Una línea de prompt]{.title-detail} {.code-full}
+
+```{r}
+#| results: asis
+code_block("ellmer/13-prompt-resumen.R", c(
+  "2-6" = "Mismo chat, mismas tools; solo cambia el system prompt.",
+  "8-12" = "Otro chat, otra conducta.",
+  "14" = "La misma descarga de siempre."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+◯ [tool call] descargar_serie("F049.DES.TAS.INE9.10.M", from = "2020-01-01")
+• La serie subió de 7.44 en 2020-01 a un máximo de 13.09 en 2020-07,
+  un alza de 5.65 puntos.
+• El último dato es 9.44 en 2026-06, sobre 8.05 en 2025-12.
+```
+
+Exactamente **dos insights, con cifras de la propia serie**. Nada más.
+:::
+
+## 3 · Tool calling [El catálogo]{.title-detail}
+
+Un YAML versionado define las series del reporte.
+
+```yaml
+series:
+  desocupacion:
+    series_id: F049.DES.TAS.INE9.10.M
+    nombre: Tasa de desocupación nacional
+    unidad: porcentaje
+    desde: "2020-01-01"
+  imacec:
+    series_id: F032.IMC.IND.Z.Z.EP18.Z.Z.0.M
+    nombre: Imacec, serie original
+    unidad: índice 2018=100
+    desde: "2020-01-01"
+  remuneraciones:
+    series_id: G049.RMM.IND.INE23.R.M
+    nombre: Índice real de remuneraciones, serie empalmada
+    unidad: índice 2023=100
+    desde: "2023-01-01"
+```
+
+## 3 · Tool calling [Un chat por serie]{.title-detail} {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("ellmer/14-pipeline.R", c(
+  "1" = "El catálogo versionado entra como datos.",
+  "4-13" = "Cada serie obtiene su propio chat: descarga y resume.",
+  "15-19" = "`transpose()` + `pmap()`: un chat por serie.",
+  "21-27" = "`map_chr()` extrae cada resultado y convierte los errores en una sección legible."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+## Tasa de desocupación nacional
+Identificador: F049.DES.TAS.INE9.10.M (porcentaje)
+• Máximo de 13.0912 en 2020-07…
+
+## Imacec, serie original
+Identificador: F032.IMC.IND.Z.Z.EP18.Z.Z.0.M (índice 2018=100)
+• Mínimo de 85.009 en 2020-07; máximo de 129.2022 en 2025-12…
+
+## Índice real de remuneraciones, serie empalmada
+• Sube de 99.6505 en 2023-01 a 110.2155 en 2026-06…
+```
+
+`secciones` contiene tres textos independientes, uno por serie. Si una consulta falla, conserva una sección con el error y el pipeline continúa.
+:::
+
+## 3 · Tool calling [El chat editor]{.title-detail} {.code-full .code-small}
+
+```{r}
+#| results: asis
+code_block("ellmer/15-chat-editor.R", c(
+  "3-8" = "El editor no tiene tools: solo un rol.",
+  "10" = "Un chat más, especializado.",
+  "12-14" = "Recibe `secciones` y escribe la síntesis.",
+  "16-24" = "Une encabezado, síntesis y secciones en `reporte_series.md`: el artefacto final."
+))
+```
+
+::: {.fragment}
+**Salida**
+
+```default
+La desocupación se deterioró a mediados de 2020 y volvió a subir hacia
+2026-06; en paralelo, el Imacec cayó en 2020-07 y luego avanzó con
+fuerza; desde 2023, las remuneraciones reales suben, con la actividad
+mejorando sin normalización plena de la desocupación.
+```
+
+chat + tool + pmap + chat editor: **un pipeline completo** que produce `reporte_series.md`, y cada pieza es chica y testeable por separado.
 :::
 
 ## {shiny} · Cinco aplicaciones
@@ -320,5 +893,3 @@ code_block("apps/app-05/app.R", c(
 ::: {.section-subtitle}
 Gracias por asistir
 :::
-
-

@@ -32,6 +32,7 @@ Así, los cambios visuales comunes se realizan una sola vez.
 - `.section-slide`: portada de sección.
 - `.has-image` y `--section-image`: imagen de fondo de una sección. La URL visual debe ser absoluta desde el sitio, por ejemplo `url('/assets/slides/regions/01.jpg')`.
 - `.section-subtitle`: bajada de una portada de sección.
+- `.title-detail`: contexto secundario dentro de un título; agrega el separador `/` y su espaciado.
 - `.center`: centrado vertical opcional.
 - `.cards` y `--cards`: tarjetas y número de columnas.
 - `data-flow`: conecta las tarjetas con flechas.

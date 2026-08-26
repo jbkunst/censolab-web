@@ -1,0 +1,16 @@
+series:
+  desocupacion:
+    series_id: F049.DES.TAS.INE9.10.M
+    nombre: Tasa de desocupación nacional
+    unidad: porcentaje
+    desde: "2020-01-01"
+  imacec:
+    series_id: F032.IMC.IND.Z.Z.EP18.Z.Z.0.M
+    nombre: Imacec, serie original
+    unidad: índice 2018=100
+    desde: "2020-01-01"
+  remuneraciones:
+    series_id: G049.RMM.IND.INE23.R.M
+    nombre: Índice real de remuneraciones, serie empalmada
+    unidad: índice 2023=100
+    desde: "2023-01-01"

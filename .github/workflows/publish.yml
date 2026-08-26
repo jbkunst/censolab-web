@@ -34,6 +34,8 @@ jobs:
 
       - name: Render site
         run: quarto render --profile production
+        env:
+          BCCH_TOKEN: ${{ secrets.BCCH_TOKEN }}
 
       - name: Export Shinylive apps
         run: Rscript R/export_shinylive_apps.R

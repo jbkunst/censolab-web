@@ -5,6 +5,8 @@ Authors@R: person("Joshua", "Kunst", role = c("aut", "cre"))
 Description: R dependencies used to render the CensoLab Quarto website.
 Encoding: UTF-8
 Imports:
+    bcchr,
+    dplyr,
     forecast,
     ggplot2,
     knitr,

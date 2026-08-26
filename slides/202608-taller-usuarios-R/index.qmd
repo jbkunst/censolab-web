@@ -41,6 +41,8 @@ revealjs-plugins:
   - codefrag
 ---
 
+## Programa {.section-slide .has-image style="--section-image: url('/assets/slides/regions/14.jpg');"}
+
 <style>
 .reveal .slides > section.code-full pre > code.sourceCode {
   max-height: var(--code-max-height, 600px);
@@ -80,8 +82,6 @@ code_block <- function(path, descriptions = NULL, replacements = NULL) {
 
 ```
 
-## Programa {.section-slide .has-image style="--section-image: url('/assets/slides/regions/14.jpg');"}
-
 ::: {.section-subtitle}
 01 · Problema<br>
 02 · Funcionalidades & Demo<br>
@@ -93,7 +93,7 @@ code_block <- function(path, descriptions = NULL, replacements = NULL) {
 ## Problema {.section-slide .has-image style="--section-image: url('/assets/slides/regions/02.jpg');"}
 
 ::: {.section-subtitle}
-El Censo, una gran fuente para conocernos.
+El punto de partida no fué una solución tecnológica sino un problema.
 :::
 
 ## Ejemplos de atributos y escalas

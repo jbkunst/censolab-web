@@ -1,1 +1,1 @@
-chat$chat("¿qué hora es?") # no está actualizado
+chat$chat("¿qué hora es?")

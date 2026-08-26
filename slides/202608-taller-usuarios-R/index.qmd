@@ -37,12 +37,12 @@ format:
     code-overflow: scroll
     code-block-height: 680px
     code-annotations: select
-    mermaid-format: png
 revealjs-plugins:
   - codefrag
 ---
 
 ```{r}
+#| label: setup-code-block
 #| include: false
 # Lee un archivo de código R y lo inserta en la presentación como un bloque
 # Markdown. Si recibe `descriptions`, también agrega anotaciones numeradas para
@@ -55,12 +55,8 @@ revealjs-plugins:
 # - `descriptions` debe ser un vector nombrado: los nombres son rangos de líneas
 #   (por ejemplo, "2-5") y los valores contienen las explicaciones.
 # - Las líneas indicadas deben existir en el archivo leído.
-.libPaths(Sys.getenv("R_LIBS_USER"))
 code_block <- function(path, descriptions = NULL) {
-  # Resuelve la ruta relativa a este QMD, sin importar el working directory.
-  root <- rprojroot::find_root(rprojroot::is_git_root)
-  qmd_dir <- file.path(root, "slides/202608-taller-usuarios-R")
-  path <- file.path(qmd_dir, path)
+  path <- file.path(dirname(knitr::current_input(dir = TRUE)), path)
   code <- readLines(path, encoding = "UTF-8", warn = FALSE)
   if (is.null(descriptions)) return(cat("```r", paste(code, collapse = "\n"), "```", sep = "\n"))
   ranges <- names(descriptions)
@@ -309,8 +305,28 @@ Cada componente se administra y documenta en un repositorio propio.
 ## Desafíos y calidad del dato {.section-slide .has-image style="--section-image: url('/assets/slides/regions/07.jpg');"}
 
 ::: {.section-subtitle}
-Geografía, consistencia y evidencia en cada respuesta.
+Seguir siendo útil, mejorar la calidad y sostener el proyecto en el tiempo.
 :::
+
+## Tres desafíos {.center}
+
+<div class="cards" style="--cards: 3" data-center aria-label="Principales desafíos de CensoLab">
+<article class="fragment">
+  <small>01 · Uso y relevancia</small>
+  <h3>Seguir siendo útil</h3>
+  <p>Que las personas continúen usando CensoLab como una herramienta habitual para explorar información de Chile.</p>
+</article>
+<article class="fragment">
+  <small>02 · Calidad</small>
+  <h3>Cuidar cada resultado</h3>
+  <p>Aumentar la precisión, claridad y utilidad de las respuestas y los entregables generados.</p>
+</article>
+<article class="fragment">
+  <small>03 · Sostenibilidad</small>
+  <h3>Mantener el proyecto</h3>
+  <p>Actualizar los datos, las tools y la aplicación, controlando los costos y la complejidad operativa.</p>
+</article>
+</div>
 
 ## Taller {.section-slide .has-image style="--section-image: url('/assets/slides/regions/09.jpg');"}
 
@@ -338,6 +354,7 @@ Prompts y tool calling, paso a paso.
 ## 1 · Configuración [Credenciales]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-credentials
 #| results: asis
 code_block("ellmer/01-setup.R", c(
   "1-4" = "Las credenciales viven en `.Renviron`, fuera del código, y R las lee al inicio de la sesión.",
@@ -358,6 +375,7 @@ code_block("ellmer/01-setup.R", c(
 ## 1 · Configuración [El objeto chat]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-chat-object
 #| results: asis
 code_block("ellmer/02-chat.R", c(
   "1-8" = "El vocabulario mínimo para hablar de modelos de lenguaje.",
@@ -377,6 +395,7 @@ code_block("ellmer/02-chat.R", c(
 ## 1 · Configuración [El chat conversa]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-chat-question
 #| results: asis
 code_block("ellmer/03a-antropologia.R")
 ```
@@ -393,6 +412,7 @@ de vida, tanto en el pasado como en el presente...
 
 ::: {.fragment}
 ```{r}
+#| label: ellmer-chat-followup
 #| results: asis
 code_block("ellmer/03b-frase.R")
 ```
@@ -410,6 +430,7 @@ dimensión biológica, cultural y social.
 ## 1 · Configuración [No está actualizado]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-time-no-tool
 #| results: asis
 code_block("ellmer/03c-hora-sin-tool.R")
 ```
@@ -424,6 +445,7 @@ No puedo ver la hora de tu dispositivo...
 
 ::: {.fragment}
 ```{r}
+#| label: ellmer-time-tool
 #| results: asis
 code_block("ellmer/03d-hora-tool.R")
 ```
@@ -442,6 +464,7 @@ En Santiago de Chile son las 15:47.
 ## 2 · Prompt [Prompt genérico]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-prompt-generic
 #| results: asis
 code_block("ellmer/04-prompt-generico.R", c(
   "1-4" = "La pregunta: tasa de desocupación nacional en 2020, con cifras y descripción.",
@@ -492,6 +515,7 @@ No incluyas introducción, conclusión, recomendaciones ni contenido adicional.
 ## 2 · Prompt [Parametrizar con interpolate_file()]{.title-detail} {.code-full .code-small}
 
 ```{r}
+#| label: ellmer-prompt-parameterized
 #| results: asis
 code_block("ellmer/05-prompt-parametrizado.R", c(
   "1-11" = "Los parámetros se controlan desde el código y se inyectan en `{{contexto}}` e `{{instruccion_insights}}`.",
@@ -517,6 +541,7 @@ interpretación en una sola frase. Nada más.
 ## 2 · Prompt [Misma pregunta, otro comportamiento]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-prompt-behavior
 #| results: asis
 code_block("ellmer/06-bot-laboral.R", c(
   "1-3" = "El prompt parametrizado entra como system prompt.",
@@ -542,6 +567,7 @@ Misma pregunta, distinto comportamiento: dos insights, una interpretación, del 
 ## 3 · Tool calling [A mano]{.title-detail} {.code-full .code-small}
 
 ```{r}
+#| label: ellmer-api-manual
 #| results: asis
 code_block("ellmer/07-api-manual.R", c(
   "2-5" = "Buscamos candidatos en el catálogo por palabra y frecuencia.",
@@ -570,6 +596,7 @@ code_block("ellmer/07-api-manual.R", c(
 ## 3 · Tool calling [Tool mínima]{.title-detail} {.code-full .code-small}
 
 ```{r}
+#| label: ellmer-tool-minimal
 #| results: asis
 code_block("ellmer/08-tool-minima.R", c(
   "1-3" = "Una función sin argumentos: la serie está cableada.",
@@ -597,6 +624,7 @@ Limitación evidente: si quiero **otra serie u otro período**, esta tool no sir
 ## 3 · Tool calling [Con argumentos]{.title-detail} {.code-full .code-small}
 
 ```{r}
+#| label: ellmer-tool-arguments
 #| results: asis
 code_block("ellmer/09-tool-args.R", c(
   "1-3" = "La función ahora recibe la serie y la fecha de inicio.",
@@ -620,6 +648,7 @@ El modelo **elige los argumentos** a partir de la petición: convirtió "desde 2
 ## 3 · Tool calling [Callejón sin salida]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-dead-end
 #| results: asis
 code_block("ellmer/10-callejon.R", c(
   "2-3" = "El chat solo tiene la tool de descarga.",
@@ -645,6 +674,7 @@ Callejón sin salida: pide precisiones, pero **no puede ofrecer opciones reales*
 ## 3 · Tool calling [Buscar y validar]{.title-detail} {.code-full .code-small}
 
 ```{r}
+#| label: ellmer-search-validate
 #| results: asis
 code_block("ellmer/11-buscar-validar.R", c(
   "1-7" = "La tool de búsqueda: el modelo puede explorar el catálogo.",
@@ -654,22 +684,65 @@ code_block("ellmer/11-buscar-validar.R", c(
 ))
 ```
 
-## 3 · Tool calling [El tool loop, por dentro]{.title-detail}
+## 3 · Tool calling [El tool loop, por dentro]{.title-detail} {.center}
 
-```{mermaid}
-flowchart LR
-  A["1 · El modelo solicita<br/>una tool"] --> B["2 · ellmer ejecuta<br/>la función de R"]
-  B --> C["3 · Resultado o error<br/>entra al historial"]
-  C -->|ellmer reenvía la conversación| D{"4 · El modelo<br/>decide"}
-  D -->|otra tool| A
-  D -->|respuesta final| E["Texto para<br/>el usuario"]
+El modelo no ejecuta R directamente: `{ellmer}` ejecuta la función y devuelve el resultado al **mismo objeto `Chat`**. El ciclo continúa hasta producir una respuesta final.
+
+```{dot}
+//| label: tool-loop-diagram
+//| fig-format: svg
+//| fig-align: center
+//| fig-width: 14
+//| fig-height: 2.6
+digraph tool_loop {
+  graph [
+    rankdir=LR,
+    bgcolor="transparent",
+    pad=0.25,
+    nodesep=0.65,
+    ranksep=0.85,
+    splines=spline
+  ];
+
+  node [
+    shape=box,
+    style="rounded,filled",
+    fillcolor="#FFFFFF",
+    color="#0E4F5A",
+    fontcolor="#202326",
+    fontname="IBM Plex Sans",
+    fontsize=20,
+    penwidth=2,
+    margin="0.24,0.16"
+  ];
+
+  edge [
+    color="#6AAAB2",
+    fontcolor="#4D6266",
+    fontname="IBM Plex Sans",
+    fontsize=16,
+    penwidth=2,
+    arrowsize=0.9
+  ];
+
+  request [label="El modelo solicita\nuna tool"];
+  execute [label="ellmer ejecuta\nla función de R"];
+  history [label="El resultado o error\nentra al historial", fillcolor="#F2F7F7"];
+  decide [label="El modelo\ndecide", shape=diamond, fillcolor="#F2F7F7", color="#6AAAB2"];
+  answer [label="Respuesta para\nel usuario", fillcolor="#0E4F5A", fontcolor="#FFFFFF"];
+
+  request -> execute;
+  execute -> history;
+  history -> decide [label="continúa la conversación"];
+  decide -> answer [label="respuesta final"];
+  decide -> request [label="otra tool", style=dashed, constraint=false];
+}
 ```
-
-El ciclo ocurre dentro del **mismo objeto `Chat`**: el historial conserva cada solicitud, resultado y error. Termina cuando el modelo responde con texto.
 
 ## 3 · Tool calling [Aclaración fundada]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-clarification
 #| results: asis
 code_block("ellmer/12-aclaracion.R", c(
   "1" = "La misma petición ambigua del callejón sin salida.",
@@ -699,6 +772,7 @@ El loop en acción: la búsqueda devuelve **cero resultados**, ese resultado vue
 ## 3 · Tool calling [Una línea de prompt]{.title-detail} {.code-full}
 
 ```{r}
+#| label: ellmer-prompt-summary
 #| results: asis
 code_block("ellmer/13-prompt-resumen.R", c(
   "2-6" = "Mismo chat, mismas tools; solo cambia el system prompt.",
@@ -746,6 +820,7 @@ series:
 ## 3 · Tool calling [Un chat por serie]{.title-detail} {.code-full .code-small}
 
 ```{r}
+#| label: ellmer-pipeline
 #| results: asis
 code_block("ellmer/14-pipeline.R", c(
   "1" = "El catálogo versionado entra como datos.",
@@ -777,6 +852,7 @@ Identificador: F032.IMC.IND.Z.Z.EP18.Z.Z.0.M (índice 2018=100)
 ## 3 · Tool calling [El chat editor]{.title-detail} {.code-full .code-small}
 
 ```{r}
+#| label: ellmer-chat-editor
 #| results: asis
 code_block("ellmer/15-chat-editor.R", c(
   "3-8" = "El editor no tiene tools: solo un rol.",
@@ -832,6 +908,7 @@ Integrando {ellmer} y {shinychat} paso a paso.
 ## 1 · Anatomía de Shiny {.code-full}
 
 ```{r}
+#| label: shiny-app-basic
 #| results: asis
 code_block("apps/app-01/app.R", c(
   "1-3" = "Los paquetes aportan los componentes de la aplicación.",
@@ -843,6 +920,7 @@ code_block("apps/app-01/app.R", c(
 ## 2 · Explorador manual {.code-full .code-small}
 
 ```{r}
+#| label: shiny-explorer
 #| results: asis
 code_block("apps/app-02/app.R", c(
   "7-19" = "Definimos un catálogo y una función para hacer búsquedas sobre él.",
@@ -855,6 +933,7 @@ code_block("apps/app-02/app.R", c(
 ## 3 · Chat sin tools {.code-full .code-small}
 
 ```{r}
+#| label: shiny-chat-no-tools
 #| results: asis
 code_block("apps/app-03/app.R", c(
   "11-15" = "La UI integra `chat_ui()`.",
@@ -866,6 +945,7 @@ code_block("apps/app-03/app.R", c(
 ## 4 · Tools para actualizar la aplicación {.code-full .code-small}
 
 ```{r}
+#| label: shiny-tools-update
 #| results: asis
 code_block("apps/app-04/app.R", c(
   "32-33" = "Definimos las variables reactivas que mantienen el estado de la aplicación.",
@@ -878,6 +958,7 @@ code_block("apps/app-04/app.R", c(
 ## 5 · Tools que devuelven contexto {.code-full .code-small}
 
 ```{r}
+#| label: shiny-tools-context
 #| results: asis
 code_block("apps/app-05/app.R", c(
   "11-12" = "El prompt pide analizar la serie después de actualizar la aplicación.",

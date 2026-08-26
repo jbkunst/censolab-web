@@ -1,7 +1,8 @@
 # En el archivo .Renviron (usethis::edit_r_environ(scope = "project")):
 # OPENAI_API_KEY=tu_clave
 # BCCH_TOKEN=tu_token
-# Reiniciar R después de guardar: R lee .Renviron solo al inicio de la sesión
+# Ejecutar el taller desde la raíz del proyecto para cargar este .Renviron
+
 
 "OPENAI_API_KEY" |>
   Sys.getenv() |>

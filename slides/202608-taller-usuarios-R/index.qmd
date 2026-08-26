@@ -87,7 +87,7 @@ code_block <- function(path, descriptions = NULL) {
 El Censo, una gran fuente para conocernos.
 :::
 
-## Atributos y escalas
+## Ejemplos de atributos y escalas
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -97,6 +97,7 @@ El Censo, una gran fuente para conocernos.
 - Educación
 - Migración
 - Ocupación
+- **…y muchos más**
 :::
 
 ::: {.column width="50%"}
@@ -106,6 +107,7 @@ El Censo, una gran fuente para conocernos.
 - Regiones
 - Comunas
 - Unidades territoriales pequeñas
+- **…y otras escalas territoriales**
 :::
 ::::
 

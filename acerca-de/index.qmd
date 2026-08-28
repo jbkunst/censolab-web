@@ -1,27 +1,29 @@
 ---
 title: Acerca de CensoLab
-description: El proyecto, el equipo y las tecnologías detrás de CensoLab.
+description: Qué es CensoLab, cómo funciona y quiénes desarrollan el proyecto.
 ---
 
-CensoLab busca que la experiencia de consultar datos sea tan fluida como formular una pregunta.
+CensoLab es una aplicación para consultar y visualizar datos del Censo de Población y Vivienda 2024 de Chile mediante lenguaje natural.
 
 ## ¿Qué es CensoLab?
 
-CensoLab es la experiencia de explorar la información de tu entorno como si tuvieras un laboratorio de datos propio. Es un espacio donde tu curiosidad encuentra cauce en un conjunto de servicios especializados que se encargan del trabajo pesado: entender qué cifras necesitas, dónde encontrarlas, cómo cruzarlas y cómo programar las consultas necesarias para obtener los resultados.
+CensoLab permite formular preguntas sobre personas, hogares y viviendas y obtener respuestas, cálculos, tablas, gráficos y mapas. La cobertura territorial va desde el país hasta manzanas y entidades rurales, junto con niveles intermedios como regiones, provincias, comunas, distritos y zonas.
+
+El proyecto utiliza las bases públicas difundidas por el [Instituto Nacional de Estadísticas de Chile](https://censo2024.ine.gob.cl/resultados/){target="_blank"}. CensoLab es una iniciativa independiente y no representa un sitio oficial del INE.
 
 ---
 
 ## ¿Cómo funciona?
 
-CensoLab integra la capacidad de entender lenguaje natural con una arquitectura de herramientas desarrolladas a medida para procesar información censal. En este esquema, el bot actúa como interfaz para interpretar tus requerimientos, mientras que la extracción, el cálculo y la visualización los ejecutan nuestras propias herramientas sobre bases de datos previamente preparadas y estructuradas. El modelo entiende la pregunta y nuestro entorno de procesamiento ejecuta el trabajo con los datos.
+1. **Pregunta.** La persona describe qué necesita, el territorio y la forma en que quiere ver el resultado.
+2. **Interpretación.** CensoBot interpreta la solicitud y selecciona las herramientas adecuadas.
+3. **Ejecución.** Las herramientas consultan los datos, realizan los cálculos y generan la respuesta o visualización.
 
-Esto permite realizar consultas sobre **toda la información censal disponible, sin reducciones**, desde la escala nacional hasta manzanas y entidades rurales, pasando por niveles territoriales intermedios.
+El modelo de lenguaje interpreta la pregunta, pero las respuestas numéricas se obtienen mediante consultas y cálculos ejecutados sobre bases preparadas a partir de los datos públicos del Censo 2024.
 
-**Los resultados provienen estrictamente de cálculos ejecutados en tiempo real sobre los microdatos de personas, hogares y viviendas del Censo 2024.**
+Esto permite responder consultas como:
 
-Esto permite responder inquietudes como:
-
-- Calcular el promedio de años de escolaridad de las personas de 18 años o más en las distintas zonas de tu comuna.
+- Calcular el promedio de años de escolaridad de las personas de 18 años o más en las distintas zonas de una comuna.
 - Mapear la tasa de desocupación por manzana y destacar aquellas que superan el promedio nacional.
 - Identificar las manzanas donde predomina la conexión a internet fija.
 
@@ -31,7 +33,7 @@ Esto permite responder inquietudes como:
 
 ::: {.columns}
 ::: {.column width="50%"}
-#### Joshua Kunst
+### Joshua Kunst
 
 Estadístico y Risk Specialist. Entusiasta del desarrollo de herramientas para explorar y visualizar datos, además de excéntrico coleccionista de autos a escala.
 
@@ -39,7 +41,7 @@ Estadístico y Risk Specialist. Entusiasta del desarrollo de herramientas para e
 :::
 
 ::: {.column width="50%"}
-#### Matías Parra
+### Matías Parra
 
 Antropólogo y programador. Obsesionado con el uso de datos para problematizar la realidad. Disfruta de leer y caminar y todavía juega de delantero.
 
@@ -58,5 +60,12 @@ CensoLab está desarrollado principalmente en [R](https://www.r-project.org/){ta
 El agente de consulta utiliza herramientas de inteligencia artificial de código abierto desarrolladas por [Posit](https://posit.co/solutions/ai){target="_blank"}, principalmente [shinychat](https://posit-dev.github.io/shinychat/){target="_blank"} y [ellmer](https://ellmer.tidyverse.org/){target="_blank"}, para conectar modelos de lenguaje con herramientas especializadas de consulta, navegación y visualización.
 
 Los datos se procesan mediante [DuckDB](https://duckdb.org/){target="_blank"}, con soporte para conexión remota a [MotherDuck](https://motherduck.com/){target="_blank"}. La exploración geográfica combina [MapLibre](https://maplibre.org/){target="_blank"} y [mapgl](https://walker-data.com/mapgl/){target="_blank"}; los gráficos utilizan [Highcharts](https://www.highcharts.com/){target="_blank"} y [highcharter](https://jkunst.com/highcharter/){target="_blank"}, y las tablas interactivas se construyen con [reactable](https://glin.github.io/reactable/){target="_blank"}.
+
+
+---
+
+## Código y contacto
+
+El código de CensoLab está disponible públicamente. Puedes revisar la [aplicación](https://github.com/jbkunst/censolab){target="_blank"}, el [sitio web](https://github.com/jbkunst/censolab-web){target="_blank"} o [reportar un problema y proponer mejoras](https://github.com/jbkunst/censolab/issues){target="_blank"}.
 
 [Entrar a CensoLab →](../app/)

@@ -37,7 +37,7 @@ Esto permite responder consultas como:
 
 Estadístico y Risk Specialist. Entusiasta del desarrollo de herramientas para explorar y visualizar datos, además de excéntrico coleccionista de autos a escala.
 
-[GitHub](https://github.com/jbkunst){target="_blank"} · [Sitio web](http://jkunst.com/blog/){target="_blank"} · [LinkedIn](https://www.linkedin.com/in/joshuakunst/){target="_blank"}
+[<i class="bi bi-github" aria-hidden="true"></i> GitHub](https://github.com/jbkunst){target="_blank"} · [<i class="bi bi-globe2" aria-hidden="true"></i> jkunst.com](https://jkunst.com/){target="_blank"} · [<i class="bi bi-linkedin" aria-hidden="true"></i> LinkedIn](https://www.linkedin.com/in/joshuakunst/){target="_blank"}
 :::
 
 ::: {.column width="50%"}
@@ -45,7 +45,7 @@ Estadístico y Risk Specialist. Entusiasta del desarrollo de herramientas para e
 
 Antropólogo y programador. Obsesionado con el uso de datos para problematizar la realidad. Disfruta de leer y caminar y todavía juega de delantero.
 
-[GitHub](https://github.com/MIParra){target="_blank"} · [LinkedIn](https://www.linkedin.com/in/matias-parra-rojas){target="_blank"}
+[<i class="bi bi-github" aria-hidden="true"></i> GitHub](https://github.com/MIParra){target="_blank"} · [<i class="bi bi-linkedin" aria-hidden="true"></i> LinkedIn](https://www.linkedin.com/in/matias-parra-rojas){target="_blank"}
 :::
 :::
 
@@ -60,12 +60,5 @@ CensoLab está desarrollado principalmente en [R](https://www.r-project.org/){ta
 El agente de consulta utiliza herramientas de inteligencia artificial de código abierto desarrolladas por [Posit](https://posit.co/solutions/ai){target="_blank"}, principalmente [shinychat](https://posit-dev.github.io/shinychat/){target="_blank"} y [ellmer](https://ellmer.tidyverse.org/){target="_blank"}, para conectar modelos de lenguaje con herramientas especializadas de consulta, navegación y visualización.
 
 Los datos se procesan mediante [DuckDB](https://duckdb.org/){target="_blank"}, con soporte para conexión remota a [MotherDuck](https://motherduck.com/){target="_blank"}. La exploración geográfica combina [MapLibre](https://maplibre.org/){target="_blank"} y [mapgl](https://walker-data.com/mapgl/){target="_blank"}; los gráficos utilizan [Highcharts](https://www.highcharts.com/){target="_blank"} y [highcharter](https://jkunst.com/highcharter/){target="_blank"}, y las tablas interactivas se construyen con [reactable](https://glin.github.io/reactable/){target="_blank"}.
-
-
----
-
-## Código y contacto
-
-El código de CensoLab está disponible públicamente. Puedes revisar la [aplicación](https://github.com/jbkunst/censolab){target="_blank"}, el [sitio web](https://github.com/jbkunst/censolab-web){target="_blank"} o [reportar un problema y proponer mejoras](https://github.com/jbkunst/censolab/issues){target="_blank"}.
 
 [Entrar a CensoLab →](../app/)

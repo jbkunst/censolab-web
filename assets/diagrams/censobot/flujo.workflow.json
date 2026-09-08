@@ -1,0 +1,196 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "CensoLab · de la pregunta al resultado",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "consulta",
+      "label": "Preparar y consultar"
+    },
+    {
+      "id": "visualizar",
+      "label": "Elegir la salida"
+    },
+    {
+      "id": "territorio",
+      "label": "Explorar el territorio"
+    }
+  ],
+  "mainPath": [
+    "bot",
+    "resolver",
+    "metadata",
+    "consultar",
+    "grafico"
+  ],
+  "nodes": [
+    {
+      "id": "bot",
+      "lane": "consulta",
+      "col": 0,
+      "type": "frontend",
+      "label": "Pregunta al bot",
+      "sublabel": "elige las tools",
+      "width": 135
+    },
+    {
+      "id": "resolver",
+      "lane": "consulta",
+      "col": 1,
+      "type": "backend",
+      "label": "resolve_territory",
+      "sublabel": "códigos y filtros",
+      "width": 135
+    },
+    {
+      "id": "metadata",
+      "lane": "consulta",
+      "col": 2,
+      "type": "backend",
+      "label": "search_metadata",
+      "sublabel": "variables y universos",
+      "width": 135
+    },
+    {
+      "id": "consultar",
+      "lane": "consulta",
+      "col": 3,
+      "type": "database",
+      "label": "get_query",
+      "sublabel": "SQL de solo lectura",
+      "width": 135
+    },
+    {
+      "id": "grafico",
+      "lane": "consulta",
+      "col": 4,
+      "type": "frontend",
+      "label": "show_chart",
+      "sublabel": "YAML + datos → gráfico",
+      "width": 135
+    },
+    {
+      "id": "tabla",
+      "lane": "visualizar",
+      "col": 4,
+      "type": "frontend",
+      "label": "show_table",
+      "sublabel": "JSON → tabla y CSV",
+      "width": 135
+    },
+    {
+      "id": "mapa",
+      "lane": "visualizar",
+      "col": 2,
+      "type": "frontend",
+      "label": "show_map",
+      "sublabel": "consulta y mapea",
+      "width": 135
+    },
+    {
+      "id": "navegar",
+      "lane": "territorio",
+      "col": 1,
+      "type": "frontend",
+      "label": "navigate_to",
+      "sublabel": "centra el mapa",
+      "width": 135
+    },
+    {
+      "id": "informe",
+      "lane": "territorio",
+      "col": 0,
+      "type": "frontend",
+      "label": "show_report",
+      "sublabel": "abre un informe",
+      "width": 135
+    }
+  ],
+  "edges": [
+    {
+      "id": "resolver-nombre",
+      "from": "bot",
+      "to": "resolver",
+      "label": "nombre territorial",
+      "role": "main"
+    },
+    {
+      "id": "buscar-variable",
+      "from": "resolver",
+      "to": "metadata",
+      "label": "si hace falta",
+      "role": "main"
+    },
+    {
+      "id": "consultar-datos",
+      "from": "metadata",
+      "to": "consultar",
+      "label": "SQL",
+      "role": "main"
+    },
+    {
+      "id": "mostrar-grafico",
+      "from": "consultar",
+      "to": "grafico",
+      "label": "datos + YAML",
+      "role": "main"
+    },
+    {
+      "id": "mostrar-tabla",
+      "from": "consultar",
+      "to": "tabla",
+      "label": "datos",
+      "role": "branch"
+    },
+    {
+      "id": "mostrar-mapa",
+      "from": "metadata",
+      "to": "mapa",
+      "label": "SQL territorial",
+      "role": "branch"
+    },
+    {
+      "id": "centrar-mapa",
+      "from": "resolver",
+      "to": "navegar",
+      "label": "geo_id",
+      "role": "branch"
+    },
+    {
+      "id": "abrir-informe",
+      "from": "resolver",
+      "to": "informe",
+      "label": "geo_id",
+      "role": "branch"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "El bot elige el recorrido",
+      "items": [
+        "Las flechas resumen llamadas coordinadas por el bot; las tools no se llaman entre sí.",
+        "Territorios y variables ya confirmados se reutilizan. No hay una secuencia obligatoria."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Consultar una vez",
+      "items": [
+        "get_query devuelve hasta 100 filas: sirven para responder, graficar o construir una tabla.",
+        "show_map ejecuta su propia consulta. No necesita llamar antes a get_query."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Continuar la conversación",
+      "items": [
+        "Cambiar el gráfico o pasarlo a tabla reutiliza los datos disponibles si siguen siendo suficientes.",
+        "El bot responde con los resultados obtenidos; aclara las ambigüedades que cambian la respuesta."
+      ]
+    }
+  ]
+}

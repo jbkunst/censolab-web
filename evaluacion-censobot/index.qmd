@@ -194,11 +194,13 @@ ggplot2::theme_set(
 </style>
 ```
 
-Una respuesta convincente no basta. Evaluamos si CensoBot encuentra el dato correcto, resuelve bien el territorio, realiza los cálculos pedidos y utiliza una salida adecuada cuando la consulta requiere una tabla, un gráfico, un mapa o un perfil territorial.
+Una respuesta convincente no basta. CensoBot trabaja con modelos probabilísticos: frente a una misma tarea puede seguir recorridos distintos y, eventualmente, producir respuestas distintas. Por eso no evaluamos una respuesta aislada, sino el comportamiento del sistema frente a un conjunto explícito de casos.
 
 ## Una batería abierta y en crecimiento
 
-Cada caso comienza con una **pregunta escrita por una persona** y un **resultado esperado definido por una persona**. Luego CensoBot responde y, mediante `vitals`, un modelo de inteligencia artificial compara esa respuesta con el resultado esperado. Así medimos el desempeño con una referencia humana explícita, sin pedirle al evaluador que invente cuál debería haber sido la respuesta.
+Cada caso comienza con una **pregunta escrita por una persona** y un **resultado esperado definido por una persona**. La pregunta, el resultado esperado y el criterio de evaluación se fijan antes de ejecutar la prueba.
+
+La batería es deliberadamente acotada. No pretende representar todas las preguntas posibles, sino cubrir distintos niveles y dimensiones de complejidad: consultas directas, cálculos, comparaciones, semántica, alcance, uso de herramientas y tareas que requieren varios pasos. También incluye preguntas ambiguas o fuera del alcance de los datos. La idea no es construir una prueba fácil de aprobar, sino una prueba capaz de hacer visibles las fallas.
 
 ```{r}
 #| label: evaluation-metrics
@@ -223,7 +225,7 @@ cat('<div class="eval-grid">', paste(metric_cards, collapse = "\n"), '</div>')
 
 ## Resultado de la evaluación
 
-Cada caso evaluado aporta `1` cuando la respuesta es correcta y `0` cuando necesita revisión. El promedio de esos valores corresponde a la proporción de respuestas correctas.
+Cada caso evaluado aporta `1` cuando la respuesta es correcta y `0` cuando necesita revisión. El promedio resume el resultado de una corrida sobre este conjunto específico de casos. No debe interpretarse como una medida general de la precisión de CensoBot frente a cualquier pregunta posible.
 
 ```{r}
 #| label: accuracy-chart
@@ -266,31 +268,33 @@ ggplot2::ggplot(
 
 ::: {.cl-card-grid}
 ::: {.cl-card}
-**Exactitud verificable**
+**Resultado**
 
-Cuando conocemos la cifra esperada, la comparación es determinística. No pedimos a otro modelo que decida si un número “parece correcto”.
+Comprobamos si CensoBot entrega el valor, la respuesta o la salida esperada. Cuando conocemos una cifra exacta, la comparación puede hacerse de forma determinística.
 :::
 
 ::: {.cl-card}
-**Referencia humana**
+**Procedimiento**
 
-La pregunta, el resultado esperado y los criterios se preparan antes de ejecutar la evaluación. La referencia no cambia para acomodarse a la respuesta de CensoBot.
+También observamos cómo llegó al resultado: territorio, universo, variables, operaciones y uso de herramientas. Un resultado correcto no implica necesariamente un procedimiento correcto.
 :::
 
 ::: {.cl-card}
-**Comparación con IA**
+**Alcance**
 
-`vitals` ejecuta cada caso y un modelo de IA compara la respuesta de CensoBot con la referencia humana, considerando el criterio definido para esa pregunta.
+Incluimos preguntas ambiguas y preguntas que los datos no permiten responder. Pedir una aclaración o reconocer que la información no está disponible puede ser la respuesta correcta.
 :::
 
 ::: {.cl-card}
-**Preguntas diversas**
+**Referencia explícita**
 
-El conjunto combina categorías y niveles de dificultad: consultas directas, cálculos, comparaciones, tablas, gráficos, mapas, perfiles territoriales y casos fuera de alcance.
+La pregunta, el resultado esperado y el criterio se preparan antes de ejecutar la evaluación. La referencia no cambia para acomodarse a la respuesta de CensoBot.
 :::
 :::
 
 ## Dificultad de los casos
+
+La complejidad puede estar tanto en el resultado pedido como en el procedimiento necesario para obtenerlo. Por eso la batería combina distintos niveles de dificultad y distintas dimensiones de evaluación.
 
 ```{r}
 #| label: difficulty-chart
@@ -383,6 +387,18 @@ Resultados de la última corrida disponible de evaluación de CensoBot.
 
 ## Cómo usamos `vitals`
 
-Usamos `vitals` para ejecutar los casos, registrar cada corrida y comparar las respuestas. En cada caso, CensoBot recibe la pregunta preparada por una persona. Después, un modelo de IA evalúa la respuesta obtenida frente al resultado esperado y los criterios que esa persona definió previamente.
+Usamos `vitals` para ejecutar los casos, registrar cada corrida y conservar la respuesta y la trayectoria seguida por CensoBot. El flujo general es simple: **caso → CensoBot → respuesta y traza → scorer → evaluación**.
 
-Esta página muestra **qué preguntamos, qué esperábamos, qué respondió CensoBot y cuál fue la evaluación**. Los detalles operacionales —como instrucciones internas, consultas SQL o llamadas a herramientas— se mantienen fuera del informe público porque no son necesarios para comprender el resultado.
+No todos los casos se evalúan de la misma forma. Cuando una condición puede comprobarse directamente, usamos reglas determinísticas, por ejemplo valores exactos, tolerancias, ordenamientos o estructura de una salida. Cuando importa interpretar la respuesta o el procedimiento, un modelo juez compara la evidencia observada con el criterio definido previamente.
+
+Esto permite separar dos preguntas: si CensoBot llegó al resultado correcto y si llegó mediante un procedimiento válido. La traza importa porque una respuesta aparentemente correcta puede esconder un territorio, un universo, una variable o una operación incorrectos.
+
+Los modelos jueces también son probabilísticos. Por eso buscamos resolver mediante reglas explícitas todo lo que pueda verificarse de forma determinística y reservar el juicio del modelo para los casos donde realmente se necesita interpretar la respuesta o el procedimiento.
+
+## Evaluar para mejorar
+
+La evaluación no termina en un puntaje. Una falla permite identificar una vulnerabilidad y acotar dónde investigar su causa: instrucciones, modelo, metadatos, herramientas, lógica de cálculo o implementación.
+
+Cuando identificamos un problema, podemos corregirlo y volver a ejecutar la misma batería. Si aparece un modo de falla nuevo, puede incorporarse como un nuevo caso. Así, la evaluación se vuelve más exigente a medida que CensoBot mejora.
+
+**Evaluar → identificar → corregir → volver a evaluar.**

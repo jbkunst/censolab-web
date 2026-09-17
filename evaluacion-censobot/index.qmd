@@ -171,16 +171,14 @@ ggplot2::theme_set(
 
 ## Cómo evaluamos CensoBot
 
-Una respuesta convincente no basta. CensoBot utiliza modelos probabilísticos: frente a una misma tarea puede seguir recorridos distintos y, eventualmente, producir resultados distintos. Por eso no buscamos comprobar una respuesta aislada, sino observar su comportamiento de manera sistemática.
+Una respuesta convincente no basta. Estamos construyendo una batería pública de preguntas para comprobar que CensoBot encuentra el dato correcto, resuelve bien el territorio, realiza los cálculos pedidos y utiliza una salida adecuada cuando la pregunta requiere una tabla, un gráfico, un mapa o un perfil territorial.
 :::
 :::
 
 ::: {.information-content}
 ### Una batería abierta y en crecimiento
 
-Trabajamos con un conjunto acotado de preguntas, definido antes de ejecutar la evaluación. No pretende representar todo lo que puede preguntarse a CensoBot: busca cubrir distintos tipos de tareas y hacer visibles sus fallas.
-
-Los casos se mantienen en una hoja pública y son la misma fuente que consume el proceso de evaluación. Incluimos preguntas simples, otras que requieren varios pasos y también casos ambiguos o fuera del alcance de los datos. Si todo funciona siempre, también debemos preguntarnos si la prueba está siendo suficientemente exigente.
+Los casos se mantienen en una hoja pública y son la misma fuente que consume el proceso de evaluación. Así podemos ampliar o corregir preguntas sin mantener una versión separada para documentación.
 
 ```{r}
 #| label: evaluation-metrics
@@ -211,33 +209,31 @@ cat('<div class="eval-grid">', paste(metric_cards, collapse = "\n"), '</div>')
 
 ::: {.eval-method}
 ::: {.eval-method-item}
-**Resultado**
+**Exactitud verificable**
 
-Comprobamos si CensoBot entrega el valor, la respuesta o la salida esperada. Cuando conocemos una cifra exacta, la comparación es determinística.
+Cuando conocemos la cifra esperada, la comparación es determinística. No pedimos a otro modelo que decida si un número “parece correcto”.
 :::
 
 ::: {.eval-method-item}
-**Procedimiento**
+**Respuesta y razonamiento aplicado**
 
-También observamos cómo llegó al resultado: territorio, universo, variables, operaciones y uso de herramientas. Un resultado correcto no implica necesariamente un procedimiento correcto.
+Para respuestas más abiertas usamos criterios escritos de antemano: qué territorio debe considerar, qué universo corresponde y qué debe explicar al usuario.
 :::
 
 ::: {.eval-method-item}
-**Alcance**
+**Salidas estructuradas**
 
-Incluimos preguntas ambiguas y preguntas que los datos no permiten responder. Pedir una aclaración o reconocer que la información no está disponible puede ser la respuesta correcta.
+Las preguntas incluyen tablas, gráficos, mapas y perfiles territoriales. La evaluación revisa tanto la respuesta como si la salida solicitada pudo construirse correctamente.
 :::
 
 ::: {.eval-method-item}
-**Referencia explícita**
+**No inventar información**
 
-Cada caso tiene una pregunta, un resultado esperado y un criterio definidos antes de ejecutar la evaluación. La referencia no cambia para acomodarse a la respuesta de CensoBot.
+También incluimos preguntas que CensoBot no debería contestar con una cifra. Reconocer los límites de los datos forma parte de una buena respuesta.
 :::
 :::
 
 ### Cobertura actual
-
-La dificultad no depende solo del resultado esperado. También puede estar en el procedimiento necesario para obtenerlo. Por eso la batería combina distintos tipos de tarea y distintos niveles de exigencia.
 
 ```{r}
 #| label: category-chart
@@ -318,21 +314,9 @@ knitr::kable(
 
 ### Cómo usamos `vitals`
 
-Usamos `vitals` para ejecutar los casos, registrar cada corrida y conservar la respuesta y la trayectoria seguida por CensoBot. El flujo general es simple: **caso → CensoBot → respuesta y traza → scorer → evaluación**.
+Internamente usamos `vitals` para ejecutar los casos, registrar cada corrida y comparar resultados. Ese visor detallado es muy útil durante el desarrollo porque permite investigar por qué falló una pregunta, pero también contiene información operacional que no es necesaria para entender la calidad de CensoBot.
 
-No todos los casos se evalúan de la misma forma. Cuando una condición puede comprobarse directamente, usamos reglas determinísticas: valores exactos, tolerancias, ordenamientos o estructura de una salida. En los casos donde importa interpretar la respuesta o el procedimiento, un modelo juez compara la evidencia observada con el criterio definido previamente.
-
-Esto permite separar dos preguntas: si CensoBot llegó al resultado correcto y si llegó mediante un procedimiento válido. La traza es especialmente útil cuando una cifra correcta puede esconder una interpretación, un universo o una operación incorrectos.
-
-Los modelos jueces también son probabilísticos. Por eso buscamos dejar en reglas explícitas todo lo que pueda verificarse de forma determinística y reservar el juicio del modelo para los casos donde realmente es necesario interpretar la respuesta o el procedimiento.
-
-### Evaluar para mejorar
-
-La evaluación no termina en un puntaje. Una falla permite localizar una vulnerabilidad y acotar dónde investigar su causa: instrucciones, modelo, metadatos, herramientas, lógica de cálculo o implementación.
-
-Cuando identificamos un problema, podemos corregirlo y volver a ejecutar la misma batería. Si aparece un modo de falla nuevo, puede incorporarse como un nuevo caso. Así, la evaluación se vuelve más exigente a medida que CensoBot mejora.
-
-**Evaluar → identificar → corregir → volver a evaluar.**
+La versión pública de esta página apunta a otra cosa: mostrar **qué probamos, cuántos casos cubrimos y cómo evoluciona el desempeño por tipo de tarea**. Cuando la batería esté más madura agregaremos métricas resumidas por categoría y dificultad, manteniendo el detalle técnico disponible para diagnóstico y reproducibilidad sin convertirlo en la interfaz principal del sitio.
 
 <div class="eval-note">
 Este benchmark está en construcción. Los casos marcados como “PENDIENTE” permanecen visibles porque forman parte de la batería que estamos definiendo, pero una referencia incompleta no se presenta como una validación numérica definitiva.

@@ -6,6 +6,8 @@ lang: es
 body-classes: evaluation-page
 toc: true
 toc-location: left
+params:
+  evaluation_path: "../data/evals/censobot-eval-latest.csv"
 execute:
   echo: false
   warning: false
@@ -15,25 +17,43 @@ execute:
 
 ```{r}
 #| label: load-evaluation-set
+evaluation_path <- params$evaluation_path
 evaluation_data <- utils::read.csv(
-  "../data/evals/censobot-eval-latest.csv",
+  evaluation_path,
   check.names = FALSE,
   stringsAsFactors = FALSE,
   na.strings = c("", "NA")
 )
 
 source_columns <- c(
-  "id", "category", "input", "target", "criterion", "difficulty",
-  "active", "validation_type", "expected_value", "tolerance", "score",
-  "response", "evaluated_at", "app_version"
+  "id", "level", "dimension", "input", "target", "validation", "tolerance",
+  "score", "response", "evaluated_at", "app_version"
 )
 stopifnot(all(source_columns %in% names(evaluation_data)))
 
-cases <- evaluation_data[source_columns]
-names(cases) <- c(
-  "ID", "Categoría", "Pregunta", "Resultado esperado", "Criterio",
-  "Dificultad", "Activo", "Tipo de validación", "Valor esperado", "Tolerancia",
-  "Evaluación", "Respuesta", "Fecha de evaluación", "Versión"
+level <- as.character(evaluation_data$level)
+difficulty <- level
+difficulty[level %in% c("1", "2", "Básica")] <- "Básica"
+difficulty[level %in% c("3", "Media")] <- "Media"
+difficulty[level %in% c("4", "5", "Alta")] <- "Alta"
+
+cases <- data.frame(
+  ID = evaluation_data$id,
+  Categoría = evaluation_data$dimension,
+  Pregunta = evaluation_data$input,
+  `Resultado esperado` = evaluation_data$target,
+  Criterio = evaluation_data$target,
+  Dificultad = difficulty,
+  Activo = "Sí",
+  `Tipo de validación` = evaluation_data$validation,
+  `Valor esperado` = evaluation_data$target,
+  Tolerancia = evaluation_data$tolerance,
+  Evaluación = evaluation_data$score,
+  Respuesta = evaluation_data$response,
+  `Fecha de evaluación` = evaluation_data$evaluated_at,
+  Versión = evaluation_data$app_version,
+  check.names = FALSE,
+  stringsAsFactors = FALSE
 )
 
 active <- tolower(trimws(cases$Activo)) %in% c("sí", "si", "true", "1")

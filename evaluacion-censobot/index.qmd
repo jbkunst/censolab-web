@@ -1,6 +1,6 @@
 ---
 title: Cómo evaluamos CensoBot
-description: Preguntas, referencias humanas y resultados de la evaluación de CensoBot.
+description: Diseño, criterios y resultados de la evaluación de CensoBot.
 draft: true
 lang: es
 body-classes: evaluation-page
@@ -31,19 +31,13 @@ source_columns <- c(
 )
 stopifnot(all(source_columns %in% names(evaluation_data)))
 
-level <- as.character(evaluation_data$level)
-difficulty <- level
-difficulty[level %in% c("1", "2", "Básica")] <- "Básica"
-difficulty[level %in% c("3", "Media")] <- "Media"
-difficulty[level %in% c("4", "5", "Alta")] <- "Alta"
-
 cases <- data.frame(
   ID = evaluation_data$id,
-  Categoría = evaluation_data$dimension,
+  Nivel = evaluation_data$level,
+  Dimensión = evaluation_data$dimension,
   Pregunta = evaluation_data$input,
   `Resultado esperado` = evaluation_data$target,
   Criterio = evaluation_data$target,
-  Dificultad = difficulty,
   Activo = "Sí",
   `Tipo de validación` = evaluation_data$validation,
   `Valor esperado` = evaluation_data$target,
@@ -60,8 +54,8 @@ active <- tolower(trimws(cases$Activo)) %in% c("sí", "si", "true", "1")
 active_cases <- cases[active, , drop = FALSE]
 
 n_cases <- nrow(active_cases)
-n_categories <- length(unique(active_cases$Categoría))
-n_difficulties <- length(unique(active_cases$Dificultad))
+n_dimensions <- length(unique(active_cases$Dimensión))
+n_levels <- length(unique(active_cases$Nivel))
 n_evaluated <- sum(!is.na(active_cases$Evaluación))
 n_correct <- sum(active_cases$Evaluación == "C", na.rm = TRUE)
 accuracy <- if (n_evaluated) n_correct / n_evaluated else NA_real_
@@ -89,8 +83,10 @@ latest_evaluation_label <- if (is.na(latest_evaluation_date)) {
   )
 }
 
-difficulty_counts <- table(
-  factor(active_cases$Dificultad, levels = c("Básica", "Media", "Alta"))
+level_values <- sort(unique(as.integer(active_cases$Nivel)))
+level_values <- level_values[!is.na(level_values)]
+level_counts <- table(
+  factor(as.integer(active_cases$Nivel), levels = level_values)
 )
 
 try(
@@ -194,13 +190,25 @@ ggplot2::theme_set(
 </style>
 ```
 
-Una respuesta convincente no basta. CensoBot trabaja con modelos probabilísticos: frente a una misma tarea puede seguir recorridos distintos y, eventualmente, producir respuestas distintas. Por eso no evaluamos una respuesta aislada, sino el comportamiento del sistema frente a un conjunto explícito de casos.
+## Por qué evaluamos
 
-## Una batería abierta y en crecimiento
+CensoBot se apoya en modelos de lenguaje y, por lo tanto, su comportamiento es probabilístico. Frente a una misma tarea puede seguir recorridos distintos, utilizar herramientas de manera diferente y producir respuestas distintas entre modelos o incluso entre ejecuciones del mismo modelo.
 
-Cada caso comienza con una **pregunta escrita por una persona** y un **resultado esperado definido por una persona**. La pregunta, el resultado esperado y el criterio de evaluación se fijan antes de ejecutar la prueba.
+Eso vuelve insuficiente comprobar que una respuesta particular es correcta. Lo que necesitamos observar es el **comportamiento del sistema** frente a un conjunto explícito de situaciones y registrar tanto sus aciertos como sus fallas.
 
-La batería es deliberadamente acotada. No pretende representar todas las preguntas posibles, sino cubrir distintos niveles y dimensiones de complejidad: consultas directas, cálculos, comparaciones, semántica, alcance, uso de herramientas y tareas que requieren varios pasos. También incluye preguntas ambiguas o fuera del alcance de los datos. La idea no es construir una prueba fácil de aprobar, sino una prueba capaz de hacer visibles las fallas.
+La evaluación parte de esa pregunta: **¿cómo observar de manera sistemática un sistema cuyo comportamiento puede variar entre ejecuciones?**
+
+## Cómo construimos la evaluación
+
+Construimos una batería acotada de casos. Cada caso fija antes de la ejecución una pregunta, un resultado esperado, un criterio de evaluación y una forma de validación. La batería no pretende representar estadísticamente todas las preguntas posibles a CensoBot. Busca cubrir distintos tipos de problemas y someter capacidades diferentes del sistema a situaciones controladas.
+
+El diseño distingue dos objetos de evaluación.
+
+**Resultado.** Observamos qué entrega finalmente CensoBot: una cifra, una comparación, una tabla, un mapa, una aclaración o una respuesta que reconoce los límites de los datos.
+
+**Procedimiento.** Observamos cómo llegó a ese resultado: qué territorio resolvió, qué universo y variables utilizó, qué operaciones realizó y qué herramientas invocó. Un resultado correcto puede provenir de un procedimiento incorrecto, por lo que ambas cosas no son equivalentes.
+
+Para ordenar la complejidad usamos dos ejes: `level` y `dimension`. `level` gradúa la exigencia del caso. `dimension` indica qué aspecto del comportamiento estamos poniendo a prueba, por ejemplo recuperación, cálculo, semántica, alcance, razonamiento o comportamiento del agente. De este modo, la complejidad no se reduce a que una pregunta sea simplemente “fácil” o “difícil”. Puede estar en el resultado, en el procedimiento o en ambos.
 
 ```{r}
 #| label: evaluation-metrics
@@ -211,21 +219,106 @@ metric_cards <- c(
     n_evaluated
   ),
   sprintf(
-    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">categorías cubiertas</span></div>',
-    n_categories
+    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">dimensiones cubiertas</span></div>',
+    n_dimensions
   ),
   sprintf(
-    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">niveles de dificultad</span></div>',
-    n_difficulties
+    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">niveles de complejidad</span></div>',
+    n_levels
   )
 )
 
 cat('<div class="eval-grid">', paste(metric_cards, collapse = "\n"), '</div>')
 ```
 
+```{r}
+#| label: level-chart
+#| fig-cap: "Casos evaluados por nivel"
+#| fig-width: 8
+#| fig-height: 3.2
+level_data <- data.frame(
+  level = factor(names(level_counts), levels = names(level_counts)),
+  n = as.integer(level_counts)
+)
+
+ggplot2::ggplot(
+  level_data,
+  ggplot2::aes(x = n, y = level)
+) +
+  ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
+  ggplot2::labs(x = NULL, y = "Nivel") +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, max(level_data$n), by = 1),
+    expand = ggplot2::expansion(mult = c(0, .04))
+  ) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank()
+  )
+```
+
+## Principios de evaluación
+
+La batería se construye con algunos principios simples.
+
+- **Los modelos se equivocan.** CensoBot, o más precisamente los modelos de lenguaje que intervienen en su funcionamiento, pueden cometer errores. Una prueba útil debe ser capaz de hacerlos visibles.
+- **Los errores no son constantes.** Su tipo y magnitud pueden variar entre modelos y entre ejecuciones de un mismo modelo. Una corrida aislada no agota el comportamiento del sistema.
+- **Una prueba que nunca falla también debe ser revisada.** Si la batería no hace aparecer errores, hay que preguntarse si los casos son demasiado simples, si faltan modos de falla relevantes o si los criterios son demasiado permisivos.
+- **El resultado no basta.** Cuando el caso lo requiere, también importa que el procedimiento utilizado sea válido y trazable.
+
+Por eso mezclamos preguntas directas con cálculos, comparaciones, problemas semánticos, preguntas ambiguas, casos fuera del alcance de los datos y tareas que requieren varias decisiones encadenadas. La batería busca variar no solo la dificultad, sino también la naturaleza del problema.
+
+## Cómo usamos `vitals`
+
+Usamos [`vitals`](https://vitals.tidyverse.org/) para ejecutar los casos, registrar cada corrida y conservar la evidencia necesaria para evaluarla. La lógica general puede resumirse así:
+
+**caso → solver → respuesta y traza → scorer → evaluación**
+
+El **caso** contiene la pregunta y la referencia contra la cual será evaluada. El **solver** es el modelo que opera CensoBot e intenta resolverla. Durante esa ejecución se registra la respuesta y, cuando corresponde, la **traza** de llamadas a herramientas y operaciones. El **scorer** determina cómo se valida el caso.
+
+No todos los casos usan el mismo tipo de scorer. Cuando una condición puede comprobarse directamente, usamos reglas determinísticas: valores exactos, tolerancias, ordenamientos, presencia de determinados pares nombre-valor o propiedades de una salida. Cuando el criterio exige interpretar una respuesta o una trayectoria, interviene un **modelo juez**, que compara la evidencia observada con el criterio definido previamente.
+
+La puntuación final es solo el resumen. Lo importante es conservar suficiente evidencia para entender **por qué** un caso fue clasificado de una manera determinada y distinguir, cuando es posible, si el problema está en el resultado, en el procedimiento o en ambos.
+
+### El juez también se evalúa
+
+El modelo juez también es probabilístico. Distintos jueces pueden reconocer una falla similar y, sin embargo, diferir en su severidad al clasificarla. Por eso intentamos dejar fuera del juicio del modelo todo lo que pueda resolverse mediante reglas explícitas y reservar el juez para aquellos casos donde realmente es necesario interpretar la respuesta o el procedimiento.
+
+Esto también permite comparar evaluaciones entre jueces y revisar si una discrepancia proviene del comportamiento de CensoBot o de la propia evaluación.
+
+## Algunos casos
+
+Los casos ayudan a entender qué significa evaluar resultado y procedimiento en la práctica.
+
+### Recuperación directa
+
+**¿Cuántas personas viven en Maipú?**
+
+Aquí el resultado puede verificarse contra una cifra exacta. Además, la traza permite comprobar que el territorio y la fuente utilizados corresponden al universo solicitado.
+
+### Semántica y procedimiento
+
+**¿Cuál es el promedio de personas por hogar en Paine?**
+
+El valor final no basta. También importa cómo se construye el universo y el denominador. Una cifra correcta obtenida mezclando hogares particulares con otros tipos de residencia seguiría siendo un problema de procedimiento.
+
+### Alcance
+
+**¿Tienes establecimientos de salud?**
+
+En este caso la respuesta correcta no es una cifra. CensoBot debe reconocer que esa información no está disponible en los datos a los que tiene acceso. Inventar una variable o presentar una aproximación como si respondiera la pregunta constituye un error.
+
+### Razonamiento
+
+**¿La menor escolaridad explica una mayor desocupación?**
+
+El problema no consiste solo en recuperar datos. CensoBot debe distinguir una asociación descriptiva de una afirmación causal y responder de forma proporcional a la evidencia disponible.
+
+Estos ejemplos cubren comportamientos distintos: recuperar, calcular, interpretar, reconocer límites y razonar sobre lo que los datos permiten sostener.
+
 ## Resultado de la evaluación
 
-Cada caso evaluado aporta `1` cuando la respuesta es correcta y `0` cuando necesita revisión. El promedio resume el resultado de una corrida sobre este conjunto específico de casos. No debe interpretarse como una medida general de la precisión de CensoBot frente a cualquier pregunta posible.
+La siguiente cifra resume la última corrida disponible sobre esta batería específica. Cada caso clasificado como correcto aporta `1`; los casos que necesitan revisión aportan `0`. El promedio no debe interpretarse como una medida general de la precisión de CensoBot frente a cualquier pregunta posible.
 
 ```{r}
 #| label: accuracy-chart
@@ -264,68 +357,9 @@ ggplot2::ggplot(
   )
 ```
 
-## Qué medimos
-
-::: {.cl-card-grid}
-::: {.cl-card}
-**Resultado**
-
-Comprobamos si CensoBot entrega el valor, la respuesta o la salida esperada. Cuando conocemos una cifra exacta, la comparación puede hacerse de forma determinística.
-:::
-
-::: {.cl-card}
-**Procedimiento**
-
-También observamos cómo llegó al resultado: territorio, universo, variables, operaciones y uso de herramientas. Un resultado correcto no implica necesariamente un procedimiento correcto.
-:::
-
-::: {.cl-card}
-**Alcance**
-
-Incluimos preguntas ambiguas y preguntas que los datos no permiten responder. Pedir una aclaración o reconocer que la información no está disponible puede ser la respuesta correcta.
-:::
-
-::: {.cl-card}
-**Referencia explícita**
-
-La pregunta, el resultado esperado y el criterio se preparan antes de ejecutar la evaluación. La referencia no cambia para acomodarse a la respuesta de CensoBot.
-:::
-:::
-
-## Dificultad de los casos
-
-La complejidad puede estar tanto en el resultado pedido como en el procedimiento necesario para obtenerlo. Por eso la batería combina distintos niveles de dificultad y distintas dimensiones de evaluación.
-
-```{r}
-#| label: difficulty-chart
-#| fig-cap: "Casos activos por dificultad"
-#| fig-width: 8
-#| fig-height: 3.2
-difficulty_data <- data.frame(
-  difficulty = factor(
-    names(difficulty_counts),
-    levels = c("Básica", "Media", "Alta")
-  ),
-  n = as.integer(difficulty_counts)
-)
-
-ggplot2::ggplot(
-  difficulty_data,
-  ggplot2::aes(x = n, y = difficulty)
-) +
-  ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
-  ggplot2::labs(x = NULL, y = NULL) +
-  ggplot2::scale_x_continuous(
-    breaks = seq(0, max(difficulty_data$n), by = 1),
-    expand = ggplot2::expansion(mult = c(0, .04))
-  ) +
-  ggplot2::theme(
-    panel.grid.major.y = ggplot2::element_blank(),
-    panel.grid.minor = ggplot2::element_blank()
-  )
-```
-
 ## Los casos
+
+La tabla muestra la pregunta, la referencia preparada para evaluarla, la respuesta producida por CensoBot y la clasificación obtenida en la última corrida.
 
 ```{r}
 #| label: cases-table
@@ -385,20 +419,10 @@ Resultados de la última corrida disponible de evaluación de CensoBot.
 <strong>Última evaluación:</strong> `r latest_evaluation_label`.
 </p>
 
-## Cómo usamos `vitals`
-
-Usamos `vitals` para ejecutar los casos, registrar cada corrida y conservar la respuesta y la trayectoria seguida por CensoBot. El flujo general es simple: **caso → CensoBot → respuesta y traza → scorer → evaluación**.
-
-No todos los casos se evalúan de la misma forma. Cuando una condición puede comprobarse directamente, usamos reglas determinísticas, por ejemplo valores exactos, tolerancias, ordenamientos o estructura de una salida. Cuando importa interpretar la respuesta o el procedimiento, un modelo juez compara la evidencia observada con el criterio definido previamente.
-
-Esto permite separar dos preguntas: si CensoBot llegó al resultado correcto y si llegó mediante un procedimiento válido. La traza importa porque una respuesta aparentemente correcta puede esconder un territorio, un universo, una variable o una operación incorrectos.
-
-Los modelos jueces también son probabilísticos. Por eso buscamos resolver mediante reglas explícitas todo lo que pueda verificarse de forma determinística y reservar el juicio del modelo para los casos donde realmente se necesita interpretar la respuesta o el procedimiento.
-
 ## Evaluar para mejorar
 
-La evaluación no termina en un puntaje. Una falla permite identificar una vulnerabilidad y acotar dónde investigar su causa: instrucciones, modelo, metadatos, herramientas, lógica de cálculo o implementación.
+El objetivo de la evaluación no es solamente producir un porcentaje. Una falla permite localizar una vulnerabilidad y acotar dónde investigar su causa: instrucciones, modelo, metadatos, herramientas, lógica de cálculo, secuencia de operaciones o implementación.
 
-Cuando identificamos un problema, podemos corregirlo y volver a ejecutar la misma batería. Si aparece un modo de falla nuevo, puede incorporarse como un nuevo caso. Así, la evaluación se vuelve más exigente a medida que CensoBot mejora.
+Cuando identificamos un problema, podemos corregirlo y volver a ejecutar la misma batería. Si aparece un modo de falla nuevo, puede incorporarse como un nuevo caso. La evaluación se vuelve más exigente a medida que conocemos mejor los límites del sistema.
 
-**Evaluar → identificar → corregir → volver a evaluar.**
+**Evaluar → identificar → diagnosticar → corregir → volver a evaluar.**

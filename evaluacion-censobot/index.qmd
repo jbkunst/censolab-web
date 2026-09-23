@@ -1,6 +1,6 @@
 ---
 title: Cómo evaluamos CensoBot
-description: Preguntas, referencias humanas y resultados de la evaluación de CensoBot.
+description: Qué evaluamos, cómo lo medimos y qué muestran las respuestas de CensoBot evaluadas por Astra.
 draft: true
 lang: es
 body-classes: evaluation-page
@@ -15,72 +15,81 @@ execute:
 
 ```{r}
 #| label: load-evaluation-set
+# Conservamos una corrida identificada para que el informe sea reproducible.
 evaluation_data <- utils::read.csv(
-  "../data/evals/censobot-eval-latest.csv",
+  "data/censobot-eval-luna-astra-2026-09-21.csv",
   check.names = FALSE,
   stringsAsFactors = FALSE,
+  colClasses = "character",
   na.strings = c("", "NA")
 )
 
 source_columns <- c(
-  "id", "category", "input", "target", "criterion", "difficulty",
-  "active", "validation_type", "expected_value", "tolerance", "score",
-  "response", "evaluated_at", "app_version"
+  "id", "dimension", "input", "target", "foco_evaluacion", "level",
+  "score", "response", "evaluated_at", "app_version"
 )
-stopifnot(all(source_columns %in% names(evaluation_data)))
+stopifnot(all(c(source_columns, "solver_model", "scorer_model") %in%
+  names(evaluation_data)))
+stopifnot(
+  nrow(evaluation_data) > 0L,
+  !anyDuplicated(evaluation_data$id),
+  all(evaluation_data$solver_model == "gpt-5.6-luna"),
+  all(evaluation_data$scorer_model == "gpt-6-astra"),
+  all(substr(evaluation_data$evaluated_at, 1, 10) == "2026-09-21"),
+  all(is.na(evaluation_data$score) | evaluation_data$score %in% c("C", "P", "I"))
+)
 
 cases <- evaluation_data[source_columns]
 names(cases) <- c(
-  "ID", "Categoría", "Pregunta", "Resultado esperado", "Criterio",
-  "Dificultad", "Activo", "Tipo de validación", "Valor esperado", "Tolerancia",
+  "ID", "Dimensión", "Pregunta", "Resultado esperado", "Foco", "Dificultad",
   "Evaluación", "Respuesta", "Fecha de evaluación", "Versión"
 )
+cases$Dificultad <- factor(
+  cases$Dificultad,
+  levels = c("bajo", "medio", "alto"),
+  labels = c("Bajo", "Medio", "Alto")
+)
+stopifnot(!anyNA(cases$Dificultad))
 
-active <- tolower(trimws(cases$Activo)) %in% c("sí", "si", "true", "1")
-active_cases <- cases[active, , drop = FALSE]
-
-n_cases <- nrow(active_cases)
-n_categories <- length(unique(active_cases$Categoría))
-n_difficulties <- length(unique(active_cases$Dificultad))
-n_evaluated <- sum(!is.na(active_cases$Evaluación))
-n_correct <- sum(active_cases$Evaluación == "C", na.rm = TRUE)
+n_cases <- nrow(cases)
+n_dimensions <- length(unique(cases$Dimensión))
+n_difficulties <- length(unique(cases$Dificultad))
+n_evaluated <- sum(!is.na(cases$Evaluación))
+n_correct <- sum(cases$Evaluación == "C", na.rm = TRUE)
+n_partial <- sum(cases$Evaluación == "P", na.rm = TRUE)
+n_incorrect <- sum(cases$Evaluación == "I", na.rm = TRUE)
 accuracy <- if (n_evaluated) n_correct / n_evaluated else NA_real_
 accuracy_label <- if (is.na(accuracy)) "—" else sprintf("%.0f%%", accuracy * 100)
+solver_model <- unique(evaluation_data$solver_model)
+scorer_model <- unique(evaluation_data$scorer_model)
+evaluation_version <- unique(cases$Versión)
 
-evaluation_dates <- as.Date(substr(active_cases$`Fecha de evaluación`, 1, 10))
-evaluation_dates <- evaluation_dates[!is.na(evaluation_dates)]
-latest_evaluation_date <- if (length(evaluation_dates)) {
-  max(evaluation_dates)
-} else {
-  as.Date(NA)
-}
+latest_evaluation_date <- max(as.Date(substr(cases$`Fecha de evaluación`, 1, 10)))
 spanish_months <- c(
   "enero", "febrero", "marzo", "abril", "mayo", "junio",
   "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
 )
-latest_evaluation_label <- if (is.na(latest_evaluation_date)) {
-  "fecha no disponible"
-} else {
-  sprintf(
-    "%d de %s de %d",
-    as.integer(format(latest_evaluation_date, "%d")),
-    spanish_months[as.integer(format(latest_evaluation_date, "%m"))],
-    as.integer(format(latest_evaluation_date, "%Y"))
-  )
-}
-
-difficulty_counts <- table(
-  factor(active_cases$Dificultad, levels = c("Básica", "Media", "Alta"))
+latest_evaluation_label <- sprintf(
+  "%d de %s de %d",
+  as.integer(format(latest_evaluation_date, "%d")),
+  spanish_months[as.integer(format(latest_evaluation_date, "%m"))],
+  as.integer(format(latest_evaluation_date, "%Y"))
 )
+difficulty_counts <- table(cases$Dificultad)
 
 try(
   sysfonts::font_add_google("IBM Plex Sans", family = "IBM Plex Sans"),
   silent = TRUE
 )
 showtext::showtext_auto()
+plot_font <- if ("IBM Plex Sans" %in% sysfonts::font_families()) {
+  "IBM Plex Sans"
+} else {
+  "sans"
+}
 
 ggplot2::theme_set(
-  ggplot2::theme_minimal(base_size = 25, base_family = "IBM Plex Sans") +
+  ggplot2::theme_minimal(base_size = 25, base_family = plot_font) +
     ggplot2::theme(
       plot.title = ggplot2::element_text(face = "plain"),
       plot.background = ggplot2::element_rect(fill = "#f9f9f9", colour = NA),
@@ -92,6 +101,9 @@ ggplot2::theme_set(
 
 ```{=html}
 <style>
+.evaluation-page #quarto-document-content p {
+  text-align: justify;
+}
 .eval-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -118,6 +130,100 @@ ggplot2::theme_set(
   color: var(--bs-secondary-color);
   font-size: .76rem;
   line-height: 1.35;
+}
+.eval-component {
+  border-top: 3px solid var(--censolab-primary);
+}
+.evaluation-page #quarto-document-content .eval-component p {
+  text-align: left;
+}
+.eval-component-step {
+  margin: 0 0 .7rem;
+  color: var(--bs-secondary-color);
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.eval-component-title {
+  margin: 0 0 .8rem;
+  color: var(--censolab-primary);
+  font-size: 1.65rem;
+  font-weight: 300;
+  letter-spacing: -.04em;
+  line-height: 1.1;
+}
+.eval-component-description {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+  line-height: 1.6;
+}
+.eval-validation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1.4rem 0 2rem;
+}
+.eval-validation-card {
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: .55rem;
+  background: var(--bs-body-bg);
+}
+.eval-validation-card dt {
+  color: var(--censolab-primary);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.eval-validation-card dt code {
+  display: block;
+  margin-top: .3rem;
+  padding: 0;
+  background: transparent;
+  color: var(--bs-secondary-color);
+  font-size: .65rem;
+  font-weight: 400;
+}
+.eval-validation-card dd {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .8rem;
+  line-height: 1.55;
+}
+.eval-validation-card .eval-validation-count {
+  align-self: flex-start;
+  padding: .2rem .65rem;
+  border-radius: 999px;
+  background: rgba(14, 79, 90, .08);
+  color: var(--censolab-primary);
+  font-size: .72rem;
+  font-weight: 600;
+}
+.eval-validation-card .eval-validation-example {
+  margin-top: auto;
+  padding: .65rem .8rem;
+  border-left: 2px solid var(--censolab-primary);
+  background: rgba(14, 79, 90, .045);
+  color: var(--bs-body-color);
+  font-size: .76rem;
+}
+.eval-validation-example strong {
+  display: block;
+  margin-bottom: .2rem;
+  color: var(--censolab-primary);
+  font-size: .62rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.eval-validation-judge {
+  grid-column: 1 / -1;
+  border-top: 3px solid var(--censolab-primary);
 }
 .eval-table-wrap {
   width: 100%;
@@ -165,20 +271,60 @@ ggplot2::theme_set(
   .eval-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .eval-grid.eval-components {
+    grid-template-columns: 1fr;
+  }
 }
 @media (max-width: 640px) {
-  .eval-grid {
+  .eval-grid,
+  .eval-validation-grid {
     grid-template-columns: 1fr;
   }
 }
 </style>
 ```
 
-Una respuesta convincente no basta. Evaluamos si CensoBot encuentra el dato correcto, resuelve bien el territorio, realiza los cálculos pedidos y utiliza una salida adecuada cuando la consulta requiere una tabla, un gráfico, un mapa o un perfil territorial.
+## Presentación
 
-## Una batería abierta y en crecimiento
+CensoLab se orienta a facilitar la consulta y visualización de la información censal de Chile mediante lenguaje natural. Para que ese objetivo se cumpla a cabalidad sus respuestas deben ser correctas y, por consecuencia, confiables. 
 
-Cada caso comienza con una **pregunta escrita por una persona** y un **resultado esperado definido por una persona**. Luego CensoBot responde y, mediante `vitals`, un modelo de inteligencia artificial compara esa respuesta con el resultado esperado. Así medimos el desempeño con una referencia humana explícita, sin pedirle al evaluador que invente cuál debería haber sido la respuesta.
+CensoLab es un sistema compuesto por un modelo de lenguaje, instrucciones, metadata, herramientas y datos. Dentro de este entorno, el modelo interpreta las solicitudes, selecciona y ejecuta operaciones, coordina el uso de las herramientas disponibles y construye una respuesta a partir de los resultados obtenidos. Aquí el diseño del sistema establece las condiciones y recursos con los que CensoBot opera, pero no determina de antemano cómo resolverá cada consulta. El modelo puede seguir distintos recorridos, cometer errores de interpretación o procedimiento e incluso producir afirmaciones que no estén respaldadas por los datos disponibles. Por esta razón es necesario observar y evaluar cómo se *comporta* al resolver las consultas.
+
+En esta entrada presentamos una primera aproximación a la evaluación de CensoLab.
+
+## Qué evaluamos
+
+Inicialmente solo habiamos concebido evaluar el *resultado* de las consultas. Pero a medida que íbamos probando CensoBot con distintos modelos, comenzamos a observar que un mismo resultado podía alcanzarse mediante recorridos muy diferentes. Esto nos indujo a pensar que el *procedimiento* para llegar al resultado también debía ser una dimensión a evaluar. Así distinguimos dos aspectos de la evaluación:
+
+::: {.cl-card-grid}
+::: {.cl-card}
+**Resultado**
+
+La respuesta resuelve la consulta con cifras, comparaciones y conclusiones correctas, referidas al territorio y al universo solicitados.
+:::
+
+::: {.cl-card}
+**Procedimiento**
+
+El sistema interpreta la solicitud, utiliza datos y herramientas pertinentes y sigue un recorrido razonablemente directo para construir una respuesta respaldada por los resultados.
+:::
+:::
+
+Esta preocupación emanó de la propia experiencia de ir desarrollando CensoLab. Sin embargo al revisar luego cómo se están evaluando sistemas agénticos encontramos que el problema estaba más desarrollado. OpenAI, por ejemplo, plantea que el desempeño de un agente no depende solo del modelo, sino también del entorno que lo rodea, al que denomina *harness*: instrucciones, herramientas, recursos y condiciones de ejecución que influyen en cómo el modelo resuelve una tarea. Desde esta perspectiva, evaluar un agente implica mirar no solo el resultado final, sino también lo que ocurre durante su ejecución [(OpenAI 2026)](https://openai.com/index/trustworthy-third-party-evaluations-foundations/). En una línea similar, Anthropic propone prestar atención a la trayectoria seguida por el agente, incluyendo sus decisiones, llamadas a herramientas y resultados intermedios [(Anthropic 2026)](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents). La evaluación de un sistema agéntico puede abarcar mucho más de lo que abordamos aquí: resultado, trayectoria, uso de herramientas, variación entre ejecuciones y métricas como latencia, tokens y costos.
+
+## Diseño de la evaluación (###AQUI VAMOS###)
+
+Para el caso que nos convoca, construimos una batería acotada de preguntas buscando cubrir distintos grados de dificultad y diferentes formas de interacción con CensoBot. 
+
+La dificultad fue definida inicialmente desde una perspectiva humana: no como una propiedad objetiva de cada pregunta, sino según la cantidad y el tipo de decisiones necesarias para resolverla.
+
+En los casos más simples, la operación puede consistir en identificar un territorio y contar registros, como al preguntar por la población de una comuna. Otras preguntas requieren construir una estimación: calcular un porcentaje supone identificar correctamente un numerador, un denominador y el universo al que ambos pertenecen. A partir de ahí incorporamos comparaciones, ordenamientos, construcción de indicadores, combinación de información y tareas que requieren varios pasos antes de producir una respuesta.
+
+También quisimos acercanos a la ambiguedad propia del lenguaje humano, donde muchas veces hay cuestiones que se dan por supuesto y no necesariamente se especifican en el prompt, asi como también enfrentarse al error. Asi por ejemplo, una consulta por “viviendas” puede parecer directa, pero exige interpretar correctamente el universo y distinguir las viviendas particulares de otros tipos de operativo, como las viviendas colectivas o las personas en situación de calle. En otros casos el enunciado del usuario está mal formulado, como ocurre al solicitar, por ejemplo, la “cantidad de hogares promedio”. 
+
+Finalmente incorporamos preguntas donde la dificultad ya no está principalmente en el cálculo, sino en determinar qué puede sostenerse con los datos disponibles. Esto incluye reconocer información que CensoLab no posee, distinguir una asociación descriptiva de una explicación causal, comparar indicadores que miden aspectos relacionados pero diferentes, respaldar conclusiones con evidencia censal o desarrollar una secuencia de análisis antes de responder.
+
+Con este diseño buscamos que un conjunto relativamente pequeño de casos recorra distintas capacidades de CensoBot. Los niveles de dificultad organizan esa progresión, mientras que las dimensiones identifican qué aspecto de la resolución estamos poniendo principalmente a prueba.
 
 ```{r}
 #| label: evaluation-metrics
@@ -189,8 +335,8 @@ metric_cards <- c(
     n_evaluated
   ),
   sprintf(
-    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">categorías cubiertas</span></div>',
-    n_categories
+    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">dimensiones cubiertas</span></div>',
+    n_dimensions
   ),
   sprintf(
     '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">niveles de dificultad</span></div>',
@@ -201,86 +347,15 @@ metric_cards <- c(
 cat('<div class="eval-grid">', paste(metric_cards, collapse = "\n"), '</div>')
 ```
 
-## Resultado de la evaluación
-
-Cada caso evaluado aporta `1` cuando la respuesta es correcta y `0` cuando necesita revisión. El promedio de esos valores corresponde a la proporción de respuestas correctas.
-
-```{r}
-#| label: accuracy-chart
-#| fig-cap: "Proporción de respuestas evaluadas clasificadas como correctas"
-#| fig-width: 8
-#| fig-height: 2.5
-accuracy_value <- if (is.na(accuracy)) 0 else accuracy
-accuracy_data <- data.frame(
-  result = "Correctas",
-  proportion = accuracy_value,
-  label = accuracy_label,
-  label_x = if (accuracy_value >= .15) accuracy_value - .02 else accuracy_value + .02
-)
-
-ggplot2::ggplot(
-  accuracy_data,
-  ggplot2::aes(x = proportion, y = result)
-) +
-  ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
-  ggplot2::geom_text(
-    ggplot2::aes(x = label_x, label = label),
-    hjust = if (accuracy_value >= .15) 1 else 0,
-    colour = if (accuracy_value >= .15) "#FFFFFF" else "#202326",
-    size = 5
-  ) +
-  ggplot2::scale_x_continuous(
-    limits = c(0, 1),
-    breaks = seq(0, 1, by = .25),
-    labels = paste0(seq(0, 100, by = 25), "%"),
-    expand = c(0, 0)
-  ) +
-  ggplot2::labs(x = NULL, y = NULL) +
-  ggplot2::theme(
-    panel.grid.major.y = ggplot2::element_blank(),
-    panel.grid.minor = ggplot2::element_blank()
-  )
-```
-
-## Qué medimos
-
-::: {.cl-card-grid}
-::: {.cl-card}
-**Exactitud verificable**
-
-Cuando conocemos la cifra esperada, la comparación es determinística. No pedimos a otro modelo que decida si un número “parece correcto”.
-:::
-
-::: {.cl-card}
-**Referencia humana**
-
-La pregunta, el resultado esperado y los criterios se preparan antes de ejecutar la evaluación. La referencia no cambia para acomodarse a la respuesta de CensoBot.
-:::
-
-::: {.cl-card}
-**Comparación con IA**
-
-`vitals` ejecuta cada caso y un modelo de IA compara la respuesta de CensoBot con la referencia humana, considerando el criterio definido para esa pregunta.
-:::
-
-::: {.cl-card}
-**Preguntas diversas**
-
-El conjunto combina categorías y niveles de dificultad: consultas directas, cálculos, comparaciones, tablas, gráficos, mapas, perfiles territoriales y casos fuera de alcance.
-:::
-:::
-
-## Dificultad de los casos
-
 ```{r}
 #| label: difficulty-chart
-#| fig-cap: "Casos activos por dificultad"
+#| fig-cap: "Casos por nivel de dificultad previsto"
 #| fig-width: 8
 #| fig-height: 3.2
 difficulty_data <- data.frame(
   difficulty = factor(
     names(difficulty_counts),
-    levels = c("Básica", "Media", "Alta")
+    levels = c("Bajo", "Medio", "Alto")
   ),
   n = as.integer(difficulty_counts)
 )
@@ -301,13 +376,265 @@ ggplot2::ggplot(
   )
 ```
 
+## Cómo evaluamos
+
+La evaluación se realiza con `vitals`, un framework que es parte de los desarrollos que viene realizando el equipo de Posit para trabajar con llms. Vitals es una herramienta muy poderosa porque permite construir evaluaciones de maneras bien personalizadas y donde se pueden cubrir una gama de dimensiones, ya sea como el resultado y el procedimiento. Ofrece un informe donde se puede consultar la conversación y de ese modo tener la trazabilidad de la operación, identificar en qué momento realizó una determinada tarea y si condujo al siguiente paso. Es realmente fascinante el abanico de posibilidades que ofrece `vitals` para evaluar un sistema como lo es CensoLab.  
+
+`vitals` organiza una evaluación en tres componentes: un dataset, un solver y un scorer.
+
+```{=html}
+<div class="eval-grid eval-components">
+  <div class="eval-metric eval-component">
+    <p class="eval-component-step">01 · Preparar</p>
+    <p class="eval-component-title">Dataset</p>
+    <p class="eval-component-description">Contiene los casos de evaluación. Cada caso tiene un identificador (<code>id</code>), una consulta (<code>input</code>) y un resultado o comportamiento esperado (<code>target</code>), además de información para organizar y evaluar la prueba.</p>
+  </div>
+  <div class="eval-metric eval-component">
+    <p class="eval-component-step">02 · Resolver</p>
+    <p class="eval-component-title">Solver</p>
+    <p class="eval-component-description">Es el sistema que resuelve los casos. En nuestro caso es CensoBot, operando con sus instrucciones, herramientas y datos.</p>
+  </div>
+  <div class="eval-metric eval-component">
+    <p class="eval-component-step">03 · Evaluar</p>
+    <p class="eval-component-title">Scorer</p>
+    <p class="eval-component-description">Evalúa la resolución de cada caso. Puede aplicar comprobaciones programáticas sobre la respuesta y la trayectoria y, cuando corresponde, utilizar un modelo de lenguaje como juez.</p>
+  </div>
+</div>
+```
+
+### De la pregunta a la evidencia
+
+El dataset entrega al solver la pregunta del campo `input`. Por ejemplo:
+
+> ¿Cuántas personas viven en Maipú?
+
+El solver ejecuta CensoBot con sus instrucciones y herramientas, que le permiten consultar DuckDB y construir una respuesta. El resultado de esa ejecución queda registrado en tres campos:
+
+| Campo | Qué conserva |
+|:--|:--|
+| `result` | La respuesta final. |
+| `solver_chat` | La conversación. |
+| `solver_metadata` | Las herramientas utilizadas, sus resultados y la traza de ejecución. |
+
+El scorer recibe estos registros junto con la información del caso: `input`, `target`, `expected_value` cuando corresponde una referencia numérica, `tolerance`, `validacion` y `juez`. Así puede contrastar la respuesta y el procedimiento con lo esperado. **El solver trabaja con la pregunta y las herramientas disponibles; las referencias quedan reservadas para la evaluación.**
+
+### Qué comprobación se aplica
+
+La variable `validacion` determina la regla que aplica el scorer. Las siguientes estrategias describen qué se comprueba y con qué evidencia.
+
+```{r}
+#| label: validation-counts
+#| include: false
+validation_types <- c(
+  "numerico_directo", "numerico_derivado", "accion", "ordenamiento",
+  "artefacto", "traza", "ninguna"
+)
+# Agrupa las etiquetas históricas por la comprobación aplicada en esa corrida.
+validation_groups <- c(
+  stats::setNames(validation_types, validation_types),
+  numeric_exact = "numerico_directo",
+  numeric_tolerance = "numerico_derivado",
+  "numeric+trace" = "numerico_derivado",
+  "numeric+llm_judge" = "numerico_derivado",
+  tool_trace = "accion",
+  table_rule = "ordenamiento",
+  artifact_rule = "artefacto",
+  "artifact+llm_judge" = "artefacto",
+  trace_rule = "traza",
+  "trace+llm_judge" = "traza",
+  llm_judge = "ninguna"
+)
+validation_column <- if ("validacion" %in% names(evaluation_data)) {
+  "validacion"
+} else {
+  "validation"
+}
+case_validations <- unname(validation_groups[evaluation_data[[validation_column]]])
+stopifnot(length(case_validations) == nrow(evaluation_data), !anyNA(case_validations))
+validation_counts <- table(factor(case_validations, levels = validation_types))
+validation_count_label <- function(type) {
+  n <- unname(validation_counts[[type]])
+  sprintf("%d %s", n, if (n == 1L) "caso" else "casos")
+}
+```
+
+```{=html}
+<dl class="eval-validation-grid" aria-label="Estrategias de validación y ejemplos">
+  <div class="eval-validation-card">
+    <dt>Numérico directo <code>numerico_directo</code></dt>
+    <dd class="eval-validation-count">`r validation_count_label("numerico_directo")`</dd>
+    <dd>Comprueba que el valor esperado aparezca en la respuesta y coincida con los datos devueltos por una herramienta.</dd>
+    <dd class="eval-validation-example"><strong>Ejemplo</strong>¿Cuántas personas viven en Maipú? → 503.635 habitantes.</dd>
+  </div>
+  <div class="eval-validation-card">
+    <dt>Numérico derivado <code>numerico_derivado</code></dt>
+    <dd class="eval-validation-count">`r validation_count_label("numerico_derivado")`</dd>
+    <dd>Comprueba un resultado obtenido mediante un cálculo, su tolerancia y los datos que lo sustentan.</dd>
+    <dd class="eval-validation-example"><strong>Ejemplo</strong>Porcentaje de mujeres en Maipú o promedio de personas por hogar.</dd>
+  </div>
+  <div class="eval-validation-card">
+    <dt>Acción <code>accion</code></dt>
+    <dd class="eval-validation-count">`r validation_count_label("accion")`</dd>
+    <dd>Verifica en la trayectoria que la acción solicitada ocurrió y, cuando corresponde, que siguió la secuencia requerida.</dd>
+    <dd class="eval-validation-example"><strong>Ejemplo</strong>Identificar Isla de Maipo y abrir su informe territorial.</dd>
+  </div>
+  <div class="eval-validation-card">
+    <dt>Ordenamiento <code>ordenamiento</code></dt>
+    <dd class="eval-validation-count">`r validation_count_label("ordenamiento")`</dd>
+    <dd>Comprueba los elementos seleccionados, sus valores y el orden solicitado.</dd>
+    <dd class="eval-validation-example"><strong>Ejemplo</strong>Las cinco comunas más pobladas, ordenadas de mayor a menor.</dd>
+  </div>
+  <div class="eval-validation-card">
+    <dt>Artefacto <code>artefacto</code></dt>
+    <dd class="eval-validation-count">`r validation_count_label("artefacto")`</dd>
+    <dd>Verifica las propiedades de un producto estructurado generado por una herramienta.</dd>
+    <dd class="eval-validation-example"><strong>Ejemplo</strong>Un mapa a escala comunal, con el territorio solicitado y valores porcentuales.</dd>
+  </div>
+  <div class="eval-validation-card">
+    <dt>Traza <code>traza</code></dt>
+    <dd class="eval-validation-count">`r validation_count_label("traza")`</dd>
+    <dd>Comprueba que exista evidencia del procedimiento. Esa evidencia permite al juez revisar consultas, filtros, universos, herramientas y secuencia de operaciones.</dd>
+    <dd class="eval-validation-example"><strong>Ejemplo</strong>Construir el numerador y el denominador adecuados, investigar una hipótesis o comparar comunas.</dd>
+  </div>
+  <div class="eval-validation-card eval-validation-judge">
+    <dt>Revisión directa por el juez <code>ninguna</code></dt>
+    <dd class="eval-validation-count">`r validation_count_label("ninguna")`</dd>
+    <dd>El caso pasa directamente al modelo juez cuando interpretar la respuesta es el criterio central. La categoría indica que se omite la comprobación programática previa.</dd>
+    <dd class="eval-validation-example"><strong>Ejemplo</strong>Distinguir asociación de causalidad o pedir una aclaración al usuario.</dd>
+  </div>
+</dl>
+```
+
+### De la evidencia a la calificación
+
+El scorer comienza por la comprobación definida para el caso. En la pregunta por Maipú, la regla `numerico_directo` compara la cifra de la respuesta con `expected_value = 503635` y verifica que también aparezca en los datos devueltos por las herramientas. La categoría `ninguna` permite pasar directamente a la etapa de juicio, omitiendo la regla determinística.
+
+Cuando `juez = TRUE` y la comprobación inicial se supera, el scorer llama a `model_graded_qa()`. El modelo juez recibe la pregunta, el criterio de `target`, la respuesta y la traza. Con esa evidencia asigna **C** (correcto), **P** (parcialmente correcto) o **I** (incorrecto).
+
+```{mermaid}
+%%| fig-cap: "Flujo de una evaluación: desde la pregunta hasta la calificación."
+flowchart TD
+  A["Dataset<br/>Pregunta de input"] --> B["Solver<br/>CensoBot consulta y responde"]
+  B --> C["Registro<br/>Respuesta, conversación y traza"]
+  C --> D["Scorer<br/>Aplica la regla de validacion"]
+  D -->|"Supera la regla y juez = TRUE"| E["Modelo juez<br/>model_graded_qa()"]
+  D -->|"Falla la regla o juez = FALSE"| F["Calificación final"]
+  E --> F
+  classDef stage fill:#f4f8f8,stroke:#b9cecf,color:#173e43,rx:8,ry:8;
+  classDef grade fill:#0E4F5A,stroke:#0E4F5A,color:#ffffff,rx:8,ry:8;
+  class A,B,C,D,E stage;
+  class F grade;
+```
+
+Si la regla falla, el caso recibe **I**. Si se supera y `juez = FALSE`, recibe **C**. Cuando interviene el juez, su calificación determina la nota final. Los errores de ejecución o del juez, así como un juicio sin una nota reconocible, quedan registrados como **NA**, es decir, sin calificación.
+
+## Resultado 
+
+Presentamos la corrida del **`r latest_evaluation_label`**, realizada con CensoLab **`r evaluation_version`**. CensoBot utilizó **Luna** (`r solver_model`) para responder y **Astra** (`r scorer_model`) actuó como juez. Las cifras corresponden a la evaluación automática, que combina las reglas descritas con el juicio de Astra.
+
+Los **`r n_evaluated` casos evaluados** se distribuyeron en **`r n_correct` correctos**, **`r n_partial` parcialmente correctos** y **`r n_incorrect` incorrectos**. La proporción de respuestas plenamente correctas fue de **`r accuracy_label`**.
+
+```{r}
+#| label: accuracy-chart
+#| fig-cap: "Respuestas por calificación: número de casos y porcentaje sobre el total calificado"
+#| fig-width: 8
+#| fig-height: 3.6
+result_labels <- c("Correctas", "Parcialmente correctas", "Incorrectas")
+accuracy_data <- data.frame(
+  result = factor(result_labels, levels = rev(result_labels)),
+  n = c(n_correct, n_partial, n_incorrect)
+)
+accuracy_data$proportion <- if (n_evaluated > 0L) {
+  accuracy_data$n / n_evaluated
+} else {
+  rep(0, nrow(accuracy_data))
+}
+accuracy_data$label <- if (n_evaluated > 0L) {
+  sprintf(
+    "%d %s (%.0f%%)",
+    accuracy_data$n,
+    ifelse(accuracy_data$n == 1L, "caso", "casos"),
+    accuracy_data$proportion * 100
+  )
+} else {
+  rep("Sin casos calificados", nrow(accuracy_data))
+}
+accuracy_data$label_inside <- accuracy_data$proportion >= .45
+accuracy_data$label_x <- accuracy_data$proportion + ifelse(
+  accuracy_data$label_inside, -.02, .02
+)
+
+ggplot2::ggplot(
+  accuracy_data,
+  ggplot2::aes(x = proportion, y = result, fill = result)
+) +
+  ggplot2::geom_col(width = .5) +
+  ggplot2::geom_text(
+    ggplot2::aes(
+      x = label_x,
+      label = label,
+      hjust = ifelse(label_inside, 1, 0),
+      colour = ifelse(label_inside, "#FFFFFF", "#202326")
+    ),
+    size = 4.5
+  ) +
+  ggplot2::scale_fill_manual(
+    values = c(
+      "Correctas" = "#0E4F5A",
+      "Parcialmente correctas" = "#986C22",
+      "Incorrectas" = "#A34343"
+    ),
+    guide = "none"
+  ) +
+  ggplot2::scale_colour_identity() +
+  ggplot2::scale_y_discrete(
+    labels = c(
+      "Correctas" = "Correctas",
+      "Parcialmente correctas" = "Parcialmente\ncorrectas",
+      "Incorrectas" = "Incorrectas"
+    ),
+    drop = FALSE
+  ) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 1),
+    breaks = seq(0, 1, by = .25),
+    labels = paste0(seq(0, 100, by = 25), "%"),
+    expand = c(0, 0)
+  ) +
+  ggplot2::labs(x = NULL, y = NULL) +
+  ggplot2::theme(
+    panel.grid.major.y = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank()
+  )
+```
+
+El porcentaje de cada categoría se calcula sobre el total de casos con calificación. Los parciales permiten reconocer una resolución que satisface parte del criterio y conserva aspectos pendientes de validación.
+
+::: {.eval-note}
+Estos resultados describen una ejecución de esta batería con una configuración específica. Su alcance es diagnóstico: permiten localizar fortalezas y problemas en las tareas probadas. Estimar el desempeño en el uso cotidiano requiere ampliar los casos y repetir las ejecuciones. Las calificaciones se presentan tal como fueron registradas; la revisión de los ejemplos siguientes aporta contexto para interpretarlas.
+:::
+
+### Análisis
+
+Los aciertos abarcan tareas de distinta complejidad: la consulta de población de Maipú (01), la aclaración de una pregunta ambigua sobre hogares en Paine (12), la distinción entre asociación y causalidad (17) y la comparación demográfica de Isla de Maipo con comunas de referencia (21). Los casos con observaciones ayudan a precisar dónde mejorar.
+
+**Cobertura de las edades.** En el caso 07, los cinco totales por grupos de edad de Valparaíso quedaron por debajo de la referencia. La consulta utilizó la edad en años cumplidos y excluyó los registros que quedaban fuera de los grupos. En los casos 14, 22 y 23, el juez también señaló que la supresión de edades podía afectar la cobertura de los rankings comunales. Esto orienta una revisión de las variables elegidas y de la comparabilidad territorial, incluida la alternativa de usar edades agrupadas en quinquenios.
+
+**Definición del denominador.** En el caso 15 se pidió el porcentaje de personas de 60 años o más pertenecientes a un pueblo originario sobre el total de ese grupo etario en cada región. CensoBot restringió el denominador a quienes tenían una respuesta válida sobre pertenencia. Las cifras reproducían la consulta, pero correspondían a una base de cálculo distinta de la solicitada.
+
+**Alcance de la información.** En el caso 16, CensoBot afirmó disponer de información sobre establecimientos de salud y ofreció explorar cantidades y tipos. La referencia exigía reconocer que esa información estaba fuera del alcance de CensoLab. El caso muestra la necesidad de respaldar las afirmaciones sobre disponibilidad antes de ofrecer un análisis.
+
+**Calibración del evaluador.** La revisión también identifica calificaciones que conviene reconsiderar. En el caso 10, Astra pidió verificar la definición del indicador de escolaridad, aunque las instrucciones de CensoBot ya indicaban qué variable usar para ese universo. En el caso 20, una regla asignó la categoría «incorrecta» por faltar una consulta de datos, pese a que la respuesta reconocía los límites de ingresos, temporalidad y causalidad. Ambos casos requieren contrastar la evidencia exigida con el objetivo de la prueba antes de atribuir el fallo al asistente.
+
 ## Los casos
+
+La tabla reúne las preguntas, sus referencias, las respuestas de CensoBot y la calificación automática. Las etiquetas conservan la diferencia entre una respuesta correcta, una parcialmente correcta y una incorrecta.
 
 ```{r}
 #| label: cases-table
 #| column: page
-public_cases <- active_cases[, c(
-  "Pregunta", "Resultado esperado", "Respuesta", "Evaluación"
+public_cases <- cases[, c(
+  "ID", "Pregunta", "Resultado esperado", "Respuesta", "Evaluación"
 ), drop = FALSE]
 
 public_cases$Respuesta <- trimws(gsub(
@@ -317,12 +644,11 @@ public_cases$Respuesta <- trimws(gsub(
   perl = TRUE
 ))
 public_cases$Respuesta <- gsub("\\*\\*", "", public_cases$Respuesta)
-public_cases$Evaluación <- ifelse(
-  public_cases$Evaluación == "C",
-  "Correcta",
-  ifelse(is.na(public_cases$Evaluación), "Sin evaluar", "Necesita revisión")
-)
+grade_labels <- c(C = "Correcta", P = "Parcialmente correcta", I = "Incorrecta")
+public_cases$Evaluación <- unname(grade_labels[public_cases$Evaluación])
+public_cases$Evaluación[is.na(public_cases$Evaluación)] <- "Sin calificación"
 names(public_cases) <- c(
+  "ID",
   "Pregunta",
   "Resultado esperado",
   "Respuesta de CensoBot",
@@ -344,6 +670,7 @@ reactable::reactable(
     headerVAlign = "center"
   ),
   columns = list(
+    ID = reactable::colDef(minWidth = 55, maxWidth = 65),
     Pregunta = reactable::colDef(minWidth = 220),
     `Resultado esperado` = reactable::colDef(minWidth = 260),
     `Respuesta de CensoBot` = reactable::colDef(minWidth = 340),
@@ -357,12 +684,19 @@ reactable::reactable(
 ```
 
 <p class="eval-source">
-Resultados de la última corrida disponible de evaluación de CensoBot.
-<strong>Última evaluación:</strong> `r latest_evaluation_label`.
+Evaluación del `r latest_evaluation_label` · CensoLab `r evaluation_version`.<br>
+Modelo de CensoBot: <strong>`r solver_model`</strong> · Modelo juez: <strong>`r scorer_model`</strong>.
 </p>
 
-## Cómo usamos `vitals`
+## Mejoras
 
-Usamos `vitals` para ejecutar los casos, registrar cada corrida y comparar las respuestas. En cada caso, CensoBot recibe la pregunta preparada por una persona. Después, un modelo de IA evalúa la respuesta obtenida frente al resultado esperado y los criterios que esa persona definió previamente.
+Cada caso que requiere atención plantea dos preguntas: qué falló en la resolución y qué evidencia sostiene esa conclusión. La respuesta permite decidir si corresponde ajustar las instrucciones, ampliar los metadatos, modificar una herramienta o precisar el criterio de evaluación.
 
-Esta página muestra **qué preguntamos, qué esperábamos, qué respondió CensoBot y cuál fue la evaluación**. Los detalles operacionales —como instrucciones internas, consultas SQL o llamadas a herramientas— se mantienen fuera del informe público porque no son necesarios para comprender el resultado.
+Las siguientes ejecuciones deben comprobar si esos cambios resuelven el problema y cómo afectan al resto de la batería. Para comparar resultados conviene conservar los casos y las condiciones de evaluación, o documentar sus cambios. Así, la batería sirve como registro del desempeño y como herramienta para guiar el desarrollo de CensoLab.
+
+## Referencias
+
+- Anthropic (2026). [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents).
+- OpenAI (2026). [A shared playbook for trustworthy third party evaluations](https://openai.com/index/trustworthy-third-party-evaluations-foundations/).
+- `vitals`. [Getting started with vitals](https://vitals.tidyverse.org/articles/vitals.html).
+- `vitals`. [Writing evals for your LLM product](https://vitals.tidyverse.org/articles/writing-evals.html).

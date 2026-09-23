@@ -589,6 +589,7 @@ Misma pregunta, distinto comportamiento: dos insights, una interpretación, del 
 
 ```{r}
 #| label: ellmer-api-manual-knitr
+#| eval: !expr nzchar(Sys.getenv("BCCH_TOKEN"))
 #| cache: true
 #| echo: true
 #| output-location: fragment

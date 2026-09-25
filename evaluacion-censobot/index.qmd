@@ -1,6 +1,6 @@
 ---
 title: Cómo evaluamos CensoBot
-description: Qué evaluamos, cómo lo medimos y qué muestran las respuestas de CensoBot evaluadas por Astra.
+description: Qué evaluamos, cómo lo medimos y qué muestran las respuestas de CensoBot evaluadas por Luna.
 draft: true
 lang: es
 body-classes: evaluation-page
@@ -17,7 +17,7 @@ execute:
 #| label: load-evaluation-set
 # Conservamos una corrida identificada para que el informe sea reproducible.
 evaluation_data <- utils::read.csv(
-  "data/censobot-eval-luna-astra-2026-09-21.csv",
+  "data/censobot-eval-luna-luna-2026-09-23.csv",
   check.names = FALSE,
   stringsAsFactors = FALSE,
   colClasses = "character",
@@ -34,8 +34,8 @@ stopifnot(
   nrow(evaluation_data) > 0L,
   !anyDuplicated(evaluation_data$id),
   all(evaluation_data$solver_model == "gpt-5.6-luna"),
-  all(evaluation_data$scorer_model == "gpt-6-astra"),
-  all(substr(evaluation_data$evaluated_at, 1, 10) == "2026-09-21"),
+  all(evaluation_data$scorer_model == "gpt-5.6-luna"),
+  all(substr(evaluation_data$evaluated_at, 1, 10) == "2026-09-23"),
   all(is.na(evaluation_data$score) | evaluation_data$score %in% c("C", "P", "I"))
 )
 
@@ -284,17 +284,17 @@ ggplot2::theme_set(
 </style>
 ```
 
-## Presentación
+## Presentación 
 
-CensoLab se orienta a facilitar la consulta y visualización de la información censal de Chile mediante lenguaje natural. Para que ese objetivo se cumpla a cabalidad sus respuestas deben ser correctas y, por consecuencia, confiables. 
+CensoLab se orienta a facilitar la exploración y visualización de la información censal mediante lenguaje natural. Esto quiere decir basicamente dos cosas. La primera es poder conversar con los datos. La segunda está más orientada a que realice operaciones con éstos, como por ejemplo, visualizar una variable o abrir un informe. Para que esa misión se cumpla a cabalidad, CensoLab debe producir respuestas correctas de manera consistente en el tiempo como para considerarlo confiable. 
 
-CensoLab es un sistema compuesto por un modelo de lenguaje, instrucciones, metadata, herramientas y datos. Dentro de este entorno, el modelo interpreta las solicitudes, selecciona y ejecuta operaciones, coordina el uso de las herramientas disponibles y construye una respuesta a partir de los resultados obtenidos. Aquí el diseño del sistema establece las condiciones y recursos con los que CensoBot opera, pero no determina de antemano cómo resolverá cada consulta. El modelo puede seguir distintos recorridos, cometer errores de interpretación o procedimiento e incluso producir afirmaciones que no estén respaldadas por los datos disponibles. Por esta razón es necesario observar y evaluar cómo se *comporta* al resolver las consultas.
+Recapitulemos un poco. **CensoLab es un sistema** compuesto por un modelo de lenguaje (por ejemplo gpt-astra o  claude-fable, kimi3), instrucciones, metadata, herramientas y obviamente los datos. El rasgo específico de este tipo de sistemas es que pueden operar con *autonomía*. Son agentes. Son agentes donde su capacidad de agencia está mediada por un modelo de lenguaje de naturaleza probabilística. Es precisamente por ese caracter -más o menos- automático el que se torna necesario evaluar su *comportamiento*. Aquí el sistema puede seguir distintos recorridos, cometer errores de interpretación o procedimiento e incluso producir afirmaciones que no estén fundadas por los datos disponibles. 
 
 En esta entrada presentamos una primera aproximación a la evaluación de CensoLab.
 
-## Qué evaluamos
+## Qué evaluamos: Resultado y procedimiento
 
-Inicialmente solo habiamos concebido evaluar el *resultado* de las consultas. Pero a medida que íbamos probando CensoBot con distintos modelos, comenzamos a observar que un mismo resultado podía alcanzarse mediante recorridos muy diferentes. Esto nos indujo a pensar que el *procedimiento* para llegar al resultado también debía ser una dimensión a evaluar. Así distinguimos dos aspectos de la evaluación:
+Al principio solo consideramos evaluar el *resultado* de las consultas. Si la cifra era correcta, la pregunta estaba resuelta. Pero a medida que avanzaba el desarrollo comenzamos a observar que la trayectoria de una respuesta podía variar según el diseño del agente. Dos caminos distintos podían llegar a la misma cifra, o uno podía llegar a la cifra correcta por un procedimiento cuestionable o a tropezones (después de muchas llamadas a herramientas) o la cifra podría estar equivocada. Esto nos indujo a pensar que el *procedimiento* también importaba. Así distinguimos dos dimensiones de la evaluación:
 
 ::: {.cl-card-grid}
 ::: {.cl-card}
@@ -310,19 +310,21 @@ El sistema interpreta la solicitud, utiliza datos y herramientas pertinentes y s
 :::
 :::
 
-Esta preocupación emanó de la propia experiencia de ir desarrollando CensoLab. Sin embargo al revisar luego cómo se están evaluando sistemas agénticos encontramos que el problema estaba más desarrollado. OpenAI, por ejemplo, plantea que el desempeño de un agente no depende solo del modelo, sino también del entorno que lo rodea, al que denomina *harness*: instrucciones, herramientas, recursos y condiciones de ejecución que influyen en cómo el modelo resuelve una tarea. Desde esta perspectiva, evaluar un agente implica mirar no solo el resultado final, sino también lo que ocurre durante su ejecución [(OpenAI 2026)](https://openai.com/index/trustworthy-third-party-evaluations-foundations/). En una línea similar, Anthropic propone prestar atención a la trayectoria seguida por el agente, incluyendo sus decisiones, llamadas a herramientas y resultados intermedios [(Anthropic 2026)](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents). La evaluación de un sistema agéntico puede abarcar mucho más de lo que abordamos aquí: resultado, trayectoria, uso de herramientas, variación entre ejecuciones y métricas como latencia, tokens y costos.
+La evaluación fue tomando forma conforme el propio desarrollo de CensoLab iba poniendo desafíos por delante. Una cuestión que rápidamente apareció: ¿cómo introducir una mejora sin que disminuya la calidad del sistema hasta ese momento? El problema, en simple, es con cuánta anticipación queremos que CensoBot entregue lo que se le pide. A veces conviene responder en un turno; otras veces conviene pedir una aclaración, porque la ambigüedad de la consulta requiere más turnos antes de arriesgar una respuesta. Ese tipo de decisiones hace que el *comportamiento* del sistema, y no solo el resultado, sea lo que haya que evaluar.
 
-## Diseño de la evaluación (###AQUI VAMOS###)
+Cuando fuimos a buscar cómo otros estaban abordando este problema, encontramos que estaba más desarrollado de lo que suponíamos. OpenAI y Anthropic han señalado que el desempeño de un agente depende del *harness*, el entorno que lo rodea (instrucciones, herramientas, recursos) y de la trayectoria que sigue para resolver una tarea [(OpenAI 2026)](https://openai.com/index/trustworthy-third-party-evaluations-foundations/); [(Anthropic 2026)](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents). Por cierto, la evaluación de un sistema agéntico puede abarcar mucho más de lo que abordamos aquí.
 
-Para el caso que nos convoca, construimos una batería acotada de preguntas buscando cubrir distintos grados de dificultad y diferentes formas de interacción con CensoBot. 
+## Diseño de la evaluación 
+
+Con esas dos dimensiones definidas, construimos una batería acotada de preguntas buscando cubrir distintos grados de dificultad y diferentes formas de interacción con CensoBot. El principio que organizó el diseño de la evaluación es cómo queremos que sea la performance de CensoLab frente a consultas más o menos estructuradas, más o menos difíciles, más o menos ambiguas y más o menos técnicas. 
 
 La dificultad fue definida inicialmente desde una perspectiva humana: no como una propiedad objetiva de cada pregunta, sino según la cantidad y el tipo de decisiones necesarias para resolverla.
 
 En los casos más simples, la operación puede consistir en identificar un territorio y contar registros, como al preguntar por la población de una comuna. Otras preguntas requieren construir una estimación: calcular un porcentaje supone identificar correctamente un numerador, un denominador y el universo al que ambos pertenecen. A partir de ahí incorporamos comparaciones, ordenamientos, construcción de indicadores, combinación de información y tareas que requieren varios pasos antes de producir una respuesta.
 
-También quisimos acercanos a la ambiguedad propia del lenguaje humano, donde muchas veces hay cuestiones que se dan por supuesto y no necesariamente se especifican en el prompt, asi como también enfrentarse al error. Asi por ejemplo, una consulta por “viviendas” puede parecer directa, pero exige interpretar correctamente el universo y distinguir las viviendas particulares de otros tipos de operativo, como las viviendas colectivas o las personas en situación de calle. En otros casos el enunciado del usuario está mal formulado, como ocurre al solicitar, por ejemplo, la “cantidad de hogares promedio”. 
+También quisimos acercarnos a la ambiguedad propia del lenguaje humano, donde muchas veces hay cuestiones que se dan por supuesto y no necesariamente se especifican en el prompt o que la propia consulta esté mal formulada. Asi por ejemplo, una consulta por “viviendas” puede parecer directa, pero exige interpretar correctamente el universo y distinguir las viviendas particulares de otros tipos de operativo, como las viviendas colectivas o las personas en situación de calle. En otros casos el enunciado del usuario está mal formulado, como ocurre al solicitar, por ejemplo, la “cantidad de hogares promedio”. 
 
-Finalmente incorporamos preguntas donde la dificultad ya no está principalmente en el cálculo, sino en determinar qué puede sostenerse con los datos disponibles. Esto incluye reconocer información que CensoLab no posee, distinguir una asociación descriptiva de una explicación causal, comparar indicadores que miden aspectos relacionados pero diferentes, respaldar conclusiones con evidencia censal o desarrollar una secuencia de análisis antes de responder.
+Finalmente incorporamos preguntas donde la dificultad no está principalmente en el cálculo, sino en determinar qué puede sostenerse con los datos disponibles. Esto incluye reconocer información que CensoLab no posee, distinguir una asociación descriptiva de una explicación causal, comparar indicadores que miden aspectos relacionados pero diferentes, respaldar conclusiones con evidencia censal o desarrollar una secuencia de análisis antes de responder.
 
 Con este diseño buscamos que un conjunto relativamente pequeño de casos recorra distintas capacidades de CensoBot. Los niveles de dificultad organizan esa progresión, mientras que las dimensiones identifican qué aspecto de la resolución estamos poniendo principalmente a prueba.
 
@@ -376,9 +378,10 @@ ggplot2::ggplot(
   )
 ```
 
+
 ## Cómo evaluamos
 
-La evaluación se realiza con `vitals`, un framework que es parte de los desarrollos que viene realizando el equipo de Posit para trabajar con llms. Vitals es una herramienta muy poderosa porque permite construir evaluaciones de maneras bien personalizadas y donde se pueden cubrir una gama de dimensiones, ya sea como el resultado y el procedimiento. Ofrece un informe donde se puede consultar la conversación y de ese modo tener la trazabilidad de la operación, identificar en qué momento realizó una determinada tarea y si condujo al siguiente paso. Es realmente fascinante el abanico de posibilidades que ofrece `vitals` para evaluar un sistema como lo es CensoLab.  
+La evaluación se realiza con `vitals`, un framework que es parte de los desarrollos que viene realizando el equipo de Posit para trabajar con llms. `vitals` es una herramienta muy poderosa porque permite construir evaluaciones de manera bien personalizadas, lo que permite satisfacer distintos objetivos de lo que se desea evaluar. Una de las cuestiones más ricas consiste en los informes de evaluación donde se puede consultar la conversación y de ese modo tener la trazabilidad de la operación, identificar en qué momento realizó una determinada tarea, qué herramientas ocupó y si condujo al siguiente paso. Es realmente fascinante el abanico de posibilidades que ofrece `vitals` para evaluar un sistema como lo es CensoLab.  
 
 `vitals` organiza una evaluación en tres componentes: un dataset, un solver y un scorer.
 
@@ -530,7 +533,7 @@ Si la regla falla, el caso recibe **I**. Si se supera y `juez = FALSE`, recibe *
 
 ## Resultado 
 
-Presentamos la corrida del **`r latest_evaluation_label`**, realizada con CensoLab **`r evaluation_version`**. CensoBot utilizó **Luna** (`r solver_model`) para responder y **Astra** (`r scorer_model`) actuó como juez. Las cifras corresponden a la evaluación automática, que combina las reglas descritas con el juicio de Astra.
+Presentamos la corrida del **`r latest_evaluation_label`**, realizada con CensoLab **`r evaluation_version`**. CensoBot utilizó **Luna** (`r solver_model`) para responder y **Luna** (`r scorer_model`) actuó como juez. Las cifras corresponden a la evaluación automática, que combina las reglas descritas con el juicio de Luna.
 
 Los **`r n_evaluated` casos evaluados** se distribuyeron en **`r n_correct` correctos**, **`r n_partial` parcialmente correctos** y **`r n_incorrect` incorrectos**. La proporción de respuestas plenamente correctas fue de **`r accuracy_label`**.
 
@@ -611,7 +614,7 @@ ggplot2::ggplot(
 El porcentaje de cada categoría se calcula sobre el total de casos con calificación. Los parciales permiten reconocer una resolución que satisface parte del criterio y conserva aspectos pendientes de validación.
 
 ::: {.eval-note}
-Estos resultados describen una ejecución de esta batería con una configuración específica. Su alcance es diagnóstico: permiten localizar fortalezas y problemas en las tareas probadas. Estimar el desempeño en el uso cotidiano requiere ampliar los casos y repetir las ejecuciones. Las calificaciones se presentan tal como fueron registradas; la revisión de los ejemplos siguientes aporta contexto para interpretarlas.
+Estos resultados describen una ejecución de esta batería con una configuración específica. Su alcance es diagnóstico: permiten localizar fortalezas y problemas en las tareas probadas. Estimar el desempeño en el uso cotidiano requiere ampliar los casos y repetir las ejecuciones. Las calificaciones se presentan tal como fueron registradas; el análisis que sigue aporta contexto para interpretarlas.
 :::
 
 ### Análisis

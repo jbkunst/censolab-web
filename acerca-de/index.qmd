@@ -11,6 +11,16 @@ CensoLab permite formular preguntas sobre personas, hogares y viviendas y obtene
 
 El proyecto utiliza las bases públicas difundidas por el [Instituto Nacional de Estadísticas de Chile](https://censo2024.ine.gob.cl/resultados/){target="_blank"}. CensoLab es una iniciativa independiente y no representa un sitio oficial del INE.
 
+## ¿Qué queríamos construir?
+
+CensoLab nace de cinco ideas que orientan el proyecto:
+
+1. **Aprovechar el microdato.** Conservar la granularidad disponible y evitar perderla prematuramente al pasar por un intermediario o una selección fija de resultados.
+2. **Integrar la información.** Reunir personas, hogares, viviendas y territorio en un mismo entorno de exploración.
+3. **Visualizar y analizar.** Poner herramientas de consulta, cálculo, visualización y análisis directamente a disposición de quien explora los datos.
+4. **Acompañar la exploración.** Permitir una búsqueda que no siempre sigue un camino lineal: preguntar, comparar, cambiar de dirección y profundizar a medida que aparecen nuevas preguntas.
+5. **Mantenerlo simple y flexible.** Construir una herramienta capaz de moverse según la imaginación del usuario, en lugar de obligarlo a seguir un único recorrido predefinido.
+
 ---
 
 ## ¿Cómo funciona?

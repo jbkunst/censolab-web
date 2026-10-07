@@ -1,0 +1,382 @@
+id,level,dimension,foco_evaluacion,input,target,validacion,juez,expected_value,tolerance,score,response,explanation,scoring_method,scoring_status,review_required,evaluation_error,evaluated_at,app_version,solver_model,scorer_model
+01,bajo,consulta,resultado,¿Cuántas personas viven en la comuna de Maipú?,503635 habitantes.,numerico_directo,TRUE,503635,0,C,"En la comuna de **Maipú viven 503.635 personas**, según el Censo 2024. Se envió la unidad al mapa.
+
+- <span class=""suggestion submit"">Ver cuántos hogares hay en Maipú</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Maipú</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Se resolvió **Maipú** como comuna `13119`, distinguiéndola de otras coincidencias territoriales. La consulta ejecutada contó filas de `personas` con `comuna = '13119'`, y el resultado validado por la herramienta fue **503.635**. También se confirmó una unidad en el mapa con ese valor.
+
+No se observan fallos metodológicos relevantes para este conteo; no requiere revisión humana.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+02,bajo,consulta,resultado,¿Cuántas personas pertenecientes al pueblo mapuche viven en la comuna de Santiago?,16883 personas pertenecientes al pueblo mapuche en la comuna de Santiago; debe contar personas con comuna = 13101 y p28_pueblo_pert = 1.,numerico_directo,TRUE,16883,0,C,"En la comuna de Santiago viven **16.883 personas pertenecientes al pueblo mapuche**, según la respuesta “Mapuche” en la variable censal de pertenencia a pueblo indígena u originario. Se consideraron todas las personas censadas de la comuna.
+
+La cifra se envió al mapa.
+
+- <span class=""suggestion submit"">Ver el porcentaje de personas mapuche en la comuna de Santiago</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de la comuna de Santiago</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Se comprobó que:
+
+- En el paso 3 se resolvió la comuna de Santiago como `comuna:13101`.
+- En el paso 5 se verificó que `p28_pueblo_pert = 1` corresponde a “Mapuche” y que su universo son personas pertenecientes a algún pueblo indígena u originario.
+- En el paso 6 se ejecutó el conteo correcto sobre `personas`, con `comuna = '13101'` y `p28_pueblo_pert = 1`.
+- En el paso 7, el resultado validado fue `16.883` personas.
+
+La respuesta coincide con el criterio solicitado y no requiere revisión humana adicional.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+03,bajo,uso_herramientas,procedimiento,Abre el informe territorial de la comuna de Isla de Maipo.,Debe resolver correctamente Isla de Maipo y ejecutar la acción que abre su informe territorial; la respuesta textual puede ser mínima.,accion,FALSE,,,C,Se abrió el informe territorial de la comuna de Isla de Maipo.,report_opened = TRUE; territory_resolved_first = TRUE,report ,evaluated,FALSE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+04,bajo,semantica,resultado_y_procedimiento,¿Cuántas viviendas hay en la Región de Valparaíso?,913524 viviendas particulares en la Región de Valparaíso; debe usar tipo_operativo == 2.,numerico_directo,TRUE,913524,0,C,"En la Región de Valparaíso hay **913.524 viviendas particulares**.
+
+- <span class=""suggestion submit"">Ver cuántos hogares particulares hay en la región</span>
+- <span class=""suggestion submit"">Ver el porcentaje de viviendas particulares desocupadas</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Se comprobó que:
+
+- Se resolvió correctamente la Región de Valparaíso como código `05`.
+- Se consultó la tabla `viviendas`.
+- Se aplicó `tipo_operativo = 2`, correspondiente a viviendas particulares.
+- Se filtraron las comunas de la región mediante `substr(comuna, 1, 2) = '05'`.
+- El resultado validado por la herramienta fue `913524`.
+
+No se observan fallas metodológicas relevantes para este criterio. La respuesta coincide con el valor solicitado.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+05,bajo,calculo,resultado,¿Qué porcentaje de la población de Maipú son mujeres?,52.2% de la población de Maipú son mujeres; debe usar población femenina sobre población total de Maipú.,numerico_derivado,TRUE,52.2,0.1,C,"En Maipú, las mujeres representan el **52,17% de la población**. El cálculo considera a todas las personas censadas de la comuna; la capa se envió al mapa.
+
+- <span class=""suggestion submit"">Ver el porcentaje de hombres en Maipú</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Maipú</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Se comprobó que:
+
+- Maipú fue resuelto como la comuna `13119`.
+- Se verificó `personas.sexo`, cuyo universo es “Todas las personas”, y la categoría `2` corresponde a “Mujer”.
+- La consulta del paso 6 calculó `SUM(sexo = 2) / COUNT(*)` para `comuna = '13119'`, es decir, población femenina sobre población total.
+- El resultado validado fue `0.5217`, equivalente a **52,17%**, consistente con el criterio de **52,2%** por redondeo.
+- El mapa fue efectivamente validado en el paso 7.
+
+No se observan fallas metodológicas relevantes para este criterio.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+06,bajo,comparacion,resultado,"¿Qué comuna tiene más población, Providencia o Ñuñoa, y por cuántas personas?","Ñuñoa tiene más población que Providencia por 97493 personas, usando la misma definición de población para ambas comunas.",numerico_derivado,TRUE,97493,0,C,"**Ñuñoa** tiene más población que Providencia:
+
+- Ñuñoa: **241.467 personas**
+- Providencia: **143.974 personas**
+- Diferencia: **97.493 personas**
+
+- <span class=""suggestion submit"">Ver la población por edad en Ñuñoa</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Ñuñoa</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Se verificó que:
+
+- Providencia corresponde a `comuna = '13123'` y Ñuñoa a `comuna = '13120'` (paso 3).
+- La consulta contó filas de `personas` para ambas comunas con el mismo criterio y sin mezclar territorios (pasos 4–5).
+- Resultados: Ñuñoa 241.467 y Providencia 143.974; la diferencia calculada es 97.493 personas.
+- La conclusión de que Ñuñoa tiene más población coincide con esos resultados.
+
+No se observan fallas metodológicas relevantes ni evidencia inventada.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+07,bajo,ordenamiento,resultado,Entrega las cinco comunas más pobladas de Chile y su población,"Puente Alto = 568086; Maipú = 503635; Santiago = 438856; Antofagasta = 401096; La Florida = 374836, en ese orden y sin mezclar niveles geográficos.",ordenamiento,TRUE,,,C,"La tabla con las cinco comunas más pobladas de Chile fue enviada a la aplicación. Los datos corresponden al conteo de personas del Censo 2024.
+
+- <span class=""suggestion submit"">Ver las cinco comunas menos pobladas de Chile</span>
+- <span class=""suggestion submit"">Mostrar la población por región</span>","name_value_pairs = TRUE; ranking_order = TRUE
+Juicio provisional:
+La consulta usa correctamente `personas`, agrupa por código comunal y une `diccionario_geografico` filtrando `nivel = 'comuna'`, sin mezclar niveles. El resultado de `get_query` entrega exactamente las cinco comunas y poblaciones solicitadas, en el orden requerido:
+
+1. Puente Alto: 568086  
+2. Maipú: 503635  
+3. Santiago: 438856  
+4. Antofagasta: 401096  
+5. La Florida: 374836  
+
+La tabla fue enviada mediante `show_table` con esos mismos valores. No se observan fallos metodológicos relevantes para este criterio.
+
+GRADE: C",ranking + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+08,bajo,calculo,resultado,"Dime los totales de población de la Región de Valparaíso para los grupos de edad 0-14, 15-29, 30-44, 45-59 y 60 años o más","0-14 = 318729; 15-29 = 387251; 30-44 = 410356; 45-59 = 346375; 60 años o más = 433342, para la Región de Valparaíso, en ese orden.",ninguna,TRUE,,,I,"En la **Región de Valparaíso**, la población por grupo de edad es:
+
+- **0-14 años:** 317.507 personas
+- **15-29 años:** 386.274 personas
+- **30-44 años:** 408.689 personas
+- **45-59 años:** 345.346 personas
+- **60 años o más:** 432.533 personas
+
+Los conteos corresponden a personas con edad registrada dentro de cada tramo.
+
+- <span class=""suggestion submit"">Ver el porcentaje de cada grupo de edad en la Región de Valparaíso</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de la Región de Valparaíso</span>","
+Juicio provisional:
+La consulta sí usó `personas` y filtró la Región de Valparaíso mediante `substr(comuna, 1, 2) = '05'`, con rangos de edad no superpuestos. Sin embargo, el resultado observado no coincide con el criterio en ninguno de los cinco grupos:
+
+- 0-14: obtuvo 317.507; criterio 318.729.
+- 15-29: obtuvo 386.274; criterio 387.251.
+- 30-44: obtuvo 408.689; criterio 410.356.
+- 45-59: obtuvo 345.346; criterio 346.375.
+- 60 años o más: obtuvo 432.533; criterio 433.342.
+
+Por tanto, el objetivo central —entregar los totales solicitados— no se cumple. Además, la traza no muestra una revisión del diccionario de la variable `edad` ni de su universo; esto requiere revisión humana, aunque la discrepancia numérica ya es suficiente para evaluar el criterio.
+
+GRADE: I",none + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+09,bajo,semantica,resultado,el campo edad cuántos valores anonimizados tiene en la comuna de San Fabian de Alico (Ñuble),5245 valores anonimizados; debe reconocer y contar edad == -66.,numerico_directo,TRUE,5245,0,C,"En la comuna de **San Fabián (Ñuble)**, el campo `edad` contiene **5.245 valores anonimizados** (`-66`).
+
+- <span class=""suggestion submit"">Ver la distribución de edades en San Fabián</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de San Fabián</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Se comprobó el conteo directamente en `personas`, filtrando la comuna `16304` (San Fabián) y `edad = -66`. La consulta devolvió **5.245** registros, consistente con que `-66` representa supresión por anonimización.
+
+La primera resolución territorial falló con el nombre completo, pero se corrigió usando “San Fabián” y se seleccionó explícitamente el nivel comunal. No quedan omisiones relevantes para este criterio.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+10,bajo,semantica,resultado,¿Cuáles son los valores especiales del campo que identifica el tipo de pueblo indígena u originario al que pertenece una persona?,Debe identificar personas.p28_pueblo_pert y responder que -66 significa valor suprimido por anonimización y -99 significa no respuesta; puede informar además que NULL o NA corresponde a no aplica.,ninguna,TRUE,,,C,"El campo **`personas.p28_pueblo_pert`**, que identifica el pueblo indígena u originario al que pertenece una persona, tiene estos valores especiales:
+
+- **`-66`**: Valor suprimido por anonimización.
+- **`-99`**: No respuesta.
+- **`NA`**: No aplica.
+
+Su universo corresponde a las personas que declararon ser o considerarse pertenecientes a algún pueblo indígena u originario.","
+Juicio provisional:
+La respuesta identifica correctamente `personas.p28_pueblo_pert` y sus valores especiales:
+
+- `-66`: valor suprimido por anonimización.
+- `-99`: no respuesta.
+- `NA`: no aplica.
+
+Esto está respaldado por la consulta de metadatos y categorías del paso 5, que además confirma el universo documentado. No era necesario informar `NULL` por separado, ya que el criterio lo considera opcional.
+
+**GRADE: C**",none + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+11,bajo,calculo,resultado_y_procedimiento,Entrega la población de Maipú desagregada por sexo y agrega un subtotal con el total comunal.,"Debe consultar personas de la comuna de Maipú, desagregar el conteo por las categorías documentadas de sexo y agregar un subtotal comunal de 503635 personas; las categorías y el subtotal deben proceder de la misma consulta o de una agregación equivalente.",numerico_directo,TRUE,503635,0,C,"Tabla enviada con la población de Maipú desagregada por sexo y el subtotal total comunal:
+
+- Hombres: **240.903**
+- Mujeres: **262.732**
+- Total comunal: **503.635**
+
+- <span class=""suggestion submit"">Ver la distribución por grupos de edad en Maipú</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Maipú</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Se cumple el criterio. Se resolvió la comuna de Maipú como `13119` (paso 3), se verificó que `personas.sexo` pertenece al universo “Todas las personas” y que sus categorías documentadas son Hombre y Mujer (paso 5). La consulta exitosa agrupó `personas` por sexo y calculó el total comunal desde la misma tabla y filtro territorial (paso 6), devolviendo 240.903 hombres, 262.732 mujeres y 503.635 personas en total (paso 7). La suma de las categorías coincide con el subtotal.
+
+La búsqueda inicial de metadatos fue imprecisa (paso 3), pero se corrigió mediante una consulta específica de `sexo` (paso 4). No queda una omisión relevante para este criterio.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+12,bajo,uso_herramientas,procedimiento,Abre el informe territorial de la Región de Valparaíso.,Debe resolver la Región de Valparaíso y ejecutar show_report con geo_id = region:05; basta una confirmación breve de apertura.,accion,TRUE,,,C,Se abrió el informe territorial de la Región de Valparaíso.,"report_opened = TRUE; territory_resolved_first = TRUE
+Juicio provisional:
+Se resolvió correctamente la Región de Valparaíso como `region:05` y se ejecutó `show_report` con ese `geo_id`. La herramienta confirmó que el reporte territorial fue solicitado. La confirmación final fue breve y adecuada.
+
+GRADE: C",report + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+13,medio,artefacto,resultado,Muéstrame en un mapa el porcentaje de hogares con internet por comuna en la Región del Biobío.,Mapa comunal de la Región del Biobío con el porcentaje correcto de hogares con internet; debe usar hogares como universo y limitarse a las comunas de la región.,artefacto,TRUE,,,P,"Se envió al mapa el porcentaje de hogares con internet por comuna en la Región del Biobío. El indicador considera hogares particulares con internet fija, móvil o satelital, contando cada hogar una sola vez.
+
+- <span class=""suggestion submit"">Ver el porcentaje de hogares con internet por zona</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Concepción</span>","map_created = TRUE
+Juicio provisional:
+Se comprobó que:
+
+- Se resolvió correctamente la Región del Biobío como código `08` (paso 3).
+- La consulta usó `hogares`, filtró `tipo_operativo = 2` y limitó las comunas mediante `substr(h.comuna, 1, 2) = '08'` (paso 4).
+- El numerador contó cada hogar una sola vez mediante un `OR` entre internet fija, móvil o satelital, y el denominador correspondió a hogares particulares.
+- El resultado del tool reportó 33 comunas, consistente con la cobertura regional observada (paso 5).
+
+Quedan omisiones metodológicas relevantes: la consulta no explicita el tratamiento de `-99` y `NULL` —quedan implícitamente fuera del numerador, pero dentro del denominador— y no devuelve ni une explícitamente `unidades_geograficas.shape`; el mapa se acredita solo por la respuesta del tool. También faltó validar las categorías documentadas de las tres variables.
+
+GRADE: P",map + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+14,medio,alcance,resultado,¿Cuántos automóviles hay en la comuna de Ñuñoa?,Debe indicar que la información no está disponible en los datos accesibles a CensoLab y no inventar una cifra ni una variable inexistente.,ninguna,TRUE,,,C,"El Censo 2024 no dispone de una variable documentada para contar automóviles en la comuna de Ñuñoa. Por lo tanto, este dato está **No disponible** en la base censal.","
+Juicio provisional:
+La respuesta cumple el criterio: declara que no existe una variable documentada para contar automóviles y no entrega una cifra ni atribuye ese dato a una variable inexistente. La traza muestra búsquedas de metadatos sobre “vehículos motorizados”, “automóvil hogar” y “tenencia vehículo”, cuyos resultados solo devolvieron variables no pertinentes, como tenencia de vivienda o actividad económica relacionada con vehículos.
+
+No se ejecutó una consulta censal de conteo, lo que es consistente con que la información no estuviera disponible. La conclusión no requiere revisión humana adicional para este criterio.
+
+GRADE: C",none + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+15,medio,aclaracion,resultado,cuál es la cantidad de hogares promedio en la comuna de paine,Debe pedir aclaración y sugerir que quizá se refiere a personas promedio por hogar; no debe asumir una interpretación y calcular sin confirmar.,ninguna,TRUE,,,C,"¿Te refieres al **promedio de personas por hogar** en la comuna de Paine, o al **total de hogares**?","
+Juicio provisional:
+La respuesta cumple el criterio. En el paso 2 pide aclarar la ambigüedad y ofrece las dos interpretaciones relevantes: **promedio de personas por hogar** o **total de hogares**. No asume una interpretación ni realiza un cálculo sin confirmación. No requiere revisión humana adicional.
+
+GRADE: C",none + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+16,medio,semantica,resultado_y_procedimiento,cuál es la cantidad de personas promedio por hogar en la comuna de paine,"3.03 personas por hogar. El numerador debe obtenerse consultando la base de personas y el denominador la base de hogares, usando universos compatibles y aplicando tipo_operativo == 2 donde corresponda; debe excluir personas en situación de calle y viviendas colectivas.",numerico_derivado,TRUE,3.03,0.01,P,"En la comuna de **Paine**, hay un promedio de **3,03 personas por hogar**.
+
+Cálculo: **78.495 personas / 25.871 hogares particulares**.  
+Interpreté “Paine” como la comuna de la Región Metropolitana.
+
+- <span class=""suggestion submit"">Ver el porcentaje de hogares con acceso a internet en Paine</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Paine</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Se comprobó que:
+
+- Se resolvió **Paine** como la comuna **13404** de la Región Metropolitana.
+- El denominador provino de `hogares`, contando hogares con `h.tipo_operativo = 2`: **25.871 hogares particulares**.
+- El numerador provino de `personas`, mediante un `LEFT JOIN` por `id_vivienda` e `id_hogar`, y contó **78.495 personas** vinculadas a esos hogares.
+- El cociente observado fue **3,0341**, correctamente expresado como **3,03 personas por hogar**.
+
+Sin embargo, la consulta no aplicó explícitamente `p.tipo_operativo = 2` ni verificó que el join excluyera efectivamente todas las personas en situación de calle y viviendas colectivas. La restricción sobre `h.tipo_operativo = 2` probablemente delimita el universo a hogares particulares, pero la exclusión del numerador no quedó demostrada de forma independiente. Tampoco se validó explícitamente la ausencia de multiplicación de filas, aunque se usaron claves completas y `COUNT(DISTINCT ...)`.
+
+GRADE: P",numeric + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+17,medio,semantica,resultado_y_procedimiento,¿Cuáles son las cuatro comunas de Chile con mayor proporción de mujeres que viven solas?,"Debe entregar Camarones = 22.51%; Providencia = 19.33%; Putre = 17.50%; Santiago = 17.33%, en ese orden. Debe calcular mujeres en hogares unipersonales sobre el total de mujeres en hogares particulares, manteniendo coherencia entre persona, hogar y territorio.",traza,TRUE,,,P,"Las cuatro comunas con mayor proporción de mujeres que viven solas son:
+
+1. **Camarones:** 22,51% (97 de 431 mujeres)
+2. **Providencia:** 19,33% (14.584 de 75.442)
+3. **Putre:** 17,50% (115 de 657)
+4. **Santiago:** 17,33% (37.225 de 214.822)
+
+La proporción se calculó como mujeres en hogares unipersonales sobre el total de mujeres en hogares particulares. La tabla fue enviada a la aplicación.
+
+- <span class=""suggestion submit"">Ver la proporción de hombres que viven solos por comuna</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Camarones</span>","
+Juicio provisional:
+La respuesta coincide exactamente con el resultado requerido: Camarones, Providencia, Putre y Santiago, con sus proporciones y numeradores/denominadores correctos.
+
+La consulta usó `personas.sexo = 2`, unió personas con hogares mediante `id_vivienda` e `id_hogar`, filtró `hogares.tipo_operativo = 2` y clasificó como unipersonales mediante `hogares.tipologia_hogar = 1`. También unió los resultados con `diccionario_geografico` a nivel comuna y ordenó por la proporción calculada. El resultado exitoso aparece en el paso 9 y la tabla en el paso 10.
+
+Sin embargo, la consulta no filtró explícitamente `personas.tipo_operativo = 2` ni comprobó en la traza que el join no incorporara personas de otros operativos o multiplicara filas. Tampoco documentó una validación independiente del universo de mujeres en hogares particulares. Por ello, el resultado numérico es correcto y la estrategia es sustantivamente adecuada, pero queda una omisión metodológica relevante que requiere revisión humana.
+
+GRADE: P",trace + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+18,medio,alcance,resultado_y_procedimiento,¿Tienes establecimientos de salud?,Debe verificar el alcance de la base y responder que CensoLab no dispone de información sobre establecimientos de salud; no debe inventar variables ni ofrecer cálculos sobre información inexistente.,traza,TRUE,,,I,"Sí, el Censo 2024 incluye información sobre **establecimientos de salud**. Puedo ayudarte a consultar, por ejemplo:
+
+- cantidad de establecimientos por región, comuna o unidad territorial;
+- distribución según tipo de establecimiento;
+- establecimientos públicos o privados, si esa desagregación está disponible.
+
+Indícame el territorio y el nivel de detalle que necesitas.","
+Juicio provisional:
+La respuesta **incumple el criterio central**. Afirma que el Censo 2024 contiene información sobre establecimientos de salud y ofrece posibles desagregaciones, pero no verifica el alcance de la base ni aporta consultas, tablas o variables que respalden esa afirmación. Además, el criterio exige responder que CensoLab no dispone de esa información y no ofrecer cálculos sobre ella.
+
+GRADE: I",trace + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+19,medio,uso_herramientas,procedimiento,Abre el informe territorial de la manzana urbana 260 de la comuna de Talca.,"Debe resolver Manzana 260, comprobar que corresponde a la comuna de Talca y ejecutar show_report con el geo_id exacto manzana:7101111006260; basta una confirmación breve de apertura.",accion,TRUE,,,C,Se abrió el informe territorial de la manzana urbana 260 de Talca.,"report_opened = TRUE; territory_resolved_first = TRUE
+Juicio provisional:
+Se comprobó que:
+
+- La resolución de **“Manzana 260”** devolvió el `geo_id` exacto `manzana:7101111006260`.
+- El resultado indicó `nivel: manzana_urbana`, `cut_comuna: 07101` y `nombre_comuna: TALCA`, confirmando la comuna.
+- Se ejecutó `show_report` con ese `geo_id` y la herramienta confirmó: “Reporte territorial solicitado”.
+- Los dos intentos iniciales fallaron, pero fueron corregidos mediante búsquedas equivalentes y no afectaron el resultado final.
+
+GRADE: C",report + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+20,medio,artefacto,resultado_y_procedimiento,"Construye un gráfico de barras con el porcentaje de personas con discapacidad en cada comuna del Gran Santiago, considerando a las personas de 5 años o más con respuesta válida sobre discapacidad.","Debe resolver las 34 comunas del Gran Santiago, consultar datos agregados por comuna y ejecutar show_chart con un gráfico de barras. Para cada comuna, calcular 100 * personas con discapacidad = 1 / personas con discapacidad en (1, 2); el universo es de 5 años o más y excluye no respuesta y no aplica. Debe identificar las comunas y expresar los valores como porcentajes respaldados por la consulta.",grafico,TRUE,,,C,"Se envió el gráfico de barras con el porcentaje de personas con discapacidad en las 34 comunas del Gran Santiago.
+
+El cálculo considera como denominador a las personas de 5 años o más con respuesta válida (`Con discapacidad` o `Sin discapacidad`), excluyendo `No respuesta` y `No aplica`. El valor más alto corresponde a San Ramón, con 15,22%, y el más bajo a Lo Barnechea, con 4,48%.
+
+- <span class=""suggestion submit"">Ver el porcentaje de personas con dificultad para caminar por comuna</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de San Ramón</span>","chart_created = TRUE
+Juicio provisional:
+Se cumple el criterio: se resolvió el Gran Santiago como 34 comunas, se identificó la variable `personas.discapacidad` y su universo de personas de 5 años o más, y la consulta agrupó por comuna usando como numerador `discapacidad = 1` y como denominador los valores `1` y `2`, excluyendo `-99` y `NA`. La consulta devolvió 34 comunas y sus porcentajes, y luego se ejecutó `show_chart` exitosamente con un gráfico de barras y valores expresados como porcentajes. No se observan omisiones relevantes en el criterio solicitado.
+
+GRADE: C",chart + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+21,medio,artefacto,resultado_y_procedimiento,"Construye un gráfico de dispersión para las 34 comunas del Gran Santiago, con un punto identificado por comuna. Calcula en el eje X los años promedio de escolaridad de las personas de 18 años o más. Calcula por separado en el eje Y la edad promedio de las jefas y jefes de hogares particulares, usando solo personas con parentesco = 1 y tipo_operativo = 2. Excluye los valores especiales o no válidos de cada promedio y comprueba que el resultado final tenga exactamente una fila por comuna antes de graficar.","Debe resolver las 34 comunas del Gran Santiago, calcular por separado ambos promedios desde microdatos y ejecutar show_chart con un gráfico de dispersión. El eje X debe contener el promedio de escolaridad de personas de 18 años o más con valores válidos. El eje Y debe restringirse a personas con parentesco = 1 y tipo_operativo = 2, o a un cruce equivalente que garantice que sean jefas y jefes de hogares particulares, y excluir edades no válidas. El resultado debe tener exactamente 34 filas, una por comuna identificada, y conservar la correspondencia de cada par X-Y sin promediar promedios territoriales sin ponderación ni atribuir causalidad.",grafico,TRUE,,,C,"Gráfico de dispersión enviado con 34 comunas del Gran Santiago, una por punto.
+
+- **Eje X:** años promedio de escolaridad de personas de 18 años o más.
+- **Eje Y:** edad promedio de jefas y jefes de hogares particulares, con `parentesco = 1` y `tipo_operativo = 2`.
+- Se excluyeron valores no válidos o especiales: escolaridad fuera de 0–24 y edades fuera de 0–85.
+- La consulta comprobó **exactamente 34 filas, una por comuna**.
+
+- <span class=""suggestion submit"">Calcular la correlación entre escolaridad y edad promedio de jefatura</span>
+- <span class=""suggestion submit"">Ver el informe territorial de Providencia</span>","chart_created = TRUE
+Juicio provisional:
+Se cumple el criterio.
+
+- Se resolvió el Gran Santiago como una agrupación de **34 comunas**, con sus códigos explícitos.
+- El eje X se calculó desde `personas`, usando `edad >= 18` y `escolaridad` entre 0 y 24; así se excluyeron `-99`, valores fuera de rango y `NULL` implícitos.
+- El eje Y se calculó separadamente desde `personas`, restringiendo a `tipo_operativo = 2`, `parentesco = 1` y `edad` entre 0 y 85; se excluyó la edad anonimizada `-66`.
+- La consulta corregida produjo `total_filas = 34` en cada registro y mostró 34 comunas identificadas, conservando la correspondencia entre ambos promedios.
+- La primera consulta falló por omitir `GROUP BY comuna` en `edad_jefatura` (paso 5); se corrigió en el paso 6 y el resultado fue exitoso en el paso 7.
+- `show_chart` se ejecutó exitosamente en el paso 8 y confirmó el envío en el paso 9, con un punto nombrado por comuna.
+
+Como revisión menor, la consulta no mostró un conteo independiente de `COUNT(DISTINCT codigo)`, aunque la salida contiene 34 nombres comunales y la unión se realizó por código.
+
+GRADE: C",chart + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+22,alto,interpretacion,resultado,¿La menor escolaridad explica la mayor desocupación en una comuna?,"Debe distinguir asociación descriptiva de explicación causal, explicitar la limitación y, si continúa, reformular la pregunta como asociación o comparación descriptiva.",ninguna,TRUE,,,C,"Sí, **hay una asociación negativa, pero no demuestra causalidad**.
+
+En las **295 comunas** analizadas:
+
+- La correlación entre escolaridad promedio y tasa de desocupación fue **-0,38**, una relación negativa moderada.
+- El cuartil de menor escolaridad promedió **9,77 años** y **9,48%** de desocupación.
+- El cuartil de mayor escolaridad promedió **12,63 años** y **7,79%** de desocupación.
+
+Es decir, las comunas con mayor escolaridad tuvieron, en promedio, **1,69 puntos porcentuales menos de desocupación**. La escolaridad puede estar relacionada con mejores oportunidades laborales, pero esta comparación comunal no permite afirmar que sea la causa: también influyen la estructura etaria, actividad económica, ruralidad y composición del mercado laboral.
+
+El cálculo usa escolaridad válida en personas de 15 años o más y desocupación como desocupados sobre la fuerza de trabajo —ocupados más desocupados—.
+
+- <span class=""suggestion submit"">Analizar la desocupación por edad y escolaridad</span>
+- <span class=""suggestion submit"">Ver qué otros factores territoriales se relacionan con la desocupación</span>","
+Juicio provisional:
+La respuesta **cumple** el criterio. Distingue explícitamente la asociación descriptiva de la causalidad (“no demuestra causalidad”), declara la limitación del análisis comunal y menciona posibles factores de confusión. Además, reformula de hecho la pregunta como una asociación: comunas con mayor escolaridad presentan, en promedio, menor desocupación.
+
+La traza respalda esa descripción: el paso 10 calcula una correlación entre promedios comunales y tasas de desocupación, y el paso 11 obtiene \(-0,377\), junto con la comparación entre cuartiles. No afirma que la escolaridad sea la causa. La revisión humana solo debería confirmar que la interpretación sustantiva de los factores adicionales no exceda lo medido por ese análisis descriptivo.
+
+GRADE: C",none + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+23,alto,razonamiento,resultado_y_procedimiento,"Busca una comuna que aparezca más envejecida en el ranking por porcentaje de población de 60 años o más que en el ranking por índice de envejecimiento, y explica la diferencia.","Debe calcular ambos indicadores, identificar una comuna cuya posición sea mejor en el ranking por porcentaje de población de 60 años o más que en el ranking por índice de envejecimiento y explicar que usan denominadores distintos.",traza,TRUE,,,C,"Una comuna que cumple claramente es **General Lagos**:
+
+- **Ranking por porcentaje de población de 60 años o más:** **9.º**
+- **Ranking por índice de envejecimiento:** **165.º**
+- Población de 60 años o más: **157 personas**, equivalentes al **30,91%** de sus **508 habitantes**.
+- Población de 0 a 14 años: **123 personas**.
+- Índice de envejecimiento: **127,64 personas mayores por cada 100 menores de 15 años**.
+
+La diferencia se debe al denominador:
+
+- El **porcentaje de población mayor** divide las personas de 60 años o más por la población total.
+- El **índice de envejecimiento** las divide solo por la población de 0 a 14 años.
+
+En General Lagos, los menores de 15 años representan cerca del **24,21%** de la población. Esa base infantil es relativamente grande y reduce el índice, aunque la proporción total de personas mayores sea muy alta. Por eso aparece mucho mejor posicionada en el ranking por porcentaje que en el ranking por índice.
+
+- <span class=""suggestion submit"">Ver el porcentaje de población de 60 años o más por comuna</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de General Lagos</span>","observable_evidence = TRUE
+Juicio provisional:
+La respuesta **cumple** el criterio.
+
+- En el paso 10 se ejecutó una consulta exitosa sobre `personas`, agrupada por comuna, que calculó:
+  - porcentaje de personas de 60 años o más: `personas_60_mas / poblacion`;
+  - índice de envejecimiento: `personas_60_mas / personas_0_14`.
+- La consulta usó `edad_quinquenal >= 60` y `edad_quinquenal <= 10`, que corresponden a 60+ y 0–14 años, respectivamente.
+- El resultado de General Lagos está respaldado por la herramienta: 157 personas de 60+, 508 habitantes, 123 personas de 0–14, posición 9.º en porcentaje y 165.º en índice.
+- La explicación distingue correctamente los denominadores: población total frente a población de 0–14 años. La conversión a 30,91% y 127,64 mayores por cada 100 menores también es consistente.
+- La primera consulta (paso 8) buscó la desigualdad en la dirección opuesta, pero fue corregida en el paso 10 mediante `ranking_porcentaje < ranking_indice`, que identifica correctamente una mejor posición en el ranking porcentual.
+
+Como revisión metodológica menor, habría sido conveniente explicitar el tratamiento de posibles valores faltantes o supresiones y documentar la cobertura completa del universo comunal. Esto no invalida el caso presentado.
+
+GRADE: C",trace + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+24,alto,evidencia,resultado_y_procedimiento,"Entrega tres hallazgos cuantitativos y descriptivos sobre la comuna de San Pedro de Atacama: uno sobre su población total, otro sobre su estructura etaria y otro sobre el acceso a internet de los hogares particulares. Respalda cada hallazgo con las cifras consultadas e indica su universo, numerador y denominador cuando corresponda, además del tratamiento de valores especiales o faltantes. No la describas como pequeña, joven, envejecida o muy conectada salvo que calcules y cites una comparación censal que sustente esa calificación.","Debe formular tres hallazgos respaldados por datos obtenidos durante la ejecución: población total; una medida de estructura etaria con su universo y exclusiones; y acceso a internet en hogares particulares, combinando las modalidades sin duplicar hogares y declarando denominador y tratamiento de no respuesta o valores faltantes. Las afirmaciones deben ser descriptivas; cualquier calificación relativa debe apoyarse en una comparación censal calculada. No debe agregar caracterizaciones externas sin respaldo.",traza,TRUE,,,C,"### San Pedro de Atacama: tres hallazgos del Censo 2024
+
+1. **Población total:** la comuna registra **9.843 personas**.  
+   - **Universo:** todas las personas censadas en la comuna.  
+   - **Cálculo:** conteo de registros en `personas`, sin excluir por edad ni por tipo de operativo.  
+   - **Valores especiales:** no se aplicaron filtros por valores especiales; el total corresponde al conteo completo de personas.
+
+2. **Estructura etaria:** de las **9.843 personas con edad válida**, **2.058 tienen entre 0 y 14 años** (**20,91%**), **6.946 entre 15 y 64 años** (**70,57%**) y **839 tienen 65 años o más** (**8,52%**).  
+   - **Universo:** personas con edad válida, de 0 a 85 años según la variable `personas.edad`.  
+   - **Numeradores:** cada tramo etario indicado.  
+   - **Denominador:** 9.843 personas con edad válida.  
+   - **Tratamiento de valores especiales:** los valores `-66` de edad anonimizada y otros faltantes se habrían excluido del denominador; en esta consulta no se observaron diferencias entre el total poblacional y el total con edad válida.
+
+3. **Acceso a internet:** **3.434 de 3.893 hogares particulares con respuesta válida** disponen de internet por al menos uno de estos medios: conexión fija, móvil o satelital; esto equivale a **88,21%**.  
+   - **Universo:** hogares particulares (`tipo_operativo = 2`).  
+   - **Numerador:** hogares con valor `1` en al menos una de las tres modalidades; se usó una condición lógica `OR` para no contar dos veces un mismo hogar.  
+   - **Denominador:** hogares particulares con respuesta válida en al menos una modalidad.  
+   - **Valores especiales:** de los 3.895 hogares particulares, 2 no tuvieron una respuesta utilizable para ninguna modalidad y fueron excluidos del denominador; no se trataron como hogares sin internet.
+
+- <span class=""suggestion submit"">Ver la distribución de la población por grupos quinquenales de edad</span>
+- <span class=""suggestion submit"">Desglosar los hogares con internet por conexión fija, móvil y satelital</span>","observable_evidence = TRUE
+Juicio provisional:
+La respuesta **cumple el criterio**.
+
+- **Población total:** la consulta exitosa contó `COUNT(*)` en `personas` para `comuna = '02203'`, obteniendo **9.843**. Es consistente con el universo de todas las personas censadas y no aplicó indebidamente `tipo_operativo`.
+- **Estructura etaria:** la consulta calculó los tramos directamente sobre `personas.edad`, con numeradores **2.058**, **6.946** y **839**, y denominador de edad válida **9.843** (`edad BETWEEN 0 AND 85`). Los porcentajes reportados son consistentes. Los valores `-66` y faltantes quedan fuera del denominador mediante ese filtro.
+- **Internet en hogares:** la consulta aplicó `tipo_operativo = 2`, obtuvo **3.895 hogares particulares**, **3.893** con respuesta válida en al menos una modalidad y **3.434** con valor `1` en al menos una. El uso de `OR` evita duplicar hogares con varias modalidades; los dos sin respuesta utilizable se excluyeron del denominador, no se contaron como hogares sin internet.
+
+No se formularon calificativos relativos como “pequeña”, “joven” o “muy conectada”, por lo que no era necesaria una comparación censal. Como revisión humana menor, podría verificarse explícitamente la unicidad de la clave de hogares, aunque la traza usa la tabla y el filtro de universo adecuados y no muestra evidencia de duplicación.
+
+GRADE: C",trace + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
+25,alto,alcance,resultado_y_procedimiento,"Evalúa si los datos accesibles en CensoLab permiten determinar que el acceso a internet aumentó los ingresos de los hogares entre 2017 y 2024. Verifica en los metadatos si existe una variable de ingresos del hogar y si hay mediciones comparables para ambos años; distingue asociación de causalidad. Si la pregunta no puede responderse, termina formulando explícitamente una pregunta alternativa que sí pueda contestarse usando solo los datos del Censo 2024.","Debe comprobar en los metadatos la disponibilidad de una variable de ingresos del hogar y establecer si los datos permiten una comparación temporal entre 2017 y 2024. Debe concluir que con la información disponible no puede estimarse ese cambio ni atribuirse un efecto causal al acceso a internet. Debe cerrar con una reformulación escrita como pregunta concreta y respondible con Censo 2024, por ejemplo sobre el porcentaje de hogares con internet por modalidad o territorio.",traza,TRUE,,,P,"No es posible determinarlo con los datos accesibles en CensoLab.
+
+- **Ingresos del hogar:** la búsqueda en los metadatos no encontró ninguna variable de ingreso monetario, ingreso laboral ni ingreso total del hogar.
+- **Acceso a internet:** sí existen variables para hogares sobre internet fija, móvil y satelital (`p15d_serv_internet_fija`, `p15e_serv_internet_movil` y `p15f_serv_internet_satelital`), además de agregados como `n_internet`.
+- **Comparación 2017–2024:** el conjunto accesible corresponde al Censo 2024. No se identificaron variables ni mediciones de 2017 integradas y comparables en estos datos. Por tanto, no puede estimarse un cambio entre ambos años.
+- **Causalidad:** aun si existieran ingresos para 2017 y 2024, una comparación transversal entre hogares con y sin internet mostraría, como máximo, una **asociación**. No demostraría que el acceso a internet causó mayores ingresos, porque podrían intervenir educación, empleo, ubicación, composición del hogar u otros factores. Para establecer causalidad se requeriría, entre otras condiciones, temporalidad, seguimiento de hogares o un diseño cuasiexperimental.
+
+**Pregunta alternativa que sí puede responderse usando solo el Censo 2024:**  
+**¿Qué proporción de los hogares censados en viviendas particulares ocupadas con moradores presentes dispone de algún tipo de acceso a internet —fijo, móvil o satelital—, por comuna o región?**","
+Juicio provisional:
+La respuesta cumple sustantivamente el objetivo principal: concluye correctamente que no puede estimarse que el acceso a internet haya aumentado los ingresos entre 2017 y 2024 ni atribuirse causalidad. También distingue asociación de causalidad y termina con una pregunta alternativa concreta sobre acceso a internet en hogares del Censo 2024.
+
+La traza respalda la existencia de variables de internet en `hogares` (`p15d_serv_internet_fija`, `p15e_serv_internet_movil`, `p15f_serv_internet_satelital`) y de agregados territoriales como `n_internet`. La búsqueda de “año censo comparación” no encontró variables, y la respuesta usa correctamente el alcance documentado del conjunto como Censo 2024 para descartar una comparación temporal integrada.
+
+Queda una omisión relevante: la búsqueda de “ingresos hogar” devolvió variables no relacionadas, pero no se mostró una consulta exhaustiva o una verificación explícita del diccionario que demuestre la ausencia de toda variable de ingresos. Tampoco se documentó una comprobación específica de mediciones 2017 comparables más allá de la búsqueda fallida. La pregunta alternativa es respondible, aunque al calcularla habría que explicitar `tipo_operativo = 2`, el universo de viviendas particulares ocupadas con moradores presentes y el tratamiento de `-99`/`NULL`.
+
+**GRADE: P**",trace + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna

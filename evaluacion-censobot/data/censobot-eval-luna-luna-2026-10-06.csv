@@ -191,7 +191,7 @@ Juicio provisional:
 La respuesta cumple el criterio. En el paso 2 pide aclarar la ambigüedad y ofrece las dos interpretaciones relevantes: **promedio de personas por hogar** o **total de hogares**. No asume una interpretación ni realiza un cálculo sin confirmación. No requiere revisión humana adicional.
 
 GRADE: C",none + llm_judge,evaluated,TRUE,,2026-10-06T09:45:10-0300,v1.3.0,gpt-5.6-luna,gpt-5.6-luna
-16,medio,semantica,resultado_y_procedimiento,cuál es la cantidad de personas promedio por hogar en la comuna de paine,"3.03 personas por hogar. El numerador debe obtenerse consultando la base de personas y el denominador la base de hogares, usando universos compatibles y aplicando tipo_operativo == 2 donde corresponda; debe excluir personas en situación de calle y viviendas colectivas.",numerico_derivado,TRUE,3.03,0.01,P,"En la comuna de **Paine**, hay un promedio de **3,03 personas por hogar**.
+16,medio,semantica,resultado_y_procedimiento,cuál es la cantidad de personas promedio por hogar en la comuna de paine,"3,03 personas por hogar en la comuna de Paine.",numerico_derivado,TRUE,3.03,0.01,P,"En la comuna de **Paine**, hay un promedio de **3,03 personas por hogar**.
 
 Cálculo: **78.495 personas / 25.871 hogares particulares**.  
 Interpreté “Paine” como la comuna de la Región Metropolitana.

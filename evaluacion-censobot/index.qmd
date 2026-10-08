@@ -1,6 +1,6 @@
 ---
-title: CensoLab a prueba
-description: Cómo diseñamos una evaluación para observar qué responde, cómo decide y qué herramientas utiliza su agente.
+title: Mirar más allá del resultado
+description: Cómo evaluamos un sistema agéntico como CensoLab
 draft: true
 lang: es
 format:
@@ -310,45 +310,6 @@ difficulty_counts <- table(cases$Dificultad)
   color: var(--bs-secondary-color);
 }
 
-/* Criteria cards (C/P/I) */
-.eval-criteria-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .75rem;
-  margin: 1.5rem 0 2rem;
-}
-
-.eval-criteria-card {
-  padding: 1.1rem 1.2rem;
-  border: 1px solid var(--bs-border-color);
-  border-top: 3px solid;
-  border-radius: .55rem;
-  background: #fff;
-}
-
-.eval-criteria-card[data-grade="c"] { border-top-color: var(--bs-success); }
-.eval-criteria-card[data-grade="p"] { border-top-color: var(--bs-warning); }
-.eval-criteria-card[data-grade="i"] { border-top-color: var(--bs-danger); }
-
-.eval-criteria-card .eval-criteria-label {
-  display: block;
-  margin-bottom: .5rem;
-  font-size: 1.4rem;
-  font-weight: 300;
-  letter-spacing: -.03em;
-}
-
-.eval-criteria-card[data-grade="c"] .eval-criteria-label { color: var(--bs-success); }
-.eval-criteria-card[data-grade="p"] .eval-criteria-label { color: var(--bs-warning); }
-.eval-criteria-card[data-grade="i"] .eval-criteria-label { color: var(--bs-danger); }
-
-.eval-criteria-card .eval-criteria-desc {
-  margin: 0;
-  color: var(--bs-secondary-color);
-  font-size: .84rem;
-  line-height: 1.55;
-}
-
 /* Dimension cards (Resultado / Procedimiento) */
 .eval-dimension-grid {
   display: grid;
@@ -443,26 +404,6 @@ difficulty_counts <- table(cases$Dificultad)
   text-transform: none;
   letter-spacing: normal;
   font-weight: 400;
-}
-
-.eval-review-table table {
-  table-layout: fixed;
-  min-width: 800px;
-}
-
-.eval-review-table th:nth-child(1) { width: 6%; }
-.eval-review-table th:nth-child(2) { width: 28%; }
-.eval-review-table th:nth-child(3) { width: 10%; }
-.eval-review-table th:nth-child(4) { width: 56%; }
-
-.eval-review-table td {
-  vertical-align: top;
-  overflow-wrap: break-word;
-}
-
-.eval-review-table td:nth-child(3) {
-  text-align: center;
-  font-weight: 600;
 }
 
 .eval-priority-table td:nth-child(1) {
@@ -608,7 +549,6 @@ difficulty_counts <- table(cases$Dificultad)
 @media (max-width: 640px) {
   .eval-grid,
   .eval-result-grid,
-  .eval-criteria-grid,
   .eval-dimension-grid {
     grid-template-columns: 1fr;
   }
@@ -620,9 +560,9 @@ CensoLab permite consultar y visualizar información del [Censo de Población y 
 
 **CensoLab es un sistema agéntico** compuesto por un modelo de lenguaje, instrucciones, metadata, herramientas y obviamente los datos. El rasgo específico de este tipo de sistemas es que pueden operar con *autonomía*. Son agentes donde su capacidad de actuar está mediada por un modelo de lenguaje de naturaleza probabilística. Es precisamente por ese carácter más o menos autónomo que se torna necesario evaluar su *comportamiento*.
 
-En esta entrada presentamos una primera metodología para evaluar CensoLab. Combina la evaluación automática con la revisión humana de las respuestas y de los procedimientos que las sustentan. Explicamos cómo construimos las pruebas y qué criterios utilizamos para examinarlas.
+En esta entrada presentamos la metodología para evaluar CensoLab. Combina la evaluación automática con la revisión humana de las respuestas y de los procedimientos que las sustentan. Explicamos cómo construimos las pruebas y qué criterios utilizamos para examinarlas.
 
-## Qué evaluamos
+## Resultado y procedimiento
 
 Cuando comenzamos a pensar en la evaluación nos concentramos en el *resultado* de las consultas. Si la cifra era correcta, el agente funcionaba. Fin del asunto. Pero a medida que el propio desarrollo iba poniendo por delante desafíos, vimos que también necesitábamos examinar el *proceso* de construcción de la respuesta. Empezamos a preguntarnos por la semántica de la solicitud, qué herramientas y recursos empleaba, en fin, como se construia y organizaba el proceso para llegar a un resultado. Así establecimos dos dimensiones de la evaluación.
 
@@ -642,7 +582,7 @@ Cuando comenzamos a pensar en la evaluación nos concentramos en el *resultado* 
 
 Esta primera evaluación se concentra en esas dos dimensiones. Otros aspectos, como la estabilidad entre ejecuciones, el tiempo de respuesta y el costo por consulta, quedan fuera de su alcance por el momento.
 
-## Cómo pusimos a prueba CensoLab
+## Diseño de la prueba
 
 Construimos una batería de `r n_cases` casos y la ejecutamos con [`vitals`](https://vitals.tidyverse.org/). Este entorno permite ejecutar preguntas y evaluar respuestas de manera sistemática[^vitals]. Después contrastamos las preguntas, las respuestas y las explicaciones del evaluador con las consultas y el contexto registrados durante cada ejecución.
 
@@ -670,26 +610,26 @@ Para organizar una evaluación, `vitals` trabaja con [tres componentes](https://
 </div>
 ```
 
-### Cómo elegimos las preguntas
+### Selección de las preguntas
 
 
-Construimos el dataset como una batería acotada de preguntas, buscando cubrir distintos grados de dificultad y formas de interacción con CensoBot.
+Construimos el dataset como una batería acotada de preguntas, buscando cubrir distintos grados de dificultad y formas de interacción con CensoLab.
 
 Las preguntas van desde identificar un territorio y contar registros hasta calcular porcentajes o promedios, comparar, ordenar y combinar información. También ponen a prueba la apertura de informes en distintos niveles territoriales y la construcción de mapas y gráficos.
 
-Incluimos además preguntas cuya resolución exige tomar precauciones. Una consulta por «viviendas» requiere definir qué tipos de vivienda se consideran. Una pregunta ambigua puede exigir una aclaración antes de hacer un cálculo. Internamente llamamos a estas consultas _preguntas con veneno_ porque ponen a prueba si CensoBot reconoce esas dificultades y actúa según el criterio previsto.
+Incluimos además preguntas cuya resolución exige tomar precauciones. Una consulta por «viviendas» requiere definir qué tipos de vivienda se consideran. Una pregunta ambigua puede exigir una aclaración antes de hacer un cálculo. Internamente llamamos a estas consultas _preguntas con veneno_ porque ponen a prueba si CensoLab reconoce esas dificultades y actúa según el criterio previsto.
 
 Finalmente incorporamos preguntas donde la dificultad consiste en determinar qué puede sostenerse con los datos: reconocer información que CensoLab no posee, distinguir asociación de causalidad y respaldar las conclusiones con evidencia censal.
 
-Buscamos poner a CensoBot frente a situaciones donde podía equivocarse y cubrir distintas capacidades. Escogimos `r n_cases` casos para poder revisar las respuestas y discutir si las calificaciones estaban bien asignadas. La batería actual contiene **`r unname(difficulty_counts["Bajo"])` casos de dificultad baja, `r unname(difficulty_counts["Medio"])` media y `r unname(difficulty_counts["Alto"])` alta**.
+Buscamos poner a CensoLab frente a situaciones donde podía equivocarse y cubrir distintas capacidades. Escogimos `r n_cases` casos para poder revisar las respuestas y discutir si las calificaciones estaban bien asignadas. La batería actual contiene **`r unname(difficulty_counts["Bajo"])` casos de dificultad baja, `r unname(difficulty_counts["Medio"])` media y `r unname(difficulty_counts["Alto"])` alta**.
 
 La batería se reorganizó antes de esta ejecución: se incorporaron comprobaciones explícitas sobre valores especiales, subtotales, universos y evidencia, y varias preguntas cambiaron de identificador. Por eso esta corrida se presenta como una unidad identificada y no se comparan sus casos por número con ejecuciones anteriores.
 
-### Qué esperamos de cada respuesta
+###  Referencias para cada caso
 
 Definimos manualmente una referencia para cada pregunta. La [tabla](#tbl-referencias) muestra tres ejemplos que evalúan capacidades diferentes: en una consulta numérica podemos fijar la cifra esperada (ID 01); en una solicitud de acción especificamos qué debe hacer el agente (ID 03); cuando hay ambigüedad, esperamos que pida una aclaración (ID 15).
 
-El dataset de `vitals` exige a lo menos tres campos por caso: el identificador (`id`), la pregunta (`input`) y lo que se define como una respuesta correcta (`target`). En nuestra batería, las comprobaciones numéricas también utilizan una cifra (`expected_value`) y una tolerancia (`tolerance`) guardadas por separado. Cambiar el texto de la referencia no modifica automáticamente esos valores. El [Anexo 1](#anexo-dataset) conserva los textos originales de cada caso.
+El dataset de `vitals` exige a lo menos tres campos por caso: el identificador (`id`), la pregunta (`input`) y lo que se define como una respuesta correcta (`target`). En nuestra batería, las comprobaciones numéricas también utilizan una cifra (`expected_value`) y una tolerancia (`tolerance`) guardadas por separado. Cambiar el texto de la referencia no modifica automáticamente esos valores. El [Anexo](#anexo-dataset) conserva los textos originales de cada caso.
 
 ```{=html}
 <div class="eval-styled-table" id="tbl-referencias">
@@ -722,7 +662,7 @@ El dataset de `vitals` exige a lo menos tres campos por caso: el identificador (
 </div>
 ```
 
-### Cómo ejecutamos y calificamos los casos
+### Ejecución y calificación
 
 Configuramos el solver con el modelo, las instrucciones, los metadatos, las herramientas y los datos de CensoLab. Cada caso se ejecutó con su pregunta (`input`); la referencia (`target`) quedó reservada para el evaluador. Esta separación permite contrastar lo que el agente resolvió con un criterio que no recibió como parte de la solicitud.
 
@@ -780,7 +720,7 @@ Se abrevia la respuesta de resolución territorial y se omiten los metadatos té
 
 </details>
 
-El scorer recibe la pregunta, la referencia, la respuesta de CensoBot y su traza. Combinamos comprobaciones programadas con el juicio de un modelo porque los casos requieren verificaciones diferentes: una cifra o una llamada a una herramienta admite una comprobación precisa; interpretar una ambigüedad o valorar si una conclusión tiene respaldo exige examinar el contexto.
+El scorer recibe la pregunta, la referencia, la respuesta de CensoLab y su traza. Combinamos comprobaciones programadas con el juicio de un modelo porque los casos requieren verificaciones diferentes: una cifra o una llamada a una herramienta admite una comprobación precisa; interpretar una ambigüedad o valorar si una conclusión tiene respaldo exige examinar el contexto.
 
 Primero se aplica la regla configurada para el caso. Si una comprobación falla, se asigna I sin consultar al juez. Si se supera y el caso tiene juez habilitado, el modelo examina la respuesta y el procedimiento. Algunas preguntas se resuelven directamente mediante ese juicio, sin una comprobación programada sustantiva previa. En esta batería, **`r n_judge` casos utilizan juez**; solo el caso 03 se califica exclusivamente mediante código.
 
@@ -790,36 +730,23 @@ El juez trabaja en una conversación independiente, con el contexto documentado 
 
 En esta evaluación, el scorer utiliza tres calificaciones para indicar en qué medida la respuesta y el procedimiento cumplen el criterio definido para cada caso:
 
-```{=html}
-<div class="eval-criteria-grid">
-  <div class="eval-criteria-card" data-grade="c">
-    <span class="eval-criteria-label">C · Correcta</span>
-    <p class="eval-criteria-desc">Resuelve lo solicitado mediante un procedimiento válido. Puede admitir mejoras de presentación sin incumplir el criterio.</p>
-  </div>
-  <div class="eval-criteria-card" data-grade="p">
-    <span class="eval-criteria-label">P · Parcialmente correcta</span>
-    <p class="eval-criteria-desc">Resuelve una parte sustantiva de la solicitud. Omite un componente requerido o deja insuficientemente definido un aspecto relevante.</p>
-  </div>
-  <div class="eval-criteria-card" data-grade="i">
-    <span class="eval-criteria-label">I · Incorrecta</span>
-    <p class="eval-criteria-desc">Incumple el objetivo central o sostiene una conclusión con datos o capacidades que no corresponden.</p>
-  </div>
-</div>
-```
+- **C · Correcta.** Resuelve lo solicitado mediante un procedimiento válido. Puede admitir mejoras de presentación sin incumplir el criterio.
+- **P · Parcialmente correcta.** Resuelve una parte sustantiva de la solicitud. Omite un componente requerido o deja insuficientemente definido un aspecto relevante.
+- **I · Incorrecta.** Incumple el objetivo central o sostiene una conclusión con datos o capacidades que no corresponden.
 
 Cuando la ejecución del agente termina con un error registrado, falla el juez o su respuesta carece de una nota reconocible, el caso queda como **NA**, sin calificación. Un intento fallido que el agente corrige durante la misma tarea no implica por sí solo que el caso quede sin nota. Esta distinción permite reconocer su capacidad de recuperarse y evaluar el resultado alcanzado.
 
 Para resumir el desempeño, calculamos la proporción de respuestas correctas sobre el total de casos con calificación. Las respuestas parcialmente correctas se muestran por separado y no se cuentan como correctas.
 
-## Qué nos mostró la evaluación
+## Resultados de la evaluación
 
-La ejecución se realizó con CensoLab **`r evaluation_version`**. El agente utilizó **Luna** (`r solver_model`) para responder. El mismo modelo actuó como juez en una conversación distinta. Esa separación mantiene aparte ambos diálogos. Aun así, ambos roles pueden compartir limitaciones del modelo.
+En esta primera ejecución usamos el mismo LLM para responder y evaluar las respuestas, con el objetivo de establecer una referencia inicial para CensoLab. Se realizó con CensoLab **`r evaluation_version`**. El agente utilizó **Luna** (`r solver_model`) para responder. El mismo modelo actuó como juez en una conversación distinta. Esa separación mantiene aparte ambos diálogos. Aun así, ambos roles pueden compartir limitaciones del modelo.
 
-### Resultados automáticos y revisión humana
+### Calificación automática y revisión humana
 
 La evaluación automática calificó los **`r n_evaluated` casos**. Asignó C a **`r n_correct` respuestas**, P a **`r n_partial`** e I a **`r n_incorrect`**. No hubo casos sin calificación.
 
-La revisión humana se concentró en las cuatro respuestas parciales y las dos incorrectas. Conservó las dos I, cambió tres P a C y una P a I. Las **19 C automáticas conservaron su nota sin una revisión equivalente documentada**. El resultado combina, por tanto, la calificación automática con la revisión de seis casos. El [Anexo 2](#anexo-revision) registra cada decisión y su fundamento, manteniendo intacta la salida automática del CSV.
+La revisión humana se concentró en las cuatro respuestas parciales y las dos incorrectas. Conservó las dos I, cambió tres P a C y una P a I. Las **19 C automáticas conservaron su nota sin una revisión equivalente documentada**. El resultado combina, por tanto, la calificación automática con la revisión de seis casos.
 
 ```{=html}
 <div class="eval-result-grid">
@@ -845,53 +772,41 @@ La proporción de respuestas correctas pasó de **`r accuracy_label` a `r review
 
 Estos porcentajes describen una batería de `r n_cases` casos seleccionados para examinar capacidades y dificultades concretas. No estiman la probabilidad de acierto ante cualquier consulta ni acreditan una revisión humana completa. Para detectar errores que el juez pudiera haber aceptado, también será necesario examinar respuestas calificadas como C.
 
-### Qué encontramos
+### Principales hallazgos
 
-Revisamos las seis preguntas que recibieron una P o una I. En cada caso contrastamos la respuesta y el fundamento de la nota con el criterio y la evidencia disponibles. El [Anexo 2](#anexo-revision) conserva el registro de las decisiones.
+Revisamos las seis preguntas que recibieron una P o una I. En cada caso contrastamos la respuesta y el fundamento de la nota con el criterio y la evidencia disponible.
 
 #### Caso 08 · Población de Valparaíso por grupos de edad
 
-Se pidieron los totales de población para los grupos de 0–14, 15–29, 30–44, 45–59 y 60 años o más. CensoBot utilizó `edad` y dejó fuera a 5.704 personas cuya edad exacta está anonimizada como `-66`. Como los grupos solicitados podían construirse con `edad_quinquenal`, era posible contar toda la población sin perder información por anonimización. **Mantuvimos la I:** el agente podía entregar los totales completos con la edad agrupada, pero eligió una variable que excluía parte de la población.
+Se solicitaron los totales de población para los grupos de 0–14, 15–29, 30–44, 45–59 y 60 años o más. Para construirlos, CensoLab podía utilizar `edad_quinquenal`, que conserva a toda la población aunque la edad exacta de algunas personas esté anonimizada. Sin embargo, utilizó `edad` y dejó fuera a 5.704 personas registradas con `-66`. Entregó un total con valores anonimizados aunque disponía de una variable más adecuada para resolver la consulta. **La calificamos como incorrecta**.
 
 #### Caso 13 · Mapa de hogares con internet en el Biobío
 
-Se pidió un mapa del porcentaje de hogares con internet por comuna. La pregunta censal permite declarar más de una modalidad de acceso: un mismo hogar puede tener internet fija, móvil o satelital. Por eso, una primera comprobación es que cada hogar se cuente una sola vez. CensoBot combinó las modalidades con `OR`, evitando sumar varias veces a los hogares que tienen más de una.
-
-La segunda comprobación es la definición del numerador. La consulta cuenta un hogar cuando al menos una modalidad tiene el valor `1`, que indica acceso a internet. Los valores `-99`, `-66` y `0` no se cuentan como respuestas afirmativas. Si un hogar tiene un `1` en una modalidad y otro código en las demás, se incluye una sola vez. El denominador corresponde al total de hogares particulares, según la definición documentada en las instrucciones.
-
-**Cambiamos de P a C:** el agente evitó el doble conteo y construyó correctamente el numerador. El juez cuestionó el tratamiento de valores especiales, pero estos no se incorporan como acceso afirmativo; su presencia en el denominador es coherente con calcular sobre el total de hogares particulares. Las variables y el código afirmativo ya estaban documentados. Además, la objeción sobre la ausencia de geometrías en el SQL no correspondía al contrato de `show_map`, que las obtiene por separado y validó las 33 comunas.
+Se pidió un mapa del porcentaje de hogares con internet por comuna. Como un hogar puede declarar más de una modalidad (fija, móvil, satelital), CensoLab debía contar cada hogar una sola vez y considerar acceso cuando al menos una modalidad tuviera el valor `1`. El juez la dejó como P porque la respuesta no declaraba qué hacía con los valores `-99`, `-66` y `0`. Sin embargo, la consulta contó correctamente los hogares con acceso: aquellos que tenían al menos una modalidad con valor `1`, sin contar varias veces a quienes declaraban más de una. También cuestionó la ausencia de geometrías en el SQL, aunque `show_map` las obtiene por separado y validó las 33 comunas. La revisión confirmó que el resultado y el procedimiento cumplían el criterio. **La calificamos como correcta.**
 
 #### Caso 16 · Personas promedio por hogar en Paine
 
-Para calcular el promedio había que dividir las personas que viven en hogares particulares por el total de esos hogares. CensoBot obtuvo 78.495 personas y 25.871 hogares: 3,03 personas por hogar. El juez asignó P porque la consulta no repitió el filtro de hogares particulares en la tabla de personas ni comprobó nuevamente posibles duplicados. Esa objeción no identifica el problema principal: la unión mediante `id_vivienda` e `id_hogar` restringía el numerador a las personas de los hogares seleccionados, y el conteo distinto evitaba duplicaciones. También era posible resolver el cálculo únicamente desde `personas`, contando personas y hogares distintos del mismo universo.
-
-**Cambiamos de P a I:** antes de consultar, el agente debía resolver «Paine» con `resolve_territory` y reutilizar el código entregado por esa herramienta. No lo hizo: escribió directamente `h.comuna = '13404'`. Aunque el código y el resultado fueron correctos, el procedimiento asumió un identificador territorial sin comprobarlo e incumplió una regla explícita de la aplicación. Como el caso evalúa resultado y procedimiento, acertar la cifra no compensa esa omisión.
+Este caso combina un resultado correcto con un procedimiento insuficiente y, por eso, lo calificamos como incorrecto. CensoLab obtuvo 78.495 personas y 25.871 hogares: 3,03 personas por hogar. El juez la dejó como P porque observó que no había un filtro explícito de hogares particulares en `personas` ni una comprobación independiente de duplicaciones. Pero su criterio estaba enfocando mal el problema. La consulta podía resolverse directamente con la tabla `personas`, contando las personas y los hogares distintos, sin consultar `hogares` ni unir ambas tablas. La cifra era correcta pero el procedimiento innecesariamente complejo.
 
 #### Caso 17 · Comunas con mayor proporción de mujeres que viven solas
 
-Se pidieron las cuatro comunas con mayor proporción de mujeres que viven solas. CensoBot entregó las comunas, numeradores, denominadores y porcentajes esperados. La consulta seleccionó mujeres con `personas.sexo = 2` e identificó los hogares unipersonales con `hogares.tipologia_hogar = 1`. El juez objetó la ausencia de un filtro explícito adicional sobre personas y de verificaciones del cruce. Sin embargo, la unión por `id_vivienda` e `id_hogar` con hogares particulares delimitaba correctamente el universo y no multiplicaba las filas. **Cambiamos de P a C:** las categorías, el numerador, el denominador y la relación entre ambas tablas correspondían al indicador solicitado.
+Se pidieron las cuatro comunas con mayor proporción de mujeres que viven solas. CensoLab entregó las comunas, numeradores, denominadores y porcentajes esperados. La consulta seleccionó mujeres con `personas.sexo = 2` e identificó los hogares unipersonales con `hogares.tipologia_hogar = 1`. El juez objetó la ausencia de un filtro explícito adicional sobre personas y de verificaciones del cruce. Sin embargo, la unión por `id_vivienda` e `id_hogar` con hogares particulares delimitaba correctamente el universo y no multiplicaba las filas. **Cambiamos de P a C:** las categorías, el numerador, el denominador y la relación entre ambas tablas correspondían al indicador solicitado.
 
 #### Caso 18 · Disponibilidad de establecimientos de salud
 
-Ante la pregunta «¿Tienes establecimientos de salud?», CensoBot afirmó que el Censo 2024 contiene esa información y ofreció desagregaciones sin verificar su disponibilidad. **Mantuvimos la I:** CensoLab no dispone de esos datos y la respuesta ofrecía una capacidad que no podía respaldar. El comportamiento esperado era comprobar el alcance de la información disponible y comunicar esa limitación.
+Ante la pregunta «¿Tienes establecimientos de salud?», CensoLab afirmó que el Censo 2024 contiene esa información y ofreció desagregaciones sin verificar su disponibilidad. **Mantuvimos la I:** CensoLab no dispone de esos datos y la respuesta ofrecía una capacidad que no podía respaldar. El comportamiento esperado era comprobar el alcance de la información disponible y comunicar esa limitación.
 
 #### Caso 25 · Internet e ingresos entre 2017 y 2024
 
-Se pidió determinar si los datos permiten atribuir al acceso a internet un aumento de los ingresos entre 2017 y 2024 y, si no era posible, formular una pregunta alternativa. CensoBot ejecutó tres búsquedas de metadatos: ingresos del hogar, acceso a internet y comparación temporal. Encontró las variables de internet, no encontró una variable pertinente de ingresos ni mediciones comparables de 2017 y utilizó correctamente el alcance documentado del conjunto como Censo 2024. Además, distinguió asociación de causalidad y terminó con una pregunta respondible. El juez exigió una demostración más exhaustiva de la ausencia de información. **Cambiamos de P a C:** las búsquedas requeridas y el contexto disponible sustentaban la limitación; no correspondía exigir consultas sucesivas para demostrar una inexistencia ya respaldada.
+Se pidió determinar si los datos permiten atribuir al acceso a internet un aumento de los ingresos entre 2017 y 2024 y, si no era posible, formular una pregunta alternativa. CensoLab ejecutó tres búsquedas de metadatos: ingresos del hogar, acceso a internet y comparación temporal. Encontró las variables de internet, no encontró una variable pertinente de ingresos ni mediciones comparables de 2017 y utilizó correctamente el alcance documentado del conjunto como Censo 2024. Además, distinguió asociación de causalidad y terminó con una pregunta respondible. El juez exigió una demostración más exhaustiva de la ausencia de información. **Cambiamos de P a C:** las búsquedas requeridas y el contexto disponible sustentaban la limitación; no correspondía exigir consultas sucesivas para demostrar una inexistencia ya respaldada.
 
-## Qué aprendimos
+## Aprendizajes
 
-La primera conclusión es también la más importante para nosotros. Antes no sabíamos si un sistema agéntico como CensoLab podía evaluarse con el detalle necesario para construir evidencia sobre su confiabilidad. Ahora sabemos que sí. Podemos separar el resultado del procedimiento, seguir la traza de una operación y volver sobre el criterio utilizado para calificarla. El comportamiento del agente deja de aparecer como una impresión general: podemos observar si llegó a una respuesta y cómo llegó a ella.
+Lo primero que diríamos es que evaluar la respuesta y el procedimiento ofrece una mirada mucho más rica que evaluar solo el resultado. Como vimos, puede haber resultados correctos obtenidos mediante procedimientos ineficientes.
 
-La diferencia importa. En esta evaluación encontramos respuestas correctas producidas mediante procedimientos incorrectos o frágiles. La velocidad del agente puede ocultar esos problemas: llega rápidamente a una cifra y la respuesta parece resolver la pregunta. Pero un atajo indebido, una regla que no se respeta o un supuesto que queda sin comprobar pueden funcionar en un caso y fallar ante una variante. Se parecen a la deuda técnica: mientras no se manifiestan, el sistema parece funcionar; después pueden convertirse en un error difícil de localizar. No se trata solo de eficiencia. También están en juego la solidez del procedimiento y su capacidad para sostener el resultado.
+La evaluación automática permite revisar los casos de manera sistemática y entrega una primera lectura del desempeño. La evaluación mejora cuando se incorpora la revisión humana con criterio de dominio: una persona puede detectar referencias mal construidas, objeciones equivocadas del juez o respuestas correctas que no están bien sustentadas.
 
-También aprendimos que C, P e I no deben leerse como un veredicto final. La nota depende de la pregunta, de la referencia que construimos, del tipo de capacidad que queremos observar, de la evidencia disponible y del criterio del juez. A veces el problema estaba en la formulación del caso. Había preguntas para las que la respuesta no podía considerarse claramente correcta o incorrecta porque la solicitud no permitía distinguirlo. La evaluación debe revisar entonces al agente y también las condiciones que definimos para evaluarlo.
-
-Por eso la revisión humana resulta necesaria. Una persona con conocimiento del dominio puede encontrar una referencia mal construida, reconocer una objeción incorrecta del juez o advertir que una respuesta aparentemente correcta no está bien sustentada. El juez también puede equivocarse. La revisión humana permite corregir la evaluación, no solo calificar al agente. Si la batería crece y ya no es posible revisar cada caso, podremos recurrir al muestreo. La escala puede cambiar la forma de revisar, pero no vuelve prescindible esa revisión.
-
-Este aprendizaje cambia la manera en que seguiremos desarrollando CensoLab. La evaluación puede formar parte del sistema y acompañar cada intervención. Durante el desarrollo ya nos ocurrió que, al resolver un problema, desvestíamos un santo para vestir otro. Con una batería estable podemos volver a probar los casos después de modificar las instrucciones, los metadatos, las herramientas o los criterios de calificación, y observar si una mejora conserva lo que ya funcionaba.
-
-El conjunto actual puede mantenerse como una referencia y crecer con módulos y variantes para examinar nuevas capacidades. Las ejecuciones periódicas permitirán seguir la evolución del sistema y conservar una historia de las decisiones. Así, corregir y volver a evaluar dejan de ser pasos posteriores al desarrollo: pasan a formar parte de él. Podemos intervenir en CensoLab con una referencia, observar qué cambia y sostener su calidad sin avanzar a ciegas.
+Un sistema de evaluación más sistemático también acompaña el desarrollo. Al repetir la batería después de modificar instrucciones, metadatos, herramientas o criterios, podemos ver qué mejora y qué se deteriora. Así evitamos desvestir un santo para vestir otro.
 
 ## Referencias
 
@@ -900,9 +815,9 @@ El conjunto actual puede mantenerse como una referencia y crecer con módulos y 
 - `vitals`. [Getting started with vitals](https://vitals.tidyverse.org/articles/vitals.html).
 - `vitals`. [Writing evals for your LLM product](https://vitals.tidyverse.org/articles/writing-evals.html).
 
-## Anexo 1. Dataset de evaluación {#anexo-dataset}
+## Anexo. Dataset de evaluación {#anexo-dataset}
 
-La tabla conserva las preguntas y sus referencias junto con las respuestas de CensoLab del 6 de octubre. La columna «Evaluación» muestra la nota automática. El identificador permite relacionar los seis casos revisados con las decisiones del [Anexo 2](#anexo-revision).
+La tabla conserva las preguntas y sus referencias junto con las respuestas de CensoLab del 6 de octubre. La columna «Evaluación» muestra la nota automática.
 
 El [CSV de la ejecución](data/censobot-eval-luna-luna-2026-10-06.csv) incluye además las explicaciones del evaluador y la configuración de cada caso. Se conserva una copia fechada para identificar los resultados y las referencias utilizados. Las decisiones humanas se registran por separado: el archivo original no se altera. El registro de trazas y el código de evaluación se consultaron para esta revisión, pero quedan fuera de los materiales publicados en esta entrada.
 
@@ -963,20 +878,3 @@ reactable::reactable(
 Evaluación del `r latest_evaluation_label` · CensoLab `r evaluation_version`.<br>
 Modelo del agente <strong>`r solver_model`</strong> · Modelo juez <strong>`r scorer_model`</strong>.
 </p>
-
-## Anexo 2. Decisiones de revisión humana {#anexo-revision}
-
-La revisión humana se concentró en las cuatro respuestas calificadas como parcialmente correctas y las dos incorrectas. Contrastó las preguntas, referencias, respuestas, consultas y resultados de herramientas disponibles en la traza. La tabla conserva la nota automática y registra por separado la decisión confirmada.
-
-::: {.eval-review-table .eval-styled-table}
-| Caso | Consulta | Automática → revisada | Fundamento |
-|---|---|---|---|
-| 08 | Población de Valparaíso por grupos de edad | I → I | **Se mantiene incorrecta.** La consulta pedía grupos de edad que podían construirse con `edad_quinquenal`, contando también a las personas cuya edad exacta está anonimizada. CensoBot utilizó `edad` y dejó fuera a 5.704 personas registradas con `-66`. La edad agrupada permitía entregar los totales completos sin perder información por anonimización. |
-| 13 | Mapa de hogares con internet en el Biobío | P → C | **Pasa a correcta.** Al ser una pregunta censal de respuesta múltiple, combina las modalidades con `OR` y cuenta cada hogar una sola vez. El numerador incluye hogares con al menos un `1`; `-99`, `-66` y `0` no cuentan como acceso afirmativo. Un hogar con `1` en una modalidad se incluye aunque tenga otros códigos en las restantes. El denominador es el total de hogares particulares, según las instrucciones, que ya documentaban las variables y el código afirmativo. `show_map` valida las 33 comunas y obtiene las geometrías por separado, por lo que no debían incluirse en el SQL. |
-| 16 | Personas promedio por hogar en Paine | P → I | **Pasa a incorrecta.** CensoBot obtuvo 3,03 personas por hogar y la unión aplicada mantenía compatibles los universos; el filtro adicional exigido por el juez no era el problema. El error fue asumir directamente el código comunal `13404` sin resolver «Paine» mediante `resolve_territory`, como exigían las instrucciones. El cálculo también podía realizarse solo con `personas`, contando personas y hogares distintos del mismo universo. Al evaluarse tanto el resultado como el procedimiento, la cifra correcta no subsana la omisión territorial. |
-| 17 | Comunas con mayor proporción de mujeres que viven solas | P → C | **Pasa a correcta.** Selecciona mujeres con `sexo = 2`, identifica hogares unipersonales con `tipologia_hogar = 1`, une personas y hogares por `id_vivienda` e `id_hogar` y restringe el universo a hogares particulares. Entrega exactamente las cuatro comunas, numeradores, denominadores y porcentajes esperados. |
-| 18 | Disponibilidad de establecimientos de salud | I → I | **Se mantiene incorrecta.** Afirma que el Censo 2024 incluye establecimientos de salud y ofrece consultas y desagregaciones que no verificó. El criterio exigía reconocer que CensoLab no dispone de esa información. |
-| 25 | Internet e ingresos entre 2017 y 2024 | P → C | **Pasa a correcta.** Ejecuta búsquedas de metadatos sobre ingresos, internet y comparación temporal. Concluye que no puede estimar el cambio ni atribuir causalidad, distingue asociación de causalidad y termina con una pregunta concreta que sí puede responderse con el Censo 2024. La exigencia del juez de demostrar exhaustivamente la ausencia de otras variables no formaba parte del procedimiento requerido. |
-:::
-
-Tras estas decisiones, el balance combinado es de **`r reviewed_correct` respuestas correctas, `r reviewed_partial` parciales y `r reviewed_incorrect` incorrectas**, con **`r reviewed_accuracy_label`** de C. Incluye las 19 C automáticas sin una revisión equivalente documentada.

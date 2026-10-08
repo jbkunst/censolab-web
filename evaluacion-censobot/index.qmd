@@ -1,11 +1,20 @@
 ---
-title: Cómo evaluamos CensoBot
-description: Preguntas, referencias humanas y resultados de la evaluación de CensoBot.
-draft: true
+title: Mirar más allá del resultado
+author:
+  - name: Matías Parra
+  - name: Joshua Kunst
+description: Cómo evaluamos un sistema agéntico como CensoLab
+draft: false
 lang: es
-body-classes: evaluation-page
-toc: true
-toc-location: left
+format:
+  html:
+    toc: true
+    toc-location: left
+    body-classes: evaluation-page
+    code-link: true
+    grid:
+      sidebar-width: 260px
+      body-width: 920px
 execute:
   echo: false
   warning: false
@@ -15,299 +24,833 @@ execute:
 
 ```{r}
 #| label: load-evaluation-set
+# Conservamos una corrida identificada para que el informe sea reproducible.
 evaluation_data <- utils::read.csv(
-  "../data/evals/censobot-eval-latest.csv",
+  "data/censobot-eval-luna-luna-2026-10-06.csv",
   check.names = FALSE,
   stringsAsFactors = FALSE,
+  colClasses = "character",
   na.strings = c("", "NA")
 )
 
 source_columns <- c(
-  "id", "category", "input", "target", "criterion", "difficulty",
-  "active", "validation_type", "expected_value", "tolerance", "score",
-  "response", "evaluated_at", "app_version"
+  "id", "dimension", "input", "target", "foco_evaluacion", "level",
+  "score", "response", "evaluated_at", "app_version"
 )
-stopifnot(all(source_columns %in% names(evaluation_data)))
+stopifnot(all(c(source_columns, "solver_model", "scorer_model", "juez",
+  "scoring_status", "review_required", "explanation") %in%
+  names(evaluation_data)))
+stopifnot(
+  nrow(evaluation_data) == 25L,
+  !anyDuplicated(evaluation_data$id),
+  setequal(evaluation_data$id, sprintf("%02d", 1:25)),
+  all(evaluation_data$solver_model == "gpt-5.6-luna"),
+  all(evaluation_data$scorer_model == "gpt-5.6-luna"),
+  all(substr(evaluation_data$evaluated_at, 1, 10) == "2026-10-06"),
+  all(is.na(evaluation_data$score) | evaluation_data$score %in% c("C", "P", "I"))
+)
 
 cases <- evaluation_data[source_columns]
 names(cases) <- c(
-  "ID", "Categoría", "Pregunta", "Resultado esperado", "Criterio",
-  "Dificultad", "Activo", "Tipo de validación", "Valor esperado", "Tolerancia",
+  "ID", "Dimensión", "Pregunta", "Resultado esperado", "Foco", "Dificultad",
   "Evaluación", "Respuesta", "Fecha de evaluación", "Versión"
 )
+cases$Dificultad <- factor(
+  cases$Dificultad,
+  levels = c("bajo", "medio", "alto"),
+  labels = c("Bajo", "Medio", "Alto")
+)
+stopifnot(!anyNA(cases$Dificultad))
 
-active <- tolower(trimws(cases$Activo)) %in% c("sí", "si", "true", "1")
-active_cases <- cases[active, , drop = FALSE]
-
-n_cases <- nrow(active_cases)
-n_categories <- length(unique(active_cases$Categoría))
-n_difficulties <- length(unique(active_cases$Dificultad))
-n_evaluated <- sum(!is.na(active_cases$Evaluación))
-n_correct <- sum(active_cases$Evaluación == "C", na.rm = TRUE)
+n_cases <- nrow(cases)
+n_dimensions <- length(unique(cases$Dimensión))
+n_difficulties <- length(unique(cases$Dificultad))
+n_evaluated <- sum(!is.na(cases$Evaluación))
+n_ungraded <- n_cases - n_evaluated
+n_judge <- sum(tolower(evaluation_data$juez) == "true")
+coverage <- n_evaluated / n_cases
+coverage_label <- sprintf("%.0f%%", coverage * 100)
+n_correct <- sum(cases$Evaluación == "C", na.rm = TRUE)
+n_partial <- sum(cases$Evaluación == "P", na.rm = TRUE)
+n_incorrect <- sum(cases$Evaluación == "I", na.rm = TRUE)
 accuracy <- if (n_evaluated) n_correct / n_evaluated else NA_real_
-accuracy_label <- if (is.na(accuracy)) "—" else sprintf("%.0f%%", accuracy * 100)
+accuracy_label <- if (is.na(accuracy)) "Sin datos" else sprintf("%.0f%%", accuracy * 100)
 
-evaluation_dates <- as.Date(substr(active_cases$`Fecha de evaluación`, 1, 10))
-evaluation_dates <- evaluation_dates[!is.na(evaluation_dates)]
-latest_evaluation_date <- if (length(evaluation_dates)) {
-  max(evaluation_dates)
-} else {
-  as.Date(NA)
-}
+# Conservamos la salida automática y aplicamos aparte las decisiones humanas.
+review_decisions <- data.frame(
+  id = c("08", "13", "16", "17", "18", "25"),
+  automatic_score = c("I", "P", "P", "P", "I", "P"),
+  reviewed_score = c("I", "C", "I", "C", "I", "C"),
+  stringsAsFactors = FALSE
+)
+stopifnot(
+  identical(
+    evaluation_data$score[match(review_decisions$id, evaluation_data$id)],
+    review_decisions$automatic_score
+  )
+)
+
+reviewed_scores <- cases$Evaluación
+reviewed_scores[match(review_decisions$id, cases$ID)] <-
+  review_decisions$reviewed_score
+reviewed_correct <- sum(reviewed_scores == "C", na.rm = TRUE)
+reviewed_partial <- sum(reviewed_scores == "P", na.rm = TRUE)
+reviewed_incorrect <- sum(reviewed_scores == "I", na.rm = TRUE)
+reviewed_accuracy <- reviewed_correct / sum(!is.na(reviewed_scores))
+reviewed_accuracy_label <- sprintf("%.0f%%", reviewed_accuracy * 100)
+
+solver_model <- unique(evaluation_data$solver_model)
+scorer_model <- unique(evaluation_data$scorer_model)
+evaluation_version <- unique(cases$Versión)
+stopifnot(length(evaluation_version) == 1L, !is.na(evaluation_version))
+
+latest_evaluation_date <- max(as.Date(substr(cases$`Fecha de evaluación`, 1, 10)))
 spanish_months <- c(
   "enero", "febrero", "marzo", "abril", "mayo", "junio",
   "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
 )
-latest_evaluation_label <- if (is.na(latest_evaluation_date)) {
-  "fecha no disponible"
-} else {
-  sprintf(
-    "%d de %s de %d",
-    as.integer(format(latest_evaluation_date, "%d")),
-    spanish_months[as.integer(format(latest_evaluation_date, "%m"))],
-    as.integer(format(latest_evaluation_date, "%Y"))
-  )
-}
-
-difficulty_counts <- table(
-  factor(active_cases$Dificultad, levels = c("Básica", "Media", "Alta"))
+latest_evaluation_label <- sprintf(
+  "%d de %s de %d",
+  as.integer(format(latest_evaluation_date, "%d")),
+  spanish_months[as.integer(format(latest_evaluation_date, "%m"))],
+  as.integer(format(latest_evaluation_date, "%Y"))
 )
-
-try(
-  sysfonts::font_add_google("IBM Plex Sans", family = "IBM Plex Sans"),
-  silent = TRUE
-)
-showtext::showtext_auto()
-
-ggplot2::theme_set(
-  ggplot2::theme_minimal(base_size = 25, base_family = "IBM Plex Sans") +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(face = "plain"),
-      plot.background = ggplot2::element_rect(fill = "#f9f9f9", colour = NA),
-      panel.background = ggplot2::element_rect(fill = "#f9f9f9", colour = NA),
-      legend.key.width = grid::unit(1.5, "cm")
-    )
-)
+difficulty_counts <- table(cases$Dificultad)
 ```
 
 ```{=html}
 <style>
-.eval-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .75rem;
-  margin: 1.4rem 0 2rem;
+/* Base typography — hereda colores y fuentes de _brand.yml + styles.css */
+.evaluation-page #quarto-document-content p {
+  text-align: justify;
+  line-height: 1.7;
 }
-.eval-metric {
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--bs-border-color);
-  border-radius: .55rem;
-  background: var(--bs-body-bg);
-}
-.eval-metric-value {
-  display: block;
+
+.evaluation-page h2 {
+  margin-top: 2.5rem;
+  padding-bottom: .5rem;
+  border-bottom: 2px solid rgba(14, 79, 90, .12);
   color: var(--censolab-primary);
-  font-size: 2rem;
   font-weight: 300;
-  letter-spacing: -.04em;
-  line-height: 1;
+  letter-spacing: -.025em;
 }
-.eval-metric-label {
-  display: block;
-  margin-top: .35rem;
-  color: var(--bs-secondary-color);
-  font-size: .76rem;
-  line-height: 1.35;
+
+.evaluation-page h3 {
+  color: var(--censolab-primary);
+  font-weight: 300;
+  letter-spacing: -.025em;
 }
-.eval-table-wrap {
-  width: 100%;
-  max-height: 700px;
-  overflow: auto;
-  border-block: 1px solid var(--bs-border-color);
+
+.evaluation-page code {
+  font-size: .85em;
+  background: rgba(14, 79, 90, .06);
+  color: var(--censolab-primary);
+  padding: .15em .35em;
+  border-radius: 4px;
 }
-.eval-reactable {
-  margin-top: 1rem;
-  font-size: .82rem;
+
+.evaluation-page pre code {
+  background: transparent;
+  padding: 0;
 }
-.eval-reactable .rt-th {
-  color: var(--bs-secondary-color);
-  font-size: .66rem;
-  font-weight: 600;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-}
-.eval-reactable .rt-td {
-  line-height: 1.45;
-  white-space: normal;
-}
+
+/* TOC */
 .evaluation-page #TOC .nav-link:hover,
 .evaluation-page #TOC .nav-link.active {
   border-left-color: var(--censolab-primary);
   color: var(--censolab-primary);
 }
+
 .evaluation-page #toc-title {
   color: var(--censolab-primary);
 }
-.eval-note {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-left: 3px solid var(--censolab-primary);
-  background: var(--bs-body-bg);
+
+/* Metric grid */
+.eval-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.eval-metric {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: .55rem;
+  background: #fff;
+}
+
+.eval-metric-value {
+  display: block;
+  color: var(--censolab-primary);
+  font-size: 2.25rem;
+  font-weight: 300;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+
+.eval-metric-label {
+  display: block;
+  margin-top: .4rem;
   color: var(--bs-secondary-color);
-  font-size: .85rem;
+  font-size: .78rem;
+  line-height: 1.35;
+}
+
+/* Component cards (Dataset/Solver/Scorer) */
+.eval-component {
+  border-top: 3px solid var(--censolab-primary);
+}
+
+.evaluation-page #quarto-document-content .eval-component p {
+  text-align: left;
+}
+
+.eval-component-step {
+  margin: 0 0 .7rem;
+  color: var(--bs-secondary-color);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.eval-component-title {
+  margin: 0 0 .8rem;
+  color: var(--censolab-primary);
+  font-size: 1.65rem;
+  font-weight: 300;
+  letter-spacing: -.04em;
+  line-height: 1.1;
+}
+
+.eval-component-description {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .82rem;
+  line-height: 1.6;
+}
+
+/* Opening result comparison */
+.eval-result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.eval-result-card {
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: .55rem;
+  background: #fff;
+}
+
+.eval-result-card[data-result="reviewed"] {
+  border-top: 3px solid var(--censolab-primary);
+  background: rgba(14, 79, 90, .035);
+}
+
+.eval-result-kicker {
+  display: block;
+  color: var(--bs-secondary-color);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.eval-result-value {
+  display: block;
+  margin: .35rem 0;
+  color: var(--censolab-primary);
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: -.05em;
+  line-height: 1;
+}
+
+.eval-result-detail {
+  color: var(--bs-secondary-color);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+/* Table wrapper */
+.eval-table-wrap {
+  width: 100%;
+  max-height: 700px;
+  overflow: auto;
+  border: 1px solid var(--bs-border-color);
+  border-radius: .55rem;
+}
+
+/* Interactive table scrolling */
+.eval-reactable {
+  overflow: hidden;
+}
+
+.eval-reactable .rt-td {
+  white-space: normal;
+}
+
+/* Notes */
+.eval-note {
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--bs-border-color);
+  border-left: 3px solid var(--censolab-primary);
+  border-radius: .55rem;
+  background: rgba(14, 79, 90, .03);
+  color: var(--bs-secondary-color);
+  font-size: .88rem;
+  line-height: 1.6;
+}
+
+.eval-source {
+  margin-top: .75rem;
+  font-size: .82rem;
+  color: var(--bs-secondary-color);
+}
+
+/* Dimension cards (Resultado / Procedimiento) */
+.eval-dimension-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.eval-dimension-card {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--bs-border-color);
+  border-top: 3px solid var(--censolab-primary);
+  border-radius: .55rem;
+  background: #fff;
+}
+
+.eval-dimension-card .eval-dimension-title {
+  display: block;
+  margin-bottom: .5rem;
+  color: var(--censolab-primary);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.eval-dimension-card .eval-dimension-desc {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: .84rem;
   line-height: 1.55;
 }
-.eval-source {
-  margin-top: .65rem;
-  font-size: .82rem;
+
+/* Styled tables */
+.eval-styled-table,
+.eval-reactable {
+  margin: 1.5rem 0;
+  overflow-x: auto;
 }
+
+.eval-styled-table table,
+.eval-reactable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+}
+
+.eval-styled-table th,
+.eval-reactable .rt-th {
+  padding: .65rem .85rem;
+  border-bottom: 2px solid var(--censolab-primary);
+  color: var(--censolab-primary);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.eval-styled-table td,
+.eval-reactable .rt-td {
+  padding: .6rem .85rem;
+  border-bottom: 1px solid var(--bs-border-color);
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+.eval-styled-table tbody tr:hover,
+.eval-reactable .rt-tr:hover .rt-td {
+  background: rgba(14, 79, 90, .03);
+}
+
+.eval-styled-table tbody tr:last-child td,
+.eval-reactable .rt-tr:last-child .rt-td {
+  border-bottom: none;
+}
+
+.eval-shift-table tbody tr:nth-child(2) {
+  background: rgba(14, 79, 90, .04);
+  font-weight: 600;
+}
+
+.eval-synthesis-table td:nth-child(2),
+.eval-synthesis-table td:nth-child(3) {
+  text-align: center;
+  font-weight: 600;
+}
+
+.eval-styled-table th code {
+  display: block;
+  width: fit-content;
+  margin-top: .35rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+.eval-priority-table td:nth-child(1) {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Fichas de revisión */
+.eval-fichas > h3 {
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  padding: .8rem 1.1rem;
+  border: 1px solid var(--bs-border-color);
+  border-left: 3px solid var(--censolab-primary);
+  border-radius: .55rem;
+  background: #fff;
+  color: var(--censolab-primary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  line-height: 1.3;
+}
+
+.eval-fichas > p {
+  margin-bottom: 1rem;
+}
+
+.eval-fichas > p > strong:first-child {
+  display: inline-block;
+  margin-bottom: .3rem;
+  color: var(--censolab-primary);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.eval-fichas > table {
+  margin: 1rem 0;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+}
+
+.eval-fichas > table th {
+  padding: .6rem .85rem;
+  border-bottom: 2px solid var(--censolab-primary);
+  color: var(--censolab-primary);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.eval-fichas > table td {
+  padding: .55rem .85rem;
+  border-bottom: 1px solid var(--bs-border-color);
+  line-height: 1.45;
+}
+
+.eval-fichas > table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Cycle of improvement */
+.eval-cycle > ol {
+  list-style: none;
+  padding-left: 0;
+  counter-reset: eval-cycle-step;
+}
+
+.eval-cycle > ol > li {
+  counter-increment: eval-cycle-step;
+  margin-bottom: .8rem;
+  padding: 1rem 1.1rem 1rem 3rem;
+  border: 1px solid var(--bs-border-color);
+  border-left: 3px solid var(--censolab-primary);
+  border-radius: .55rem;
+  background: #fff;
+  position: relative;
+}
+
+.eval-cycle > ol > li::before {
+  content: counter(eval-cycle-step);
+  position: absolute;
+  left: .85rem;
+  top: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--censolab-primary);
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.eval-cycle > ol > li strong {
+  color: var(--censolab-primary);
+}
+
+/* Ficha detail expandable */
+.eval-ficha-detail {
+  margin-top: .75rem;
+}
+.eval-ficha-detail > summary {
+  cursor: pointer;
+  color: var(--bs-secondary-color);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.eval-ficha-detail > summary::marker,
+.eval-ficha-detail > summary::-webkit-details-marker {
+  display: none;
+}
+.eval-ficha-detail > summary::before {
+  content: "▸  ";
+  color: var(--censolab-primary);
+}
+.eval-ficha-detail[open] > summary::before {
+  content: "▾  ";
+}
+.eval-ficha-detail[open] > summary {
+  margin-bottom: .75rem;
+}
+
+/* Responsive */
 @media (max-width: 860px) {
   .eval-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .eval-grid.eval-components,
+  .eval-result-grid {
+    grid-template-columns: 1fr;
+  }
 }
+
 @media (max-width: 640px) {
-  .eval-grid {
+  .eval-grid,
+  .eval-result-grid,
+  .eval-dimension-grid {
     grid-template-columns: 1fr;
   }
 }
 </style>
 ```
 
-Una respuesta convincente no basta. Evaluamos si CensoBot encuentra el dato correcto, resuelve bien el territorio, realiza los cálculos pedidos y utiliza una salida adecuada cuando la consulta requiere una tabla, un gráfico, un mapa o un perfil territorial.
+CensoLab permite consultar y visualizar información del [Censo de Población y Vivienda 2024 de Chile](https://censo2024.ine.gob.cl/resultados/) mediante lenguaje natural. Se le pueden solicitar cálculos y mapas territoriales. De igual modo puede construir tipologías a partir de múltiples variables y consultar informes territoriales predefinidos. Por cierto, también ofrece interpretaciones en base a los datos. El agente trabaja con microdatos censales y con información agregada a nivel de zona/localidad y manzana/entidad. Estos datos se complementan con las capas geográficas censales. Para que su uso sea confiable, CensoLab debe producir respuestas correctas y mantener ese desempeño a lo largo del tiempo.
 
-## Una batería abierta y en crecimiento
+**CensoLab es un sistema agéntico** compuesto por un modelo de lenguaje, instrucciones, metadata, herramientas y obviamente los datos. El rasgo específico de este tipo de sistemas es que pueden operar con *autonomía*. Son agentes donde su capacidad de actuar está mediada por un modelo de lenguaje de naturaleza probabilística. Es precisamente por ese carácter más o menos autónomo que se torna necesario evaluar su *comportamiento*.
 
-Cada caso comienza con una **pregunta escrita por una persona** y un **resultado esperado definido por una persona**. Luego CensoBot responde y, mediante `vitals`, un modelo de inteligencia artificial compara esa respuesta con el resultado esperado. Así medimos el desempeño con una referencia humana explícita, sin pedirle al evaluador que invente cuál debería haber sido la respuesta.
+En esta entrada presentamos la metodología para evaluar CensoLab. Combina la evaluación automática con la revisión humana de las respuestas y de los procedimientos que las sustentan. Explicamos cómo construimos las pruebas y qué criterios utilizamos para examinarlas.
 
-```{r}
-#| label: evaluation-metrics
-#| results: asis
-metric_cards <- c(
-  sprintf(
-    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">casos evaluados</span></div>',
-    n_evaluated
-  ),
-  sprintf(
-    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">categorías cubiertas</span></div>',
-    n_categories
-  ),
-  sprintf(
-    '<div class="eval-metric"><span class="eval-metric-value">%s</span><span class="eval-metric-label">niveles de dificultad</span></div>',
-    n_difficulties
-  )
-)
+## Resultado y procedimiento
 
-cat('<div class="eval-grid">', paste(metric_cards, collapse = "\n"), '</div>')
+Cuando comenzamos a pensar en la evaluación nos concentramos en el *resultado* de las consultas. Si la cifra era correcta, el agente funcionaba. Fin del asunto. Pero a medida que el propio desarrollo iba poniendo por delante desafíos, vimos que también necesitábamos examinar el *proceso* de construcción de la respuesta. Empezamos a preguntarnos por la semántica de la solicitud, qué herramientas y recursos empleaba, en fin, como se construia y organizaba el proceso para llegar a un resultado. Así establecimos dos dimensiones de la evaluación.
+
+
+```{=html}
+<div class="eval-dimension-grid">
+  <div class="eval-dimension-card">
+    <span class="eval-dimension-title">Resultado</span>
+    <p class="eval-dimension-desc">El agente resuelve lo solicitado. Entrega una respuesta correcta o realiza la acción requerida. El resultado corresponde al territorio y al universo de población de la pregunta.</p>
+  </div>
+  <div class="eval-dimension-card">
+    <span class="eval-dimension-title">Procedimiento</span>
+    <p class="eval-dimension-desc">El agente interpreta la solicitud y pide aclaraciones cuando corresponde. Utiliza datos y herramientas pertinentes para respaldar sus cálculos y conclusiones.</p>
+  </div>
+</div>
 ```
 
-## Resultado de la evaluación
+Esta primera evaluación se concentra en esas dos dimensiones. Otros aspectos, como la estabilidad entre ejecuciones, el tiempo de respuesta y el costo por consulta, quedan fuera de su alcance por el momento.
 
-Cada caso evaluado aporta `1` cuando la respuesta es correcta y `0` cuando necesita revisión. El promedio de esos valores corresponde a la proporción de respuestas correctas.
+## Diseño de la prueba
 
-```{r}
-#| label: accuracy-chart
-#| fig-cap: "Proporción de respuestas evaluadas clasificadas como correctas"
-#| fig-width: 8
-#| fig-height: 2.5
-accuracy_value <- if (is.na(accuracy)) 0 else accuracy
-accuracy_data <- data.frame(
-  result = "Correctas",
-  proportion = accuracy_value,
-  label = accuracy_label,
-  label_x = if (accuracy_value >= .15) accuracy_value - .02 else accuracy_value + .02
-)
+Construimos una batería de `r n_cases` casos y la ejecutamos con [`vitals`](https://vitals.tidyverse.org/). Este entorno permite evaluar respuestas de manera sistemática[^vitals]. Después contrastamos las preguntas, las respuestas y las explicaciones del evaluador con las consultas y el contexto registrados durante cada ejecución.
 
-ggplot2::ggplot(
-  accuracy_data,
-  ggplot2::aes(x = proportion, y = result)
-) +
-  ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
-  ggplot2::geom_text(
-    ggplot2::aes(x = label_x, label = label),
-    hjust = if (accuracy_value >= .15) 1 else 0,
-    colour = if (accuracy_value >= .15) "#FFFFFF" else "#202326",
-    size = 5
-  ) +
-  ggplot2::scale_x_continuous(
-    limits = c(0, 1),
-    breaks = seq(0, 1, by = .25),
-    labels = paste0(seq(0, 100, by = 25), "%"),
-    expand = c(0, 0)
-  ) +
-  ggplot2::labs(x = NULL, y = NULL) +
-  ggplot2::theme(
-    panel.grid.major.y = ggplot2::element_blank(),
-    panel.grid.minor = ggplot2::element_blank()
-  )
+[^vitals]: `vitals` es una adaptación para R de `Inspect`, un entorno de evaluación para Python. Está muy bien integrado con [`ellmer`](https://ellmer.tidyverse.org/) y nos resultó bastante amigable de ocupar. Su mayor virtud es que permite examinar distintas capacidades y aspectos de un agente, cubriendo razonamiento, generación de código, empleo de herramientas, así como también costos y la traza de una operación. De ese modo contribuye a mostrar algo que normalmente aparece oculto en la operación de los agentes.
+
+Para organizar una evaluación, `vitals` trabaja con [tres componentes](https://vitals.tidyverse.org/articles/vitals.html): un dataset, un solver y un scorer.
+
+```{=html}
+<div class="eval-grid eval-components">
+  <div class="eval-metric eval-component">
+    <p class="eval-component-step">01 · Preparar</p>
+    <p class="eval-component-title">Dataset</p>
+    <p class="eval-component-description">Reúne los casos de prueba. Cada pregunta tiene una referencia que define qué esperamos del agente.</p>
+  </div>
+  <div class="eval-metric eval-component">
+    <p class="eval-component-step">02 · Resolver</p>
+    <p class="eval-component-title">Solver</p>
+    <p class="eval-component-description">Ejecuta CensoLab con la configuración de la versión evaluada y registra cómo resuelve cada pregunta.</p>
+  </div>
+  <div class="eval-metric eval-component">
+    <p class="eval-component-step">03 · Evaluar</p>
+    <p class="eval-component-title">Scorer</p>
+    <p class="eval-component-description">Contrasta lo que hizo el agente con la referencia del caso. Puede combinar comprobaciones mediante código con el juicio de un modelo de lenguaje.</p>
+  </div>
+</div>
 ```
 
-## Qué medimos
+### Selección de las preguntas
 
-::: {.cl-card-grid}
-::: {.cl-card}
-**Exactitud verificable**
 
-Cuando conocemos la cifra esperada, la comparación es determinística. No pedimos a otro modelo que decida si un número “parece correcto”.
-:::
+Construimos el dataset como una batería acotada de preguntas, buscando cubrir distintos grados de dificultad y formas de interacción con CensoLab.
 
-::: {.cl-card}
-**Referencia humana**
+Las preguntas van desde identificar un territorio y contar registros hasta calcular porcentajes o promedios, comparar, ordenar y combinar información. También ponen a prueba la apertura de informes en distintos niveles territoriales y la construcción de mapas y gráficos.
 
-La pregunta, el resultado esperado y los criterios se preparan antes de ejecutar la evaluación. La referencia no cambia para acomodarse a la respuesta de CensoBot.
-:::
+Incluimos además preguntas cuya resolución exige tomar precauciones. Una consulta por «viviendas» requiere definir qué tipos de vivienda se consideran. Una pregunta ambigua puede exigir una aclaración antes de hacer un cálculo. Internamente llamamos a estas consultas _preguntas con veneno_ porque ponen a prueba si CensoLab reconoce esas dificultades y actúa según el criterio previsto.
 
-::: {.cl-card}
-**Comparación con IA**
+Finalmente incorporamos preguntas donde la dificultad consiste en determinar qué puede sostenerse con los datos: reconocer información que CensoLab no posee, distinguir asociación de causalidad y respaldar las conclusiones con evidencia censal.
 
-`vitals` ejecuta cada caso y un modelo de IA compara la respuesta de CensoBot con la referencia humana, considerando el criterio definido para esa pregunta.
-:::
+Buscamos poner a CensoLab frente a situaciones donde podía equivocarse y cubrir distintas capacidades. Escogimos `r n_cases` casos para poder revisar las respuestas y discutir si las calificaciones estaban bien asignadas. La batería actual contiene **`r unname(difficulty_counts["Bajo"])` casos de dificultad baja, `r unname(difficulty_counts["Medio"])` media y `r unname(difficulty_counts["Alto"])` alta**.
 
-::: {.cl-card}
-**Preguntas diversas**
+###  Referencias para cada caso
 
-El conjunto combina categorías y niveles de dificultad: consultas directas, cálculos, comparaciones, tablas, gráficos, mapas, perfiles territoriales y casos fuera de alcance.
-:::
-:::
+Definimos manualmente una referencia para cada pregunta. La [tabla](#tbl-referencias) muestra tres ejemplos que evalúan capacidades diferentes. En una consulta numérica fijamos la cifra esperada (ID 01). Para una solicitud de acción especificamos qué debe hacer el agente (ID 03). Cuando la pregunta es ambigua, esperamos que pida una aclaración (ID 15).
 
-## Dificultad de los casos
+Cada caso incluye la pregunta (`input`), la referencia que define la respuesta esperada (`target`) y un identificador (`id`). El [Anexo](#anexo-dataset) reúne las preguntas y referencias de los 25 casos.
 
-```{r}
-#| label: difficulty-chart
-#| fig-cap: "Casos activos por dificultad"
-#| fig-width: 8
-#| fig-height: 3.2
-difficulty_data <- data.frame(
-  difficulty = factor(
-    names(difficulty_counts),
-    levels = c("Básica", "Media", "Alta")
-  ),
-  n = as.integer(difficulty_counts)
-)
-
-ggplot2::ggplot(
-  difficulty_data,
-  ggplot2::aes(x = n, y = difficulty)
-) +
-  ggplot2::geom_col(fill = "#0E4F5A", width = .38) +
-  ggplot2::labs(x = NULL, y = NULL) +
-  ggplot2::scale_x_continuous(
-    breaks = seq(0, max(difficulty_data$n), by = 1),
-    expand = ggplot2::expansion(mult = c(0, .04))
-  ) +
-  ggplot2::theme(
-    panel.grid.major.y = ggplot2::element_blank(),
-    panel.grid.minor = ggplot2::element_blank()
-  )
+```{=html}
+<div class="eval-styled-table" id="tbl-referencias">
+  <table aria-label="Ejemplos de referencias para evaluar una cifra, una acción y una aclaración">
+    <thead>
+      <tr>
+        <th scope="col">ID<code>id</code></th>
+        <th scope="col">Pregunta<code>input</code></th>
+        <th scope="col">Resultado esperado<code>target</code></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>01</td>
+        <td>¿Cuántas personas viven en la comuna de Maipú?</td>
+        <td>503.635 personas.</td>
+      </tr>
+      <tr>
+        <td>03</td>
+        <td>Abre el informe territorial de la comuna de Isla de Maipo.</td>
+        <td>Identificar la comuna y ejecutar la acción que abre su informe territorial.</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td>¿Cuál es la cantidad de hogares promedio en la comuna de Paine?</td>
+        <td>Pedir una aclaración antes de calcular. Sugerir que quizá se refiere al promedio de personas por hogar.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 ```
 
-## Los casos
+### Ejecución y calificación
+
+Configuramos el solver con el modelo, las instrucciones, los metadatos, las herramientas y los datos de CensoLab. Cada caso se ejecutó con su pregunta (`input`). La referencia (`target`) quedó reservada para el evaluador. Esta separación permite contrastar lo que el agente resolvió con un criterio que no recibió como parte de la solicitud.
+
+Para repetir las pruebas sin abrir la aplicación, adaptamos las acciones de presentación: comprobamos la solicitud de informes, los datos e identificadores de los mapas y la configuración de los gráficos. Así podemos examinar esas operaciones automáticamente, aunque su apariencia y funcionamiento visual requieren una comprobación adicional en la interfaz.
+
+También registramos las herramientas utilizadas, los argumentos enviados y los resultados obtenidos. A ese registro lo llamamos la **traza**. Permite seguir las acciones observables que sustentan una respuesta: qué territorio se identificó, qué datos se consultaron y qué operación se solicitó. Su lectura ayuda a localizar errores y a reconocer procedimientos válidos; no equivale a observar todo el razonamiento interno del modelo.
+
+Por ejemplo, ante la solicitud de abrir el informe de Isla de Maipo (caso 03), el agente identificó la comuna y llamó a la herramienta que solicita su informe. La traza permite comprobar ambas acciones, además de leer la confirmación final.
+
+<iframe
+  src="../assets/diagrams/evaluacion-censobot/traza-isla-de-maipo.html"
+  title="Traza del caso 03: informe territorial de Isla de Maipo"
+  width="100%"
+  height="235"
+  style="display: block; border: 0; margin: .5rem 0 .25rem;"
+  loading="lazy">
+</iframe>
+
+<details>
+<summary>Ver un extracto simplificado de la traza de Isla de Maipo</summary>
+
+Se abrevia la respuesta de resolución territorial y se omiten los metadatos técnicos.
+
+```{.json}
+[
+  {
+    "role": "user",
+    "content": "Abre el informe territorial de la comuna de Isla de Maipo."
+  },
+  {
+    "role": "assistant",
+    "tool_calls": [
+      {
+        "function": "resolve_territory",
+        "arguments": { "name": "Isla de Maipo" }
+      }
+    ]
+  },
+  {
+    "role": "tool",
+    "function": "resolve_territory",
+    "content": "comuna:13603 · Isla de Maipo, Región Metropolitana"
+  },
+  {
+    "role": "assistant",
+    "tool_calls": [
+      {
+        "function": "show_report",
+        "arguments": { "geo_id": "comuna:13603" }
+      }
+    ]
+  },
+  {
+    "role": "tool",
+    "function": "show_report",
+    "content": "Reporte territorial solicitado para comuna:13603."
+  },
+  {
+    "role": "assistant",
+    "content": "Abrí el informe territorial de la comuna de Isla de Maipo."
+  }
+]
+```
+
+</details>
+
+El scorer recibe la pregunta, la referencia, la respuesta de CensoLab y su traza. Combinamos comprobaciones programadas con el juicio de un modelo porque los casos requieren verificaciones diferentes: una cifra o una llamada a una herramienta admite una comprobación precisa; interpretar una ambigüedad o valorar si una conclusión tiene respaldo exige examinar el contexto.
+
+Primero se aplica la regla configurada para el caso. Si una comprobación falla, se asigna I sin consultar al juez. Si se supera y el caso tiene juez habilitado, el modelo examina la respuesta y el procedimiento. Algunas preguntas se resuelven directamente mediante ese juicio, sin una comprobación programada sustantiva previa. En esta batería, **`r n_judge` casos utilizan juez**; solo el caso 03 se califica exclusivamente mediante código.
+
+En Maipú, el código contrasta la cifra de referencia con la respuesta y con los datos devueltos por las herramientas; después interviene el juez. Para el informe de Isla de Maipo, comprueba que se haya identificado la comuna antes de solicitar el informe. En la pregunta ambigua de Paine, el juez examina si se pidió una aclaración antes de calcular. En los gráficos, el código comprueba la consulta y la configuración, mientras el juez revisa territorios, indicadores, ejes y valores.
+
+El juez trabaja en una conversación independiente, con el contexto documentado y sin herramientas para volver a consultar la base. Por eso las cifras de referencia deben validarse durante la preparación del test: la calificación comprueba el cumplimiento de esa referencia, pero no garantiza por sí misma que esté bien construida.
+
+En esta evaluación, el scorer utiliza tres calificaciones para indicar en qué medida la respuesta y el procedimiento cumplen el criterio definido para cada caso:
+
+- **C · Correcta.** Resuelve lo solicitado mediante un procedimiento válido. Puede admitir mejoras de presentación sin incumplir el criterio.
+- **P · Parcialmente correcta.** Resuelve una parte sustantiva de la solicitud. Omite un componente requerido o deja insuficientemente definido un aspecto relevante.
+- **I · Incorrecta.** Incumple el objetivo central o sostiene una conclusión con datos o capacidades que no corresponden.
+
+Cuando la ejecución del agente termina con un error registrado, falla el juez o su respuesta carece de una nota reconocible, el caso queda como **NA** y no se califica. Un intento fallido que el agente corrige durante la misma tarea no implica por sí solo que el caso quede sin nota. Esta distinción permite reconocer su capacidad de recuperarse y evaluar el resultado alcanzado.
+
+Para resumir el desempeño, calculamos la proporción de respuestas correctas sobre el total de casos con calificación. Las respuestas parcialmente correctas se muestran por separado y no se cuentan como correctas.
+
+## Resultados de la evaluación
+
+En esta ejecución usamos el mismo LLM para responder y evaluar las respuestas, con el objetivo de establecer una referencia inicial para CensoLab. Se realizó con CensoLab **`r evaluation_version`**. El agente utilizó **Luna** (`r solver_model`) para responder. El mismo modelo actuó como juez en una conversación distinta.
+
+### Calificación automática y revisión humana
+
+La evaluación automática calificó las **`r n_evaluated` respuestas** de CensoLab. Consideró que **`r n_correct` eran correctas**, **`r n_partial` parcialmente correctas** y **`r n_incorrect` incorrectas**.
+
+Después revisamos todas las respuestas y las razones de sus calificaciones. Coincidimos con las 19 calificadas como correctas y las dos incorrectas. Los cambios estuvieron en las cuatro respuestas parcialmente correctas. Al examinarlas, consideramos que tres eran correctas y una era incorrecta.
+
+```{=html}
+<div class="eval-result-grid">
+  <div class="eval-result-card">
+    <span class="eval-result-kicker">Casos con calificación</span>
+    <span class="eval-result-value">`r coverage_label`</span>
+    <span class="eval-result-detail">`r n_evaluated` de `r n_cases` casos</span>
+  </div>
+  <div class="eval-result-card">
+    <span class="eval-result-kicker">Evaluación automática</span>
+    <span class="eval-result-value">`r accuracy_label`</span>
+    <span class="eval-result-detail">`r n_correct` correctas · `r n_partial` parciales · `r n_incorrect` incorrectas</span>
+  </div>
+  <div class="eval-result-card" data-result="reviewed">
+    <span class="eval-result-kicker">Tras la revisión humana</span>
+    <span class="eval-result-value">`r reviewed_accuracy_label`</span>
+    <span class="eval-result-detail">`r reviewed_correct` correctas · `r reviewed_partial` parciales · `r reviewed_incorrect` incorrectas</span>
+  </div>
+</div>
+```
+
+Tras la revisión, el resultado quedó en **`r reviewed_correct` respuestas correctas y `r reviewed_incorrect` incorrectas**. Las tres respuestas que pasaron de parcialmente correctas a correctas explican el aumento de **`r accuracy_label` a `r reviewed_accuracy_label`**.
+
+Estos porcentajes corresponden a los `r n_cases` casos seleccionados para esta evaluación. Describen cómo respondió CensoLab a esas preguntas y no representan una tasa de acierto general para cualquier consulta.
+
+### Principales hallazgos
+
+A continuación nos detenemos en las cuatro respuestas calificadas automáticamente como parciales y las dos incorrectas. Estos casos permiten explicar los desacuerdos con el juez y los errores identificados.
+
+#### Caso 08 · Población de Valparaíso por grupos de edad
+
+Se solicitaron los totales de población para los grupos de 0–14, 15–29, 30–44, 45–59 y 60 años o más. Para construirlos, CensoLab podía utilizar `edad_quinquenal`, que conserva a toda la población aunque la edad exacta de algunas personas esté anonimizada. Sin embargo, utilizó `edad` y dejó fuera a 5.704 personas registradas con `-66`. Entregó un total que se basaba en una variable con valores anonimizados aunque disponía de una variable más adecuada para resolver la consulta. **La evaluación automática la calificó como incorrecta y la revisión mantuvo esa calificación.**
+
+#### Caso 13 · Mapa de hogares con internet en el Biobío
+
+Se pidió un mapa del porcentaje de hogares con internet por comuna. Como un hogar puede declarar más de una modalidad (fija, móvil, satelital), CensoLab debía contar cada hogar una sola vez y considerar acceso cuando al menos una modalidad tuviera el valor `1`. El juez cuestionó que la respuesta no declarara qué hacía con los valores `-99` y `NULL`. También cuestionó la ausencia de geometrías en el SQL, aunque `show_map` las obtiene por separado y validó las 33 comunas. Sin embargo, la consulta contó correctamente los hogares con acceso: aquellos que tenían al menos una modalidad con valor `1`, sin contar varias veces a quienes declaraban más de una. **La evaluación automática la calificó como parcialmente correcta. La revisión la cambió a correcta.**
+
+#### Caso 16 · Personas promedio por hogar en Paine
+
+Se pidió el promedio de personas por hogar en Paine. CensoLab obtuvo la cifra correcta uniendo las tablas de personas y hogares. El juez cuestionó los filtros y las verificaciones del cruce, pero no su necesidad. La consulta podía resolverse desde la tabla de personas, contando las personas y los hogares distintos del mismo universo. La revisión consideró ese cruce innecesario un error de procedimiento. **La evaluación automática la calificó como parcialmente correcta. La revisión la cambió a incorrecta.**
+
+#### Caso 17 · Comunas con mayor proporción de mujeres que viven solas
+
+Se pidieron las cuatro comunas con mayor proporción de mujeres que viven solas. CensoLab entregó las comunas y los porcentajes esperados. El cruce era necesario porque la variable tipología, que identifica los hogares unipersonales, solo está en la tabla de hogares. El juez exigió un filtro adicional sobre personas y verificaciones del cruce. Sin embargo, la unión mediante los identificadores de vivienda y hogar delimitaba correctamente el universo de hogares particulares y no duplicaba registros. **La evaluación automática la calificó como parcialmente correcta. La revisión la cambió a correcta.**
+
+#### Caso 18 · Disponibilidad de establecimientos de salud
+
+Ante la pregunta «¿Tienes establecimientos de salud?», CensoLab afirmó que el Censo 2024 contiene esa información y ofreció desagregaciones sin verificar su disponibilidad. CensoLab no dispone de esos datos y la respuesta ofrecía una capacidad que no podía respaldar. El comportamiento esperado era comprobar el alcance de la información disponible y comunicar esa limitación. **La evaluación automática la calificó como incorrecta y la revisión mantuvo esa calificación.**
+
+#### Caso 25 · Internet e ingresos entre 2017 y 2024
+
+Se pidió determinar si los datos permiten atribuir al acceso a internet un aumento de los ingresos entre 2017 y 2024 y, si no era posible, formular una pregunta alternativa. CensoLab ejecutó tres búsquedas de metadatos: ingresos del hogar, acceso a internet y comparación temporal. Encontró las variables de internet, no encontró una variable pertinente de ingresos ni mediciones comparables de 2017. Se apoyó en el alcance documentado del conjunto, que corresponde al Censo 2024. Además, distinguió asociación de causalidad y terminó con una pregunta respondible. El juez exigió una demostración más exhaustiva de la ausencia de información. Las búsquedas requeridas y el contexto disponible sustentaban la limitación; no correspondía exigir consultas sucesivas para demostrar una inexistencia ya respaldada. **La evaluación automática la calificó como parcialmente correcta. La revisión la cambió a correcta.**
+
+## Aprendizajes
+
+Lo primero que diríamos es que evaluar la respuesta y el procedimiento ofrece una mirada mucho más rica que evaluar solo el resultado. Como vimos, pueden existir resultados correctos obtenidos mediante procedimientos ineficientes. La evaluación automática permite revisar los casos de manera sistemática y entrega una primera lectura del desempeño. Como se desprende de la revisión manual, la evaluación mejora cuando se incorpora la revisión humana con criterio de dominio. 
+
+Durante el desarrollo de CensoLab fue común que al agregar una nueva funcionalidad o instrucción, resolvíamos un problema y provocábamos otro. Terminábamos desvistiendo un santo para vestir otro. Volver a evaluar CensoLab después de cada cambio nos permite seguir desarrollando la aplicación procurando mantener la calidad alcanzada hasta ese momento.
+
+Finalmente, consideramos que esta evaluación produce una métrica útil. Construimos preguntas ambiguas, capciosas y, en algunos casos, con premisas deliberadamente erróneas para observar cómo CensoLab reconoce esas dificultades y responde. La métrica resume su desempeño frente a esas situaciones y permite seguir su evolución durante el desarrollo.
+
+## Cómo citar
+
+**APA 7**
+
+
+Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab*. https://censolab.cl/evaluacion-censobot/
+
+**BibTeX**
+
+```bibtex
+@online{censolab2026evaluacion,
+  author  = {Parra, Matías and Kunst, Joshua},
+  title   = {Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab},
+  year    = {2026},
+  url     = {https://censolab.cl/evaluacion-censobot/},
+  urldate = {2026-10-08}
+}
+```
+
+## Referencias
+
+- `vitals`. [Getting started with vitals](https://vitals.tidyverse.org/articles/vitals.html).
+- `vitals`. [Writing evals for your LLM product](https://vitals.tidyverse.org/articles/writing-evals.html).
+
+## Anexo. Dataset de evaluación {#anexo-dataset}
+
+Esta tabla reúne las preguntas, las referencias, las respuestas de CensoLab y la calificación automática de la ejecución del 6 de octubre.
 
 ```{r}
 #| label: cases-table
 #| column: page
-public_cases <- active_cases[, c(
-  "Pregunta", "Resultado esperado", "Respuesta", "Evaluación"
+public_cases <- cases[, c(
+  "ID", "Pregunta", "Resultado esperado", "Respuesta", "Evaluación"
 ), drop = FALSE]
 
 public_cases$Respuesta <- trimws(gsub(
@@ -317,15 +860,14 @@ public_cases$Respuesta <- trimws(gsub(
   perl = TRUE
 ))
 public_cases$Respuesta <- gsub("\\*\\*", "", public_cases$Respuesta)
-public_cases$Evaluación <- ifelse(
-  public_cases$Evaluación == "C",
-  "Correcta",
-  ifelse(is.na(public_cases$Evaluación), "Sin evaluar", "Necesita revisión")
-)
+grade_labels <- c(C = "Correcta", P = "Parcialmente correcta", I = "Incorrecta")
+public_cases$Evaluación <- unname(grade_labels[public_cases$Evaluación])
+public_cases$Evaluación[is.na(public_cases$Evaluación)] <- "Sin calificación"
 names(public_cases) <- c(
+  "ID",
   "Pregunta",
   "Resultado esperado",
-  "Respuesta de CensoBot",
+  "Respuesta de CensoLab",
   "Evaluación"
 )
 
@@ -344,9 +886,10 @@ reactable::reactable(
     headerVAlign = "center"
   ),
   columns = list(
+    ID = reactable::colDef(minWidth = 55, maxWidth = 65),
     Pregunta = reactable::colDef(minWidth = 220),
     `Resultado esperado` = reactable::colDef(minWidth = 260),
-    `Respuesta de CensoBot` = reactable::colDef(minWidth = 340),
+    `Respuesta de CensoLab` = reactable::colDef(minWidth = 340),
     Evaluación = reactable::colDef(minWidth = 180)
   ),
   class = "eval-reactable",
@@ -357,12 +900,6 @@ reactable::reactable(
 ```
 
 <p class="eval-source">
-Resultados de la última corrida disponible de evaluación de CensoBot.
-<strong>Última evaluación:</strong> `r latest_evaluation_label`.
+Evaluación del `r latest_evaluation_label` · CensoLab `r evaluation_version`.<br>
+Modelo del agente <strong>`r solver_model`</strong> · Modelo juez <strong>`r scorer_model`</strong>.
 </p>
-
-## Cómo usamos `vitals`
-
-Usamos `vitals` para ejecutar los casos, registrar cada corrida y comparar las respuestas. En cada caso, CensoBot recibe la pregunta preparada por una persona. Después, un modelo de IA evalúa la respuesta obtenida frente al resultado esperado y los criterios que esa persona definió previamente.
-
-Esta página muestra **qué preguntamos, qué esperábamos, qué respondió CensoBot y cuál fue la evaluación**. Los detalles operacionales —como instrucciones internas, consultas SQL o llamadas a herramientas— se mantienen fuera del informe público porque no son necesarios para comprender el resultado.

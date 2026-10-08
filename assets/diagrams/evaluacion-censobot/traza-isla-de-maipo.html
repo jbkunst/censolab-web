@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Traza del caso 03: informe territorial de Isla de Maipo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17343a;
+      --muted: #6a7e83;
+      --line: #c9d9dc;
+      --teal: #0e4f5a;
+      --teal-2: #177384;
+      --cyan: #25a7b8;
+      --violet: #7658a6;
+      --surface: #ffffff;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 12px;
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .artifact {
+      max-width: 1320px;
+      margin: 0 auto;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .diagram-shell {
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(14, 79, 90, .24) transparent;
+    }
+
+    .diagram {
+      display: block;
+      width: 100%;
+      min-width: 840px;
+      height: auto;
+    }
+
+    .node {
+      cursor: default;
+      transition: filter 180ms ease;
+    }
+
+    .node:hover,
+    .node:focus {
+      filter: drop-shadow(0 10px 10px rgba(23, 52, 58, .14));
+      outline: none;
+    }
+
+    .node:hover .node-card,
+    .node:focus .node-card {
+      stroke-width: 2.25;
+    }
+
+    .node-card {
+      fill: #fff;
+      stroke-width: 1.35;
+    }
+
+    .node-number { fill: #fff; font-size: 10px; font-weight: 750; text-anchor: middle; }
+    .node-kind { font-size: 9px; font-weight: 750; letter-spacing: 1.1px; }
+    .node-title { fill: var(--ink); font-size: 14px; font-weight: 680; }
+    .node-copy { fill: var(--muted); font-size: 10.5px; }
+    .node-code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; }
+    .lane-label { fill: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 1.2px; }
+    .lane-line { stroke: rgba(14, 79, 90, .12); stroke-width: 1; }
+
+    .edge {
+      fill: none;
+      stroke: #86aeb5;
+      stroke-width: 2;
+      stroke-linecap: round;
+      marker-end: url(#arrow);
+    }
+
+    .edge-flow {
+      fill: none;
+      stroke: var(--cyan);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-dasharray: 3 11;
+      opacity: .82;
+      animation: route-flow 1.9s linear infinite;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin: 0 18px;
+      padding: 14px 0 8px;
+      border-top: 1px solid rgba(14, 79, 90, .14);
+    }
+
+    .summary-item {
+      min-width: 0;
+      padding: 0 16px;
+    }
+
+    .summary-item:first-child { padding-left: 0; }
+    .summary-item:last-child { padding-right: 0; }
+
+    .summary-item + .summary-item {
+      border-left: 1px solid rgba(14, 79, 90, .14);
+    }
+
+    .summary-value {
+      display: block;
+      color: var(--teal);
+      font-size: 18px;
+      font-weight: 650;
+      letter-spacing: -.03em;
+      line-height: 1;
+    }
+
+    .summary-label {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.3;
+    }
+
+    .summary-detail {
+      display: block;
+      margin-top: 3px;
+      color: var(--teal);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 9px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    @keyframes route-flow {
+      to { stroke-dashoffset: -28; }
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 6px; }
+      .diagram { min-width: 820px; }
+      .summary { margin: 0 8px; }
+      .summary-item { padding: 0 9px; }
+      .summary-value { font-size: 16px; }
+      .summary-label { font-size: 9px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .edge-flow { animation: none; }
+      .node { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="artifact">
+    <div class="diagram-shell" aria-label="Recorrido de izquierda a derecha desde la solicitud hasta la confirmación">
+      <svg class="diagram" viewBox="0 0 1280 195" role="img" aria-labelledby="diagram-title diagram-desc">
+        <title id="diagram-title">Traza del caso 03</title>
+        <desc id="diagram-desc">Seis pasos de izquierda a derecha: la persona solicita un informe, CensoLab resuelve el territorio, recibe su identificador, solicita el informe, recibe confirmación y responde a la persona.</desc>
+        <defs>
+          <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%">
+            <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#17343a" flood-opacity=".08"/>
+          </filter>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#86aeb5"/>
+          </marker>
+          <linearGradient id="lane" x1="0" x2="1">
+            <stop offset="0" stop-color="#eef7f8"/>
+            <stop offset=".5" stop-color="#f9fbfb"/>
+            <stop offset="1" stop-color="#f3f0f8"/>
+          </linearGradient>
+        </defs>
+
+        <path d="M 219 87 H 249" class="edge"/>
+        <path d="M 219 87 H 249" class="edge-flow"/>
+
+        <path d="M 419 87 H 449" class="edge"/>
+        <path d="M 419 87 H 449" class="edge-flow"/>
+
+        <path d="M 619 87 H 649" class="edge"/>
+        <path d="M 619 87 H 649" class="edge-flow"/>
+
+        <path d="M 819 87 H 849" class="edge"/>
+        <path d="M 819 87 H 849" class="edge-flow"/>
+
+        <path d="M 1019 87 H 1049" class="edge"/>
+        <path d="M 1019 87 H 1049" class="edge-flow"/>
+
+        <g class="node" tabindex="0" aria-label="Paso 1. La persona solicita abrir el informe territorial" transform="translate(49 20)">
+          <rect class="node-card" width="170" height="134" rx="12" stroke="#25a7b8" filter="url(#shadow)"/>
+          <circle cx="22" cy="27" r="11" fill="#25a7b8"/><text x="22" y="31" class="node-number">1</text>
+          <text x="41" y="29" class="node-kind" fill="#177384">PERSONA</text>
+          <text x="16" y="61" class="node-title">Solicitud</text>
+          <text x="16" y="82" class="node-copy"><tspan x="16">Abrir el informe</tspan><tspan x="16" dy="15">territorial de</tspan><tspan x="16" dy="15">Isla de Maipo</tspan></text>
+        </g>
+
+        <g class="node" tabindex="0" aria-label="Paso 2. CensoLab llama a resolve territory" transform="translate(249 20)">
+          <rect class="node-card" width="170" height="134" rx="12" stroke="#0e4f5a" filter="url(#shadow)"/>
+          <circle cx="22" cy="27" r="11" fill="#0e4f5a"/><text x="22" y="31" class="node-number">2</text>
+          <text x="41" y="29" class="node-kind" fill="#0e4f5a">CENSOLAB</text>
+          <text x="16" y="61" class="node-title">Resolver territorio</text>
+          <text x="16" y="85" class="node-code" fill="#0e4f5a"><tspan x="16">resolve_territory</tspan><tspan x="16" dy="16">("Isla de Maipo")</tspan></text>
+        </g>
+
+        <g class="node" tabindex="0" aria-label="Paso 3. La herramienta devuelve el identificador de la comuna" transform="translate(449 20)">
+          <rect class="node-card" width="170" height="134" rx="12" stroke="#7658a6" filter="url(#shadow)"/>
+          <circle cx="22" cy="27" r="11" fill="#7658a6"/><text x="22" y="31" class="node-number">3</text>
+          <text x="41" y="29" class="node-kind" fill="#7658a6">HERRAMIENTA</text>
+          <text x="16" y="61" class="node-title">Territorio resuelto</text>
+          <text x="16" y="82" class="node-code" fill="#7658a6"><tspan x="16">comuna:13603</tspan><tspan x="16" dy="15">Isla de Maipo</tspan><tspan x="16" dy="15">Región Metropolitana</tspan></text>
+        </g>
+
+        <g class="node" tabindex="0" aria-label="Paso 4. CensoLab solicita abrir el informe" transform="translate(649 20)">
+          <rect class="node-card" width="170" height="134" rx="12" stroke="#0e4f5a" filter="url(#shadow)"/>
+          <circle cx="22" cy="27" r="11" fill="#0e4f5a"/><text x="22" y="31" class="node-number">4</text>
+          <text x="41" y="29" class="node-kind" fill="#0e4f5a">CENSOLAB</text>
+          <text x="16" y="61" class="node-title">Abrir informe</text>
+          <text x="16" y="85" class="node-code" fill="#0e4f5a"><tspan x="16">show_report</tspan><tspan x="16" dy="16">("comuna:13603")</tspan></text>
+        </g>
+
+        <g class="node" tabindex="0" aria-label="Paso 5. La herramienta confirma que el informe fue solicitado" transform="translate(849 20)">
+          <rect class="node-card" width="170" height="134" rx="12" stroke="#7658a6" filter="url(#shadow)"/>
+          <circle cx="22" cy="27" r="11" fill="#7658a6"/><text x="22" y="31" class="node-number">5</text>
+          <text x="41" y="29" class="node-kind" fill="#7658a6">HERRAMIENTA</text>
+          <text x="16" y="61" class="node-title">Informe solicitado</text>
+          <text x="16" y="82" class="node-copy"><tspan x="16">El informe territorial</tspan><tspan x="16" dy="15">fue solicitado para</tspan><tspan x="16" dy="15">comuna:13603</tspan></text>
+        </g>
+
+        <g class="node" tabindex="0" aria-label="Paso 6. CensoLab confirma la apertura a la persona" transform="translate(1049 20)">
+          <rect class="node-card" width="170" height="134" rx="12" stroke="#0e4f5a" filter="url(#shadow)"/>
+          <circle cx="22" cy="27" r="11" fill="#0e4f5a"/><text x="22" y="31" class="node-number">6</text>
+          <text x="41" y="29" class="node-kind" fill="#0e4f5a">CENSOLAB</text>
+          <text x="16" y="61" class="node-title">Confirmación</text>
+          <text x="16" y="82" class="node-copy"><tspan x="16">“Abrí el informe</tspan><tspan x="16" dy="15">territorial de la comuna</tspan><tspan x="16" dy="15">de Isla de Maipo.”</tspan></text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="summary" aria-label="Resumen de la traza">
+      <div class="summary-item">
+        <strong class="summary-value">6</strong>
+        <span class="summary-label">eventos observables</span>
+      </div>
+      <div class="summary-item">
+        <strong class="summary-value">2</strong>
+        <span class="summary-label">herramientas coordinadas</span>
+        <span class="summary-detail">resolve_territory → show_report</span>
+      </div>
+      <div class="summary-item">
+        <strong class="summary-value">1</strong>
+        <span class="summary-label">identificador reutilizado</span>
+        <span class="summary-detail">comuna:13603</span>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>

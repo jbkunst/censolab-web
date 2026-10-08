@@ -1,0 +1,430 @@
+id,level,dimension,foco_evaluacion,input,target,validation,tolerance,score,response,explanation,scoring_method,scoring_status,review_required,evaluation_error,evaluated_at,app_version,solver_model,scorer_model
+01,bajo,consulta,resultado,¿Cuántas personas viven en la comuna de Maipú?,503635 habitantes.,numeric_exact,0,C,"En la comuna de **Maipú viven 503.635 personas**, según el Censo 2024. Se envió el resultado al mapa.
+
+- <span class=""suggestion submit"">Ver la edad promedio de las personas en Maipú</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Maipú</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Correcto. El paso 3 identifica Maipú como comuna con código `'13119'`. En el paso 4 se consulta `COUNT(*)` sobre `personas`, filtrando esa comuna y sin excluir operativos, adecuado para contar su población censada. El resultado exitoso del paso 5 devuelve **503635**, coincidente con el criterio y la respuesta final del paso 6; no es una cifra escrita como constante en SQL.
+
+No se observan fallos ni aspectos que requieran revisión humana para este criterio.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+02,bajo,uso_herramientas,procedimiento,Abre el informe territorial de la comuna de Isla de Maipo.,Debe resolver correctamente Isla de Maipo y ejecutar la acción que abre su informe territorial; la respuesta textual puede ser mínima.,tool_trace,,C,Se abrió el informe territorial de la comuna de Isla de Maipo.,report_opened = TRUE; territory_resolved_first = TRUE,report ,evaluated,FALSE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+03,bajo,semantica,resultado_y_procedimiento,¿Cuántas viviendas hay en la Región de Valparaíso?,913524 viviendas particulares en la Región de Valparaíso; debe usar tipo_operativo == 2.,numeric+trace,0,C,"En la Región de Valparaíso hay **913.524 viviendas particulares**. Se envió el resultado al mapa.
+
+- <span class=""suggestion submit"">Ver el porcentaje de viviendas desocupadas en la Región de Valparaíso</span>
+- <span class=""suggestion submit"">Ver cuántos hogares hay en la Región de Valparaíso</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Cumple el criterio. El territorio se resolvió como Región de Valparaíso, código `'05'` (paso 3). La consulta del paso 4 calcula `COUNT(*)` sobre `viviendas`, con `tipo_operativo = 2` y filtro regional `substr(comuna, 1, 2) = '05'`. El resultado exitoso devuelve **913.524** (paso 5), cifra coincidente con la respuesta final y la referencia solicitada.
+
+No se observan fallos ni aspectos que requieran revisión humana para este criterio.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+04,bajo,calculo,resultado,¿Qué porcentaje de la población de Maipú son mujeres?,52.2% de la población de Maipú son mujeres; debe usar población femenina sobre población total de Maipú.,numeric_tolerance,0.1,C,"En Maipú, las mujeres representan el **52,17% de la población**. El indicador considera a todas las personas censadas y la capa fue enviada al mapa.
+
+- <span class=""suggestion submit"">Ver el porcentaje de hombres en Maipú</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Maipú</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+El criterio se cumple. Los pasos 3 y 5 confirman que `sexo` abarca a todas las personas y que `2` corresponde a mujer. En el paso 6 se calcula la población femenina sobre la población total de la comuna de Maipú (`comuna = '13119'`), sin excluir operativos.
+
+El resultado exitoso del paso 7 es `0.5217`: equivale al **52,17 %** informado y redondea a **52,2 %**, como exige el criterio. No se observa un fallo de cálculo ni se requiere revisión humana para este criterio.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+05,bajo,comparacion,resultado,"¿Qué comuna tiene más población, Providencia o Ñuñoa, y por cuántas personas?","Ñuñoa tiene más población que Providencia por 97493 personas, usando la misma definición de población para ambas comunas.",numeric+llm_judge,0,C,"Ñuñoa tiene más población: **241.467 personas**, frente a **143.974 en Providencia**. La diferencia es de **97.493 personas**.
+
+Se envió la comparación al mapa.
+
+- <span class=""suggestion submit"">Ver la población de 65 años o más por comuna</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Ñuñoa</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+El criterio se cumple. En el paso 3 se identificaron los códigos comunales de Providencia (`13123`) y Ñuñoa (`13120`). La consulta del paso 4 utilizó la misma definición para ambas: `COUNT(*)` sobre `personas`, sin excluir operativos censales.
+
+El resultado exitoso del paso 5 confirmó 241.467 personas en Ñuñoa y 143.974 en Providencia. La resta es **97.493 personas**, coincidente con la respuesta final. No se observan fallos respecto del criterio ni aspectos que requieran revisión humana.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+06,bajo,ordenamiento,resultado,Entrega las cinco comunas más pobladas de Chile y su población,"Puente Alto = 568086; Maipú = 503635; Santiago = 438856; Antofagasta = 401096; La Florida = 374836, en ese orden y sin mezclar niveles geográficos.",table_rule,,C,"Las cinco comunas más pobladas de Chile, según el Censo 2024, son:
+
+1. **Puente Alto:** 568.086 habitantes  
+2. **Maipú:** 503.635 habitantes  
+3. **Santiago:** 438.856 habitantes  
+4. **Antofagasta:** 401.096 habitantes  
+5. **La Florida:** 374.836 habitantes  
+
+También envié el detalle a la aplicación en una tabla descargable.
+
+- <span class=""suggestion submit"">Mostrar las cinco comunas menos pobladas de Chile</span>
+- <span class=""suggestion submit"">Ver la población por región</span>","name_value_pairs = TRUE; ranking_order = TRUE
+Juicio provisional:
+El criterio se cumple. En el paso 2 se cuenta la población con `COUNT(*)` sobre `personas`, agrupada por comuna, y se unen nombres exclusivamente del nivel `comuna`; se ordena de mayor a menor y se seleccionan cinco resultados.
+
+El resultado exitoso del paso 3 y la respuesta final del paso 6 coinciden exactamente con las cifras y el orden exigidos: Puente Alto 568086; Maipú 503635; Santiago 438856; Antofagasta 401096; La Florida 374836.
+
+No se observan fallos ni mezcla de niveles geográficos. No requiere revisión humana para este criterio.
+
+GRADE: C",ranking + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+07,bajo,calculo,resultado,"Dime los totales de población de la Región de Valparaíso para los grupos de edad 0-14, 15-29, 30-44, 45-59 y 60 años o más","0-14 = 318729; 15-29 = 387251; 30-44 = 410356; 45-59 = 346375; 60 años o más = 433342, para la Región de Valparaíso, en ese orden.",llm_judge,,I,"En la Región de Valparaíso, la población por grupo de edad es:
+
+- **0-14 años:** 317.507 personas
+- **15-29 años:** 386.274 personas
+- **30-44 años:** 408.689 personas
+- **45-59 años:** 345.346 personas
+- **60 años o más:** 432.533 personas
+
+- <span class=""suggestion submit"">Ver la distribución porcentual de estos grupos de edad</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de la Región de Valparaíso</span>","
+Juicio provisional:
+Los cinco totales incumplen el criterio:
+
+| Grupo | Respuesta | Referencia |
+|---|---:|---:|
+| 0-14 | 317.507 | 318.729 |
+| 15-29 | 386.274 | 387.251 |
+| 30-44 | 408.689 | 410.356 |
+| 45-59 | 345.346 | 346.375 |
+| 60 años o más | 432.533 | 433.342 |
+
+Se comprobó que el territorio corresponde a la región `'05'` (paso 3) y que la respuesta reproduce fielmente los resultados de la consulta (pasos 4-6). Sin embargo, esta agrupa por `edad` y excluye los registros sin grupo; no consta revisión del universo ni de la supresión de edad. Requiere revisión humana determinar si el uso de `edad_quinquenal` explica la discrepancia, sin imputar valores suprimidos. Ninguno de los totales solicitados coincide con la referencia.
+
+GRADE: I",none + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+08,bajo,semantica,resultado,el campo edad cuántos valores anonimizados tiene en la comuna de San Fabian de Alico (Ñuble),5245 valores anonimizados; debe reconocer y contar edad == -66.,numeric_exact,0,C,"Interpreté “San Fabián de Alico” como la **comuna de San Fabián** (Ñuble). En el campo `personas.edad`, el valor anonimizado `-66` aparece en **5.245 personas**.
+
+- <span class=""suggestion submit"">Ver cuántas personas tienen edad no respondida en San Fabián</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de San Fabián</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+Correcto. La resolución territorial identifica la comuna de San Fabián, Ñuble, con código `16304` (paso 5). La consulta cuenta efectivamente filas de `personas` con `comuna = '16304' AND edad = -66` (paso 6), y el resultado exitoso devuelve **5.245** (paso 7), coincidente con la respuesta final.
+
+La búsqueda inicial sin coincidencias fue corregida; no afecta el cumplimiento del criterio. No se observan discrepancias que requieran revisión humana.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+09,medio,artefacto,resultado,Muéstrame en un mapa el porcentaje de hogares con internet por comuna en la Región del Biobío.,Mapa comunal de la Región del Biobío con el porcentaje correcto de hogares con internet; debe usar hogares como universo y limitarse a las comunas de la región.,artifact_rule,,C,"Se envió al mapa el porcentaje de hogares con internet por comuna en la Región del Biobío. Se consideraron hogares particulares y acceso por internet fijo, móvil o satelital, contando cada hogar una sola vez.
+
+El porcentaje va desde **62,40% en Alto Biobío** hasta **96,43% en San Pedro de la Paz**.
+
+- <span class=""suggestion submit"">Ver el porcentaje de hogares con internet fija por comuna</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Alto Biobío</span>","map_created = TRUE
+Juicio provisional:
+El criterio se cumple con la evidencia observada:
+
+- **Universo y cálculo:** el SQL del paso 4 usa `hogares`, filtra `tipo_operativo = 2` y divide los hogares con alguna de las tres conexiones entre el total de hogares particulares de cada comuna. El `OR` evita contar varias veces un hogar.
+- **Alcance territorial y mapa:** la región se resuelve como `'08'` (paso 3); ese código se aplica al filtro comunal. El resultado de la herramienta confirma un mapa con 33 comunas, todas del Biobío (paso 5).
+- **Consistencia:** los extremos informados en el paso 6 coinciden con los resultados del mapa.
+
+Como limitación, no se verificaron las etiquetas de los códigos de respuesta. Además, los hogares sin respuesta afirmativa permanecen en el denominador, incluidos los casos sin respuesta; esto debió explicitarse. La revisión humana puede confirmar esa codificación y convención metodológica, sin que la traza demuestre un porcentaje erróneo.
+
+GRADE: C",map + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+10,medio,semantica,resultado,Muéstrame por zonas del Gran Santiago el promedio de escolaridad de las personas de 18 años o más.,"Debe interpretar Gran Santiago como agrupación territorial, usar zonas como nivel de salida, aplicar el universo de personas de 18 años o más y representar el promedio de escolaridad.",artifact+llm_judge,,P,"Se envió al mapa la capa con el promedio de escolaridad de las personas de 18 años o más para **1.640 zonas del Gran Santiago**.
+
+- <span class=""suggestion submit"">Ver el porcentaje de personas de 18 años o más con educación superior por zona</span>
+- <span class=""suggestion submit"">Graficar la distribución del promedio de escolaridad de las zonas</span>","map_created = TRUE
+Juicio provisional:
+**Cumplimiento parcial.** Se comprobó que Gran Santiago se resolvió como una agrupación de 34 comunas (pasos 2–3) y que la consulta reutilizó esos códigos, filtró `nivel_geografico = 'zona'` y representó `prom_escolaridad18` como valor, sin promediar promedios (paso 4). El resultado exitoso de la herramienta respalda las 1.640 unidades informadas (paso 5).
+
+Faltó verificar la definición y el universo de `prom_escolaridad18` en el diccionario: su nombre y el título del mapa no acreditan por sí solos que corresponda al promedio de escolaridad de personas de 18 años o más. Requiere revisión humana confirmar esa definición y sus exclusiones; no se demuestra que el indicador sea incorrecto, pero tampoco queda completamente validado.
+
+GRADE: P",map + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+11,medio,alcance,resultado,¿Cuántos automóviles hay en la comuna de Ñuñoa?,Debe indicar que la información no está disponible en los datos accesibles a CensoLab y no inventar una cifra ni una variable inexistente.,llm_judge,,C,"El Censo 2024 no incluye una variable para contabilizar automóviles en la comuna de Ñuñoa. Por lo tanto, ese dato está **No disponible** en esta base.","
+Juicio provisional:
+Cumple el criterio: indica que el dato no está disponible en esta base y no inventa cifras ni variables (paso 12). La traza respalda esa conclusión: las búsquedas no encontraron variables de automóviles (pasos 7 y 11), y el listado de `viviendas` tampoco contiene una (paso 9). Además, no confunde el conteo de personas ocupadas en comercio y reparación de vehículos con un conteo de automóviles (paso 3).
+
+No se observa un fallo respecto del criterio solicitado. Como precisión, la afirmación sobre todo el Censo 2024 es más amplia que la evidencia de la base accesible; comprobar ese alcance general requeriría revisión externa, sin afectar el cumplimiento aquí.
+
+GRADE: C",none + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+12,medio,aclaracion,resultado,cuál es la cantidad de hogares promedio en la comuna de paine,Debe pedir aclaración y sugerir que quizá se refiere a personas promedio por hogar; no debe asumir una interpretación y calcular sin confirmar.,llm_judge,,C,"¿Te refieres al **promedio de personas por hogar** en la comuna de Paine, o a la **cantidad total de hogares**?","
+Juicio provisional:
+Cumple el criterio. En el paso 4 pide aclaración explícita y propone el **promedio de personas por hogar** como posible interpretación, frente al total de hogares. Los pasos 2–3 solo muestran consultas de territorio y metadatos: no se observa ningún cálculo ni una interpretación asumida sin confirmar. No se detectan fallos respecto del criterio ni aspectos que requieran revisión humana; queda pendiente la confirmación del usuario.
+
+GRADE: C",none + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+13,medio,semantica,resultado_y_procedimiento,cuál es la cantidad de personas promedio por hogar en la comuna de paine,"3.03 personas por hogar. El numerador debe obtenerse consultando la base de personas y el denominador la base de hogares, usando universos compatibles y aplicando tipo_operativo == 2 donde corresponda; debe excluir personas en situación de calle y viviendas colectivas.",numeric+trace,0.01,C,"En la comuna de **Paine hay un promedio de 3,03 personas por hogar**.
+
+El cálculo considera hogares particulares en viviendas ocupadas con moradores presentes. La unidad comunal fue enviada al mapa.
+
+- <span class=""suggestion submit"">Ver el promedio de personas por hogar por localidad en Paine</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Paine</span>","response_value = TRUE; data_provenance = TRUE
+Juicio provisional:
+**Cumple el criterio.** En el paso 6, el denominador se obtiene de `hogares`, filtrando Paine (`comuna = '13404'`) y `tipo_operativo = 2`. El numerador cuenta registros de `personas` vinculados a esos hogares mediante la clave completa `(id_vivienda, id_hogar)`.
+
+Aunque no aplica explícitamente `p.tipo_operativo = 2`, la unión con hogares particulares restringe el universo de forma equivalente conforme a las relaciones documentadas, excluyendo personas en situación de calle y viviendas colectivas. El `DISTINCT` de las claves de hogar evita multiplicar personas en la unión.
+
+El resultado exitoso del paso 7 es **3,0341**, que redondea a **3,03**, tal como informa el paso 8. No es una constante ni un promedio de promedios: procede del cociente entre los conteos consultados.
+
+No se observa un fallo en el criterio evaluado ni una cuestión que requiera revisión humana para emitir este juicio.
+
+GRADE: C",numeric + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+14,medio,semantica,resultado_y_procedimiento,¿Qué comunas de Chile tienen mayor proporción de personas de 60 años o más que viven solas?,"Debe usar variables compatibles con edad y condición de vivir solo, manteniendo coherencia entre persona, hogar y territorio; si no puede construir válidamente el indicador, debe declararlo.",trace+llm_judge,,P,"El ranking de las 10 comunas con mayor proporción fue enviado a la tabla. **Santiago encabeza con 29,6%**, seguida por **San Pedro de Atacama (27,93%)** y **Providencia (26,63%)**.
+
+La proporción corresponde a personas de 60 años o más que viven en hogares unipersonales, sobre el total de personas de 60 años o más en hogares particulares.
+
+- <span class=""suggestion submit"">Ver el porcentaje de personas de 60 años o más por comuna</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Santiago</span>","
+Juicio provisional:
+El criterio se cumple parcialmente. Se comprobó que `tipologia_hogar = 1` significa hogar unipersonal y que `edad` mide años cumplidos (pasos 7–9). La consulta une personas y hogares mediante la clave completa, restringe a hogares particulares y calcula un numerador contenido en el denominador por comuna (paso 10). Los porcentajes publicados coinciden con el resultado obtenido (pasos 11 y 14).
+
+Sin embargo, se utilizó `edad >= 60` pese a haberse identificado edades suprimidas con `-66` (paso 9). Esto excluye esas personas y puede dejar comunas fuera del ranking o afectar su comparabilidad. No se utilizó ni validó `edad_quinquenal`, alternativa documentada para comparar comunas, ni se declaró esta limitación. Por ello, el denominador no queda acreditado como el **total** de personas de 60 años o más en hogares particulares de todas las comunas.
+
+Requiere revisión humana el efecto de la supresión sobre la cobertura y el orden del ranking; no puede darse por confirmado el liderazgo nacional sin resolverlo.
+
+GRADE: P",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+15,medio,semantica,procedimiento,¿En qué regiones es mayor el porcentaje de la población de 60 años o más que pertenece a un pueblo originario?,Debe usar como numerador las personas de 60 años o más pertenecientes a pueblo originario y como denominador el total de personas de 60 años o más de la misma región.,trace_rule,,I,"La mayor proporción se observa en:
+
+1. **La Araucanía:** 28,75%  
+2. **Arica y Parinacota:** 25,13%  
+3. **Aysén:** 19,59%  
+4. **Los Ríos:** 19,38%  
+5. **Atacama:** 19,34%  
+6. **Los Lagos:** 19,04%
+
+El porcentaje corresponde a personas de **60 años o más** que declararon pertenecer a un pueblo indígena u originario, considerando solo respuestas válidas. La capa por regiones se envió al mapa.
+
+- <span class=""suggestion submit"">Ver el porcentaje de población de 60 años o más por región</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de La Araucanía</span>","observable_evidence = TRUE
+Juicio provisional:
+**No cumple el criterio.** En el paso 6, el numerador cuenta personas con `edad >= 60` y `p28_autoid_pueblo = 1`, coherente con la pertenencia solicitada y la categoría confirmada en el paso 5.
+
+Sin embargo, el denominador cuenta únicamente personas de ese grupo etario con `p28_autoid_pueblo IN (1, 2)`: excluye la no respuesta, en vez de incluir al **total de personas de 60 años o más de la misma región**. La aclaración «considerando solo respuestas válidas» del paso 8 reconoce esa restricción, pero no satisface el criterio.
+
+Los porcentajes publicados coinciden con el resultado del paso 7, aunque corresponden a otro denominador. Hace falta recalcular para verificar los porcentajes y el orden correctos; la evidencia no permite determinar cuánto cambiarían ni requiere revisión humana para identificar el error.
+
+GRADE: I",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+16,medio,alcance,resultado_y_procedimiento,¿Tienes establecimientos de salud?,Debe verificar el alcance de la base y responder que CensoLab no dispone de información sobre establecimientos de salud; no debe inventar variables ni ofrecer cálculos sobre información inexistente.,trace+llm_judge,,I,"Sí, el Censo 2024 incluye información sobre **establecimientos de salud**. Puedo ayudarte a explorarla por territorio, por ejemplo:
+
+- cantidad de establecimientos;
+- distribución por tipo;
+- ubicación territorial disponible.
+
+¿Qué territorio quieres revisar?",observable_evidence = FALSE,trace ,evaluated,FALSE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+17,alto,interpretacion,resultado,¿La menor escolaridad explica la mayor desocupación en una comuna?,"Debe distinguir asociación descriptiva de explicación causal, explicitar la limitación y, si continúa, reformular la pregunta como asociación o comparación descriptiva.",llm_judge,,C,"Sí, **hay una asociación**, pero no permite afirmar que la menor escolaridad por sí sola explique causalmente la mayor desocupación.
+
+- En **295 comunas**, la correlación entre escolaridad promedio —personas de 15 años o más— y desocupación fue **-0,38**, una relación negativa moderada.
+- Las comunas del cuartil con menor escolaridad registraron, en promedio, **9,48%** de desocupación.
+- En el cuartil con mayor escolaridad, fue **7,78%**: una diferencia de **1,70 puntos porcentuales**.
+
+La tasa de desocupación se calculó como personas desocupadas sobre la fuerza de trabajo —ocupadas más desocupadas—. El resultado sugiere que ambas variables se relacionan, pero también pueden influir la estructura productiva, la participación laboral, la edad y otras características territoriales.
+
+- <span class=""suggestion submit"">Ver un mapa de la tasa de desocupación por comuna</span>
+- <span class=""suggestion submit"">Analizar la participación laboral por comuna</span>","
+Juicio provisional:
+La respuesta **cumple el criterio**: distingue asociación de explicación causal y continúa con una comparación descriptiva entre comunas.
+
+- **Limitación explícita:** en el paso 10 afirma que la asociación no permite sostener una explicación causal y menciona otros factores que podrían intervenir.
+- **Reformulación efectiva:** el paso 8 calcula una correlación entre indicadores comunales y compara promedios de tasas por cuartiles de escolaridad, sin estimar efectos causales. El paso 9 respalda las cifras comunicadas: 295 comunas, correlación de −0,377 y promedios de 9,48% y 7,78%.
+- **Aspecto mejorable:** el «Sí» inicial podría resultar ambiguo ante una pregunta causal, aunque se aclara inmediatamente. Conviene advertir también que una asociación entre comunas no demuestra una relación individual ni explica una comuna específica.
+
+No se observa un incumplimiento sustantivo del criterio. Cualquier interpretación causal o extrapolación a una comuna concreta requeriría revisión metodológica adicional.
+
+GRADE: C",none + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+18,alto,razonamiento,resultado_y_procedimiento,"Busca una comuna que aparezca muy envejecida según el porcentaje de población de 60 años o más, pero no según el índice de envejecimiento, y explica la diferencia.","Debe calcular ambos indicadores, identificar una divergencia real entre rankings y explicar que miden dimensiones relacionadas pero no idénticas.",trace+llm_judge,,C,"Una comuna que muestra bien esta diferencia es **General Lagos**:
+
+- **Población de 60 años o más:** 157 de 508 personas, equivalente a **30,91%**. Ocupa el **9.º lugar** entre las comunas con mayor proporción.
+- **Índice de envejecimiento:** **127,64**; es decir, cerca de **128 personas de 60 años o más por cada 100 menores de 15 años**. En este indicador ocupa el **puesto 165**.
+
+La diferencia está en el denominador:
+
+- **Porcentaje de 60 años o más:** personas de 60+ ÷ población total.
+- **Índice de envejecimiento:** personas de 60+ ÷ menores de 15 años × 100.
+
+En General Lagos, los menores de 15 años son 123 personas, cerca del **24,21%** de la población. Por eso la comuna puede tener una proporción alta de adultos mayores, pero no un índice de envejecimiento especialmente alto: también tiene una presencia importante de población infantil. El porcentaje mide el peso de las personas mayores dentro del total; el índice compara dos extremos de la estructura etaria.
+
+- <span class=""suggestion submit"">Abrir el informe territorial de General Lagos</span>
+- <span class=""suggestion submit"">Ver el porcentaje de población menor de 15 años por comuna</span>","observable_evidence = TRUE
+Juicio provisional:
+Cumple el criterio solicitado.
+
+- **Calcula ambos indicadores:** tras verificar las categorías y el universo de `edad_quinquenal` (pasos 6–7), la consulta del paso 8 cuenta personas por comuna y calcula 60+/población y 60+/menores de 15 × 100.
+- **Acredita una divergencia real:** calcula ambos rankings sobre las comunas antes de seleccionar las primeras veinte. El resultado exitoso del paso 9 sitúa a General Lagos en el puesto **9** por porcentaje de mayores y **165** por índice, con 157 mayores, 123 menores y 508 personas.
+- **Explica correctamente la diferencia:** el paso 10 distingue el peso de los mayores en la población de su relación con la población infantil.
+
+**Salvedad:** el denominador consultado incluye únicamente personas con edad válida, mientras la respuesta lo llama “población total”. Verificar si hubo exclusiones permitiría precisar esa denominación; no invalida la divergencia demostrada. No se requiere revisión humana adicional para acreditar el criterio.
+
+GRADE: C",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+19,alto,evidencia,resultado_y_procedimiento,Dame tres conclusiones sobre San Pedro de Atacama y respalda cada una con evidencia censal.,"Debe formular tres conclusiones y cada afirmación sustantiva debe poder rastrearse a datos, tablas, comparaciones o indicadores obtenidos durante la ejecución; no debe agregar caracterizaciones externas sin respaldo.",trace+llm_judge,,C,"### Tres conclusiones sobre San Pedro de Atacama
+
+1. **La pertenencia a pueblos indígenas u originarios es una característica central de la comuna.**  
+   El **62,53%** de las personas con respuesta válida declaró pertenecer a un pueblo indígena u originario. Es una proporción muy superior a la de la Región de Antofagasta (**14,47%**) y al total nacional (**11,46%**).
+
+2. **San Pedro de Atacama presenta una población relativamente joven.**  
+   La edad promedio es de **34,18 años**, menor que la regional (**35,00 años**) y la nacional (**38,00 años**). El Censo contabilizó **9.843 personas** en la comuna.
+
+3. **El acceso de los hogares a internet es alto, pero menor que los promedios regional y nacional.**  
+   El **88,16% de los 3.895 hogares particulares** dispone de internet por al menos uno de estos medios: conexión fija, móvil o satelital. La cifra es inferior a la Región de Antofagasta (**96,45%**) y a Chile (**93,18%**). Cada hogar se contó una sola vez aunque tuviera más de una modalidad.
+
+- <span class=""suggestion submit"">Ver la distribución de los pueblos indígenas u originarios en San Pedro de Atacama</span>
+- <span class=""suggestion submit"">Analizar la escolaridad promedio de la comuna</span>","observable_evidence = TRUE
+Juicio provisional:
+**Cumple el criterio.** Formula tres conclusiones y todas las cifras de la respuesta final se rastrean a la consulta del paso 12 y sus resultados del paso 13:
+
+- **Pertenencia indígena:** 62,53% comunal frente a 14,47% regional y 11,46% nacional, calculados en `personas` sobre respuestas válidas de `p28_autoid_pueblo`. Las categorías se comprobaron en el paso 9.
+- **Edad y población:** 34,18 años y 9.843 personas, con medias comparativas de 35,00 y 38,00 años. La media considera edades entre 0 y 85.
+- **Internet:** 88,16% de 3.895 hogares particulares frente a 96,45% y 93,18%. El SQL restringe numerador y denominador a `tipo_operativo = 2` y combina las modalidades mediante `OR`, sin contar varias veces un hogar.
+
+**Fallo corregido:** el paso 10 construía grupos excluyentes y etiquetaba incorrectamente los remanentes como región y país. El paso 12 corrigió los universos con consultas independientes mediante `UNION ALL`; la respuesta utiliza los resultados corregidos.
+
+**Revisión humana:** conviene matizar “relativamente joven”: la comparación corresponde a edades válidas, excluyendo las suprimidas. Asimismo, internet usa todos los hogares particulares como denominador, incluida la no respuesta. Estas precisiones no anulan la trazabilidad. No se añadieron caracterizaciones externas sin respaldo.
+
+GRADE: C",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+20,alto,alcance,resultado_y_procedimiento,Investiga si el acceso a internet aumentó los ingresos de los hogares entre 2017 y 2024.,"Debe comprobar disponibilidad de ingresos y comparabilidad temporal, reconocer que los datos no permiten atribuir causalidad y proponer una reformulación que sí pueda responderse.",trace+llm_judge,,I,"No es posible determinarlo con los datos disponibles del Censo 2024.
+
+- El Censo 2024 sí registra acceso del hogar a internet —fija, móvil o satelital—.
+- No contiene una variable de ingresos monetarios del hogar.
+- La base disponible tampoco incorpora una medición comparable del Censo 2017.
+- Además, aun con ingresos observados en ambos años, una comparación descriptiva no demostraría que el acceso a internet **causó** un aumento: podrían influir educación, empleo, ubicación, composición del hogar u otros factores.
+
+Por tanto, la conclusión válida es: **el Censo 2024 permite estudiar qué hogares tienen internet, pero no evaluar si ese acceso aumentó sus ingresos entre 2017 y 2024**. Para investigarlo se necesitarían encuestas con ingresos —por ejemplo, CASEN— y un diseño estadístico que controle diferencias entre hogares y territorios.",observable_evidence = FALSE,trace ,evaluated,FALSE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+21,alto,comportamiento_agente,resultado_y_procedimiento,Investiga qué distingue demográficamente a Isla de Maipo respecto de comunas comparables de la Región Metropolitana.,"Debe reconocer que es una pregunta abierta y construir una secuencia razonable: definir comparadores e indicadores, obtener evidencia antes de concluir y ajustar el plan si los primeros resultados lo requieren.",trace+llm_judge,,C,"### Qué distingue a Isla de Maipo
+
+Para hacer una comparación razonable, tomé comunas de la Región Metropolitana con población similar: **El Monte** y **Curacaví**. También sirve **Pirque** como contraste, aunque es bastante menor.
+
+| Comuna | Población | Edad promedio | 0–14 años | 65 años o más | Nacidos fuera de Chile | Escolaridad promedio, 18+ |
+|---|---:|---:|---:|---:|---:|---:|
+| **Isla de Maipo** | 39.274 | 37,45 años | 19,11% | 13,12% | 3,84% | 11,37 años |
+| El Monte | 37.497 | 37,15 años | 20,08% | 13,36% | 2,93% | 11,14 años |
+| Curacaví | 35.165 | 38,73 años | 18,36% | 15,10% | 4,17% | 11,71 años |
+| Pirque | 29.060 | 38,13 años | 18,75% | 13,74% | 2,21% | 12,51 años |
+
+**Lectura principal:** Isla de Maipo no se distingue por ser especialmente joven ni envejecida. Su edad promedio es casi igual a la de El Monte y menor que la de Curacaví. Sin embargo, combina una proporción relativamente alta de niños —casi uno de cada cinco habitantes— con una proporción de personas mayores menor que en Curacaví.
+
+Su rasgo más claro es una **composición migratoria intermedia**: el 3,84% de sus habitantes nació fuera de Chile, por encima de El Monte y Pirque, pero ligeramente por debajo de Curacaví.
+
+En educación, Isla de Maipo queda **en una posición intermedia**: supera levemente a El Monte, pero está por debajo de Curacaví y bastante por debajo de Pirque. En conjunto, aparece como una comuna de tamaño medio, con estructura etaria equilibrada, relativamente menos envejecida que otras comunas comparables y con una presencia extranjera moderada.
+
+*Los porcentajes de lugar de nacimiento excluyen las respuestas no válidas; la escolaridad corresponde al promedio de personas de 18 años o más con años de escolaridad válidos.*
+
+- <span class=""suggestion submit"">Comparar la estructura de edades de Isla de Maipo con otras comunas de la Región Metropolitana</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Isla de Maipo</span>","observable_evidence = TRUE
+Juicio provisional:
+La secuencia observada **cumple el criterio**: convierte una pregunta abierta en una comparación demográfica concreta y obtiene evidencia antes de concluir.
+
+- **Delimitación e indicadores:** resuelve el territorio y consulta metadatos de edad, migración y escolaridad, incluidos universos y categorías relevantes (pasos 2–5).
+- **Comparadores reproducibles:** calcula población e indicadores para las comunas de la Región Metropolitana y las ordena por diferencia de población respecto de Isla de Maipo (paso 6). El resultado confirma que El Monte y Curacaví son las más próximas; Pirque se presenta explícitamente como contraste de menor tamaño (pasos 7–8).
+- **Conclusiones sustentadas:** las cifras finales coinciden con el resultado exitoso. El SQL utiliza edades válidas, respuestas válidas de nacimiento y escolaridad válida de personas de 18 años o más.
+- **Ajustes:** no se observa un fallo ni un resultado que obligara a replantear la estrategia; no corresponde exigir otra consulta por sí misma.
+
+Como reserva interpretativa, llamar a la composición migratoria intermedia su «rasgo más claro» requiere revisión humana: los datos acreditan esa posición, pero no justifican su primacía frente a los demás indicadores. Esto no invalida la secuencia investigativa.
+
+GRADE: C",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+22,alto,comportamiento_agente,procedimiento,¿Qué comunas de Ñuble presentan mayor envejecimiento y qué rasgos las distinguen?,"Debe primero identificar o rankear comunas mediante un indicador de envejecimiento y luego caracterizar o comparar las seleccionadas, usando herramientas acordes a cada subproblema y evitando llamadas redundantes.",trace_rule,,P,"En Ñuble, el envejecimiento se aprecia por la proporción de personas de **65 años o más** entre quienes tienen edad válida. Las comunas con mayores valores son:
+
+1. **Ránquil:** 22,80%; edad promedio **43,67 años**.  
+2. **Ñiquén:** 21,73%; **43,32 años**.  
+3. **Quillón:** 21,15%; **42,65 años**.  
+4. **Trehuaco:** 19,14%; **41,86 años**.  
+5. **Quirihue:** 18,96%; **41,45 años**.
+
+### Rasgos que las distinguen
+
+- **Alta ruralidad:** Ñiquén alcanza **88,99%** de población rural; Ránquil, **72,82%**; Trehuaco, **60,84%**. Quillón y Quirihue son menos rurales, pero mantienen una estructura etaria envejecida.
+- **Mayor edad promedio:** las cinco superan ampliamente a **Chillán**, que registra 15,14% de personas de 65 años o más y una edad promedio de 38,86 años.
+- **Menor escolaridad promedio:** sus promedios se ubican entre **8,26 y 9,10 años**, frente a **10,56 años** en Chillán.
+- **Limitación:** Cobquecura, San Fabián, Ninhue y Portezuelo no pudieron ordenarse por porcentaje de 65 años o más porque ese detalle aparece suprimido o no disponible en los datos censales.
+
+El patrón sugiere un envejecimiento especialmente concentrado en comunas rurales y con menor escolaridad promedio; no implica por sí mismo una relación causal.
+
+- <span class=""suggestion submit"">Ver el porcentaje de personas de 80 años o más por comuna en Ñuble</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Ránquil</span>","observable_evidence = TRUE
+Juicio provisional:
+Cumple parcialmente el criterio.
+
+- **Identificación y caracterización comprobadas:** la consulta del paso 8 ordena las comunas por proporción de personas de 65 años o más sobre población con edad válida y obtiene ruralidad, edad media y escolaridad. El resultado del paso 9 respalda las cinco seleccionadas y su comparación con Chillán en el paso 10. Resolver ambos subproblemas en una sola consulta es una estrategia válida y eficiente; no era necesario hacer llamadas separadas.
+- **Herramientas pertinentes:** se resolvió el territorio y se consultaron metadatos y categorías (pasos 2–7). La consulta específica de `area` aportó las etiquetas necesarias; no constituye una repetición injustificada.
+- **Insuficiencia relevante:** el ranking regional deja cuatro comunas sin ordenar por usar `edad`. Ya se había identificado `edad_quinquenal` (paso 5), recomendada para comparaciones entre comunas, pero no se exploró esa alternativa. Advertir la exclusión no permite acreditar cuáles son las más envejecidas de toda Ñuble.
+
+Requiere revisión metodológica completar el ranking con una variable comparable y comprobar si se mantienen las comunas seleccionadas.
+
+GRADE: P",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+23,alto,comportamiento_agente,resultado_y_procedimiento,Investiga qué caracteriza a las cinco comunas con mayor proporción de población de 60 años o más y entrega una síntesis reproducible.,"Debe rankear comunas, seleccionar dimensiones pertinentes, comparar los cinco casos y sintetizar patrones respaldados por evidencia; la conclusión debe poder reconstruirse desde la traza.",trace+llm_judge,,P,"## Síntesis
+
+Las cinco comunas con mayor proporción de personas de 60 años o más son:
+
+1. **El Tabo:** 34,75% — 5.650 personas de 60+  
+2. **Algarrobo:** 32,68% — 5.253 personas  
+3. **El Quisco:** 32,44% — 6.154 personas  
+4. **Curepto:** 32,08% — 3.054 personas  
+5. **Ránquil:** 30,73% — 2.000 personas  
+
+El patrón combina dos perfiles territoriales:
+
+- **Comunas costeras —El Tabo, Algarrobo y El Quisco—:** concentran una población mayoritariamente urbana, aunque Algarrobo presenta una ruralidad considerable entre sus personas mayores: **30,29%**, frente a **4,19%** en El Tabo y **7,73%** en El Quisco.
+- **Comunas rurales —Curepto y Ránquil—:** la ruralidad entre las personas de 60 años o más alcanza **72,40%** y **77,80%**, respectivamente. También presentan los menores promedios de escolaridad en ese grupo: **6,49** años en Curepto y **7,41** en Ránquil, frente a **10,25–11,70** años en las comunas costeras.
+
+En las cinco comunas, las mujeres representan entre **49,80% y 55,38%** de la población de 60 años o más. El grupo de 75 años o más equivale aproximadamente a **30,10%–33,89%** de las personas mayores.
+
+### Método reproducible
+
+Se utilizó la tabla `personas`, agrupando por `comuna`:
+
+- Numerador: personas con `edad >= 60`.
+- Denominador: personas con edad válida, `edad BETWEEN 0 AND 85`; se excluyó el valor `-66`, suprimido por anonimización.
+- Ruralidad: `area = 2`.
+- Mujeres: `sexo = 2`.
+- Escolaridad: promedio de `escolaridad` entre valores válidos de `0` a `24`.
+- El ranking se ordenó descendentemente por `personas de 60+ / población con edad válida`.
+- Los nombres se incorporaron mediante `diccionario_geografico`, filtrando `nivel = 'comuna'`.
+
+La proporción de 60 años o más se calculó sobre la población con edad válida, no sobre porcentajes previamente calculados ni promediando comunas. En estas cinco comunas, la población con edad válida coincidió con el total censado.
+
+- <span class=""suggestion submit"">Ver el porcentaje de personas de 60 años o más por comuna en un mapa</span>
+- <span class=""suggestion submit"">Comparar la estructura de edad de El Tabo y Curepto</span>","
+Juicio provisional:
+**Cumplimiento parcial.** La traza permite reconstruir los cálculos y la comparación, pero no acredita suficientemente que los casos seleccionados sean las cinco primeras comunas del país.
+
+- **Comprobado:** se revisaron variables, universos y categorías (pasos 3 y 5). La consulta del paso 8 agrupa `personas` por comuna, ordena la proporción de 60+, selecciona cinco casos y calcula dimensiones pertinentes: ruralidad, sexo, presencia de personas de 75+ y escolaridad. Los resultados exitosos del paso 9 respaldan las cifras y los contrastes de la síntesis.
+- **Corrección observada:** la consulta inicial falló con un error de agregación (pasos 6–7). El paso 8 corrigió el SQL y obtuvo resultados; no se atribuyen resultados a la solicitud fallida.
+- **Limitación principal:** el ranking utiliza `edad`, pese a haberse documentado su supresión por anonimización y la disponibilidad de `edad_quinquenal` (pasos 3 y 5). Excluir edades suprimidas puede dejar comunas sin proporción calculable o con cobertura incompleta. Que las cinco seleccionadas tengan edad válida para toda su población no demuestra que las restantes sean comparables. No se validó esta cobertura ni se contrastó el ranking mediante quinquenios.
+- **Alcance de la síntesis:** la ruralidad calculada corresponde exclusivamente a personas de 60+, no a toda la población comunal. La caracterización urbana/rural general debe acotarse a ese grupo.
+
+**Revisión humana:** confirmar la comparabilidad del ranking nacional mediante edad quinquenal o una validación equivalente de cobertura. No hay evidencia independiente para afirmar qué comunas reemplazarían a las seleccionadas. La comparación entre estos cinco casos sí está respaldada y es reproducible desde la traza.
+
+GRADE: P",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+24,alto,comportamiento_agente,procedimiento,¿Qué comuna de la Región Metropolitana tiene el mayor porcentaje de hogares con internet y cuál es el valor?,"Debe resolver la pregunta con el mínimo conjunto suficiente de operaciones, verificar universo y porcentaje y detenerse cuando dispone de un resultado verificable.",trace_rule,,P,"La comuna con mayor porcentaje de hogares con internet en la Región Metropolitana es **Vitacura**, con **99,03%**.
+
+El cálculo considera hogares particulares con internet por cualquier medio: fijo, móvil o satelital. Se envió al mapa la capa con las 52 comunas de la región.
+
+- <span class=""suggestion submit"">Ver porcentaje de hogares con computador por comuna</span>
+- <span class=""suggestion submit"">Abrir el informe territorial de Vitacura</span>","observable_evidence = TRUE
+Juicio provisional:
+Cumplimiento parcial. En los pasos 2–3 se resolvió el territorio y se revisaron las variables y su universo. El SQL del paso 4 calcula una proporción sobre hogares particulares (`tipo_operativo = 2`), contando una sola vez cada hogar con alguna conexión. El resultado exitoso del paso 5 permite verificar que Vitacura tiene el máximo entre las 52 comunas: `0,9903 = 99,03 %`. El agente se detuvo sin consultas repetidas; no hacía falta otra operación para identificar el máximo.
+
+Sin embargo, no verificó las etiquetas de las categorías: asumió que `1` significa disponibilidad. Además, incluyó todos los hogares particulares en el denominador, incluso aquellos sin respuesta afirmativa por valores `-99` o `NULL`, sin explicar ese tratamiento ni devolver numerador y denominador. Generar un mapa tampoco era necesario para contestar, aunque esa misma operación aportó los resultados comparables.
+
+La revisión humana debe confirmar la codificación y la adecuación del denominador; la cifra final es consistente con la salida observada, pero la verificación metodológica quedó incompleta.
+
+GRADE: P",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra
+25,alto,razonamiento,resultado_y_procedimiento,Evalúa la hipótesis de que las comunas con mayor ruralidad tienden a presentar mayor envejecimiento. Busca evidencia a favor y en contra.,"Debe operacionalizar ruralidad y envejecimiento, comparar sistemáticamente comunas, buscar evidencia favorable y contraejemplos y formular una conclusión proporcional a la evidencia.",trace+llm_judge,,P,"### Evaluación
+
+Hay **evidencia a favor**, aunque la relación es moderada y no determinista.
+
+- Medí la **ruralidad** como la proporción de hogares particulares ubicados en área rural.
+- Medí el **envejecimiento** como la proporción de personas de 65 años o más, complementada con la edad promedio.
+- En **345 comunas**, la correlación fue:
+  - **0,43** entre ruralidad y proporción de personas de 65 años o más.
+  - **0,44** entre ruralidad y edad promedio.
+
+Al ordenar las comunas en cuartiles de ruralidad, el patrón es consistente:
+
+- **25% menos rurales:** 14,17% de personas de 65 años o más y edad promedio de 38,0 años.
+- **25% más rurales:** 17,56% de personas de 65 años o más y edad promedio de 40,5 años.
+
+Esto respalda la hipótesis: las comunas más rurales tienden, en promedio, a ser más envejecidas.
+
+### Evidencia en contra o matices
+
+La asociación no es suficientemente fuerte como para afirmar que toda comuna rural es más envejecida:
+
+- **San Pedro**, con 100% de hogares rurales, registra 17,02% de personas de 65 años o más, ligeramente por debajo del promedio del cuartil más rural.
+- Algunas comunas completamente urbanas también presentan un envejecimiento elevado: **Conchalí** alcanza 15,83% de personas de 65 años o más, superando el promedio del cuartil menos rural.
+- **Santiago**, igualmente urbana, es un caso muy distinto: solo 8,07% de personas de 65 años o más y una edad promedio de 35,9 años.
+
+### Conclusión
+
+Los datos **apoyan parcialmente la hipótesis**: existe un gradiente positivo entre ruralidad y envejecimiento, pero con bastante dispersión entre comunas. La ruralidad parece ser un factor asociado, no una explicación suficiente por sí sola. Además, algunas comunas pequeñas presentan edades anonimizadas, por lo que sus indicadores no están disponibles y la correlación se calculó solo con edades válidas.
+
+- <span class=""suggestion submit"">Ver el porcentaje de personas de 60 años o más por comuna</span>
+- <span class=""suggestion submit"">Graficar la relación entre ruralidad y edad promedio</span>","observable_evidence = TRUE
+Juicio provisional:
+**Cumple parcialmente el criterio.**
+
+- **Operacionalización y comparación:** define ruralidad como proporción de hogares particulares rurales y envejecimiento como proporción de personas de 65+ y edad media. Verifica variables y categorías (pasos 3–5), aplica `tipo_operativo = 2` a hogares y excluye edades inválidas. La consulta exitosa compara comunas mediante correlaciones y cuartiles; sus resultados respaldan las cifras presentadas (pasos 8–9). El intento del paso 6 falló y no produjo resultados.
+- **Limitaciones de la evidencia favorable:** las **345 comunas** corresponden al `COUNT(*)` de la base, no al número efectivo de pares usados por `corr`, que omite indicadores nulos. El paso 9 muestra comunas sin edades válidas. Además, los porcentajes por cuartil son **promedios simples de proporciones comunales**, no proporciones poblacionales agrupadas; esto debió explicitarse.
+- **Contraejemplos insuficientes:** solo selecciona cinco extremos de ruralidad, con empates sin criterio adicional. San Pedro por debajo del promedio rural y Conchalí por encima del promedio urbano ilustran heterogeneidad, pero no contradicen claramente la tendencia entre comunas. Santiago es compatible con la hipótesis. No se acredita una búsqueda sistemática de comunas rurales relativamente jóvenes y urbanas relativamente envejecidas.
+- **Conclusión:** es prudente al hablar de asociación y no causalidad, pero falta evaluar cuánto afecta la exclusión de comunas pequeñas. Requiere revisión humana la robustez del patrón usando `edad_quinquenal`, disponible en el paso 3 y recomendada para comparabilidad, así como confirmar los tamaños efectivos de muestra.
+
+GRADE: P",trace + llm_judge,evaluated,TRUE,,2026-09-21T17:16:11-0300,v1.3.0,gpt-5.6-luna,gpt-6-astra

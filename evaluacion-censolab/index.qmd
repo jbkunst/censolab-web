@@ -674,7 +674,7 @@ También registramos las herramientas utilizadas, los argumentos enviados y los 
 Por ejemplo, ante la solicitud de abrir el informe de Isla de Maipo (caso 03), el agente identificó la comuna y llamó a la herramienta que solicita su informe. La traza permite comprobar ambas acciones, además de leer la confirmación final.
 
 <iframe
-  src="../assets/diagrams/evaluacion-censobot/traza-isla-de-maipo.html"
+  src="../assets/diagrams/evaluacion-censolab/traza-isla-de-maipo.html"
   title="Traza del caso 03: informe territorial de Isla de Maipo"
   width="100%"
   height="235"
@@ -891,7 +891,7 @@ Modelo del agente <strong>`r solver_model`</strong> · Modelo juez <strong>`r sc
 
 **APA 7**
 
-Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab*. https://censolab.cl/evaluacion-censobot/
+Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab*. https://censolab.cl/evaluacion-censolab/
 
 **BibTeX**
 
@@ -900,7 +900,7 @@ Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos 
   author  = {Parra, Matías and Kunst, Joshua},
   title   = {Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab},
   year    = {2026},
-  url     = {https://censolab.cl/evaluacion-censobot/},
+  url     = {https://censolab.cl/evaluacion-censolab/},
   urldate = {2026-10-08}
 }
 ```

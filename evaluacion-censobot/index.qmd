@@ -818,25 +818,6 @@ Durante el desarrollo de CensoLab fue común que al agregar una nueva funcionali
 
 Finalmente, consideramos que esta evaluación produce una métrica útil. Construimos preguntas ambiguas, capciosas y, en algunos casos, con premisas deliberadamente erróneas para observar cómo CensoLab reconoce esas dificultades y responde. La métrica resume su desempeño frente a esas situaciones y permite seguir su evolución durante el desarrollo.
 
-## Cómo citar
-
-**APA 7**
-
-
-Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab*. https://censolab.cl/evaluacion-censobot/
-
-**BibTeX**
-
-```bibtex
-@online{censolab2026evaluacion,
-  author  = {Parra, Matías and Kunst, Joshua},
-  title   = {Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab},
-  year    = {2026},
-  url     = {https://censolab.cl/evaluacion-censobot/},
-  urldate = {2026-10-08}
-}
-```
-
 ## Referencias
 
 - `vitals`. [Getting started with vitals](https://vitals.tidyverse.org/articles/vitals.html).
@@ -903,3 +884,23 @@ reactable::reactable(
 Evaluación del `r latest_evaluation_label` · CensoLab `r evaluation_version`.<br>
 Modelo del agente <strong>`r solver_model`</strong> · Modelo juez <strong>`r scorer_model`</strong>.
 </p>
+
+::: {.eval-note aria-labelledby="como-citar-titulo"}
+<p id="como-citar-titulo"><strong>Cómo citar</strong></p>
+
+**APA 7**
+
+Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab*. https://censolab.cl/evaluacion-censobot/
+
+**BibTeX**
+
+```bibtex
+@online{censolab2026evaluacion,
+  author  = {Parra, Matías and Kunst, Joshua},
+  title   = {Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab},
+  year    = {2026},
+  url     = {https://censolab.cl/evaluacion-censobot/},
+  urldate = {2026-10-08}
+}
+```
+:::

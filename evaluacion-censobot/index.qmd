@@ -885,8 +885,9 @@ Evaluación del `r latest_evaluation_label` · CensoLab `r evaluation_version`.<
 Modelo del agente <strong>`r solver_model`</strong> · Modelo juez <strong>`r scorer_model`</strong>.
 </p>
 
-::: {.eval-note aria-labelledby="como-citar-titulo"}
-<p id="como-citar-titulo"><strong>Cómo citar</strong></p>
+---
+
+<p id="como-citar-titulo">Cómo citar</p>
 
 **APA 7**
 
@@ -903,4 +904,3 @@ Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos 
   urldate = {2026-10-08}
 }
 ```
-:::

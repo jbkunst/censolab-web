@@ -1,6 +1,6 @@
 ---
-title: Cómo evaluamos CensoLab
-description: La evaluación de CensoLab del 6 de octubre de 2026, su batería actualizada y la revisión humana de sus respuestas.
+title: CensoLab a prueba
+description: Cómo diseñamos una evaluación para observar qué responde, cómo decide y qué herramientas utiliza su agente.
 draft: true
 lang: es
 format:
@@ -616,34 +616,15 @@ difficulty_counts <- table(cases$Dificultad)
 </style>
 ```
 
-CensoLab permite consultar y visualizar información del [Censo de Población y Vivienda 2024 de Chile](https://censo2024.ine.gob.cl/resultados/) mediante lenguaje natural. Se le pueden solicitar cálculos y la representación de variables en mapas. También permite construir tipologías y consultar informes territoriales predefinidos. El agente trabaja con microdatos censales y con información agregada a nivel de zona o localidad y de manzana o entidad. Estos datos se complementan con capas geográficas para el análisis territorial. Para que su uso sea confiable, CensoLab debe producir respuestas correctas y mantener ese desempeño a lo largo del tiempo.
+CensoLab permite consultar y visualizar información del [Censo de Población y Vivienda 2024 de Chile](https://censo2024.ine.gob.cl/resultados/) mediante lenguaje natural. Se le pueden solicitar cálculos y mapas territoriales. De igual modo puede construir tipologías a partir de multiples variables y consultar informes territoriales predefinidos. Por cierto, también ofrece interpretaciones en base a los datos. El agente trabaja con microdatos censales y con información agregada a nivel de zona/localidad y manzana/entidad. Estos datos se complementan con las capas geográficas censales. Para que su uso sea confiable, CensoLab debe producir respuestas correctas y mantener ese desempeño a lo largo del tiempo.
 
-**CensoLab es un sistema agéntico** compuesto por un modelo de lenguaje, instrucciones, metadata, herramientas y obviamente los datos. El rasgo específico de este tipo de sistemas es que pueden operar con *autonomía*. Son agentes donde su capacidad de operar está mediada por un modelo de lenguaje de naturaleza probabilística. Es precisamente por ese carácter más o menos autónomo que se torna necesario evaluar su *comportamiento*.
+**CensoLab es un sistema agéntico** compuesto por un modelo de lenguaje, instrucciones, metadata, herramientas y obviamente los datos. El rasgo específico de este tipo de sistemas es que pueden operar con *autonomía*. Son agentes donde su capacidad de actuar está mediada por un modelo de lenguaje de naturaleza probabilística. Es precisamente por ese carácter más o menos autónomo que se torna necesario evaluar su *comportamiento*.
 
-En esta entrada presentamos una primera metodología para evaluar CensoLab. Combina la evaluación automática con la revisión humana de las respuestas y de los procedimientos que las sustentan. Explicamos cómo construimos las pruebas y qué criterios utilizamos para examinarlas. Esta actualización incorpora la ejecución del 6 de octubre de 2026 y las decisiones de revisión confirmadas sobre sus resultados.
-
-Pensamos esta primera entrada como una referencia práctica para tres públicos:
-
-```{=html}
-<div class="eval-grid eval-components">
-  <div class="eval-dimension-card eval-component">
-    <span class="eval-dimension-title">Quienes programan habitualmente</span>
-    <p class="eval-dimension-desc">Una experiencia concreta para comprender cómo se prueba una aplicación que incorpora un modelo de lenguaje.</p>
-  </div>
-  <div class="eval-dimension-card eval-component">
-    <span class="eval-dimension-title">Quienes ya emplean modelos de lenguaje</span>
-    <p class="eval-dimension-desc">Un punto de partida para definir criterios y revisar el comportamiento de sus agentes.</p>
-  </div>
-  <div class="eval-dimension-card eval-component">
-    <span class="eval-dimension-title">Oficinas estadísticas y centros de investigación</span>
-    <p class="eval-dimension-desc">Evidencia sobre los errores que pueden producir estas herramientas y las condiciones que conviene examinar antes de utilizarlas.</p>
-  </div>
-</div>
-```
+En esta entrada presentamos una primera metodología para evaluar CensoLab. Combina la evaluación automática con la revisión humana de las respuestas y de los procedimientos que las sustentan. Explicamos cómo construimos las pruebas y qué criterios utilizamos para examinarlas.
 
 ## Qué evaluamos
 
-Cuando comenzamos a pensar en la evaluación nos concentramos en el *resultado* de las consultas. Si la cifra era correcta, el agente funcionaba. Fin del asunto. Pero a medida que el propio desarrollo iba poniendo por delante desafíos, vimos que también necesitábamos examinar el *proceso* de construcción de la respuesta. Empezamos a preguntarnos por la semántica de la solicitud, qué herramientas y recursos empleaba, en fin, como se construia y organizaba el proceso para llegar a un resultado. Así llegamos a establecer dos dimensiones de la evaluación.
+Cuando comenzamos a pensar en la evaluación nos concentramos en el *resultado* de las consultas. Si la cifra era correcta, el agente funcionaba. Fin del asunto. Pero a medida que el propio desarrollo iba poniendo por delante desafíos, vimos que también necesitábamos examinar el *proceso* de construcción de la respuesta. Empezamos a preguntarnos por la semántica de la solicitud, qué herramientas y recursos empleaba, en fin, como se construia y organizaba el proceso para llegar a un resultado. Así establecimos dos dimensiones de la evaluación.
 
 
 ```{=html}
@@ -663,7 +644,7 @@ Esta primera evaluación se concentra en esas dos dimensiones. Otros aspectos, c
 
 ## Cómo pusimos a prueba CensoLab
 
-Aplicamos un test de `r n_cases` casos con [`vitals`](https://vitals.tidyverse.org/). Este entorno creado por [`Posit`](https://posit.co/) permite ejecutar las preguntas y evaluar las respuestas de manera sistemática[^vitals]. Después contrastamos las preguntas, las respuestas y las explicaciones del evaluador con las consultas y el contexto disponibles en el registro de ejecución.
+Construimos una batería de `r n_cases` casos y la ejecutamos con [`vitals`](https://vitals.tidyverse.org/). Este entorno permite ejecutar preguntas y evaluar respuestas de manera sistemática[^vitals]. Después contrastamos las preguntas, las respuestas y las explicaciones del evaluador con las consultas y el contexto registrados durante cada ejecución.
 
 [^vitals]: `vitals` es una adaptación para R de `Inspect`, un entorno de evaluación para Python. Está muy bien integrado con [`ellmer`](https://ellmer.tidyverse.org/) y nos resultó bastante amigable de ocupar. Su mayor virtud es que permite examinar distintas capacidades y aspectos de un agente, cubriendo razonamiento, generación de código, empleo de herramientas, así como también costos y la traza de una operación. De ese modo contribuye a mostrar algo que normalmente aparece oculto en la operación de los agentes.
 
@@ -898,15 +879,19 @@ Ante la pregunta «¿Tienes establecimientos de salud?», CensoBot afirmó que e
 
 Se pidió determinar si los datos permiten atribuir al acceso a internet un aumento de los ingresos entre 2017 y 2024 y, si no era posible, formular una pregunta alternativa. CensoBot ejecutó tres búsquedas de metadatos: ingresos del hogar, acceso a internet y comparación temporal. Encontró las variables de internet, no encontró una variable pertinente de ingresos ni mediciones comparables de 2017 y utilizó correctamente el alcance documentado del conjunto como Censo 2024. Además, distinguió asociación de causalidad y terminó con una pregunta respondible. El juez exigió una demostración más exhaustiva de la ausencia de información. **Cambiamos de P a C:** las búsquedas requeridas y el contexto disponible sustentaban la limitación; no correspondía exigir consultas sucesivas para demostrar una inexistencia ya respaldada.
 
-## Qué aprendimos y cómo seguimos
+## Qué aprendimos
 
-Preparar esta batería nos obligó a definir qué entendemos por una respuesta correcta. Fue necesario precisar territorios, universos, denominadores, valores especiales y comportamientos esperados. Ese trabajo convierte conocimientos que suelen darse por supuestos en criterios que podemos revisar y discutir.
+La primera conclusión es también la más importante para nosotros. Antes no sabíamos si un sistema agéntico como CensoLab podía evaluarse con el detalle necesario para construir evidencia sobre su confiabilidad. Ahora sabemos que sí. Podemos separar el resultado del procedimiento, seguir la traza de una operación y volver sobre el criterio utilizado para calificarla. El comportamiento del agente deja de aparecer como una impresión general: podemos observar si llegó a una respuesta y cómo llegó a ella.
 
-Examinar consultas, herramientas y resultados permite relacionar una respuesta con las decisiones que la produjeron. Así, la evaluación aporta evidencia para decidir si corresponde intervenir en las instrucciones, los metadatos, las herramientas o los criterios de calificación.
+La diferencia importa. En esta evaluación encontramos respuestas correctas producidas mediante procedimientos incorrectos o frágiles. La velocidad del agente puede ocultar esos problemas: llega rápidamente a una cifra y la respuesta parece resolver la pregunta. Pero un atajo indebido, una regla que no se respeta o un supuesto que queda sin comprobar pueden funcionar en un caso y fallar ante una variante. Se parecen a la deuda técnica: mientras no se manifiestan, el sistema parece funcionar; después pueden convertirse en un error difícil de localizar. No se trata solo de eficiencia. También están en juego la solidez del procedimiento y su capacidad para sostener el resultado.
 
-Cada intervención debe quedar asociada a una comprobación concreta y volver a probarse con casos estables y variantes, para observar si resuelve el problema sin introducir otros. Si cambia el evaluador, podemos volver a calificar las respuestas guardadas para examinar su efecto. Si cambia el agente, necesitamos una nueva ejecución. Mantener esa distinción permite atribuir los cambios al componente correspondiente y conservar una historia comprensible de las decisiones.
+También aprendimos que C, P e I no deben leerse como un veredicto final. La nota depende de la pregunta, de la referencia que construimos, del tipo de capacidad que queremos observar, de la evidencia disponible y del criterio del juez. A veces el problema estaba en la formulación del caso. Había preguntas para las que la respuesta no podía considerarse claramente correcta o incorrecta porque la solicitud no permitía distinguirlo. La evaluación debe revisar entonces al agente y también las condiciones que definimos para evaluarlo.
 
-La evaluación deja así una base para sostener con evidencia la confianza en CensoLab. Hace visibles sus aciertos, permite localizar sus límites y establece qué debemos comprobar después de cada intervención. **El aprendizaje central es incorporar esa capacidad de observar, revisar y corregir como parte habitual del desarrollo.**
+Por eso la revisión humana resulta necesaria. Una persona con conocimiento del dominio puede encontrar una referencia mal construida, reconocer una objeción incorrecta del juez o advertir que una respuesta aparentemente correcta no está bien sustentada. El juez también puede equivocarse. La revisión humana permite corregir la evaluación, no solo calificar al agente. Si la batería crece y ya no es posible revisar cada caso, podremos recurrir al muestreo. La escala puede cambiar la forma de revisar, pero no vuelve prescindible esa revisión.
+
+Este aprendizaje cambia la manera en que seguiremos desarrollando CensoLab. La evaluación puede formar parte del sistema y acompañar cada intervención. Durante el desarrollo ya nos ocurrió que, al resolver un problema, desvestíamos un santo para vestir otro. Con una batería estable podemos volver a probar los casos después de modificar las instrucciones, los metadatos, las herramientas o los criterios de calificación, y observar si una mejora conserva lo que ya funcionaba.
+
+El conjunto actual puede mantenerse como una referencia y crecer con módulos y variantes para examinar nuevas capacidades. Las ejecuciones periódicas permitirán seguir la evolución del sistema y conservar una historia de las decisiones. Así, corregir y volver a evaluar dejan de ser pasos posteriores al desarrollo: pasan a formar parte de él. Podemos intervenir en CensoLab con una referencia, observar qué cambia y sostener su calidad sin avanzar a ciegas.
 
 ## Referencias
 

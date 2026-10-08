@@ -4,7 +4,7 @@ author:
   - name: Matías Parra
   - name: Joshua Kunst
 description: Cómo evaluamos un sistema agéntico como CensoLab
-draft: true
+draft: false
 lang: es
 format:
   html:
@@ -626,8 +626,6 @@ Finalmente incorporamos preguntas donde la dificultad consiste en determinar qu�
 
 Buscamos poner a CensoLab frente a situaciones donde podía equivocarse y cubrir distintas capacidades. Escogimos `r n_cases` casos para poder revisar las respuestas y discutir si las calificaciones estaban bien asignadas. La batería actual contiene **`r unname(difficulty_counts["Bajo"])` casos de dificultad baja, `r unname(difficulty_counts["Medio"])` media y `r unname(difficulty_counts["Alto"])` alta**.
 
-La batería se reorganizó antes de esta ejecución: se incorporaron comprobaciones explícitas sobre valores especiales, subtotales, universos y evidencia, y varias preguntas cambiaron de identificador. Por eso esta corrida se presenta como una unidad identificada y no se comparan sus casos por número con ejecuciones anteriores.
-
 ###  Referencias para cada caso
 
 Definimos manualmente una referencia para cada pregunta. La [tabla](#tbl-referencias) muestra tres ejemplos que evalúan capacidades diferentes. En una consulta numérica fijamos la cifra esperada (ID 01). Para una solicitud de acción especificamos qué debe hacer el agente (ID 03). Cuando la pregunta es ambigua, esperamos que pida una aclaración (ID 15).
@@ -794,7 +792,7 @@ Se solicitaron los totales de población para los grupos de 0–14, 15–29, 30�
 
 #### Caso 13 · Mapa de hogares con internet en el Biobío
 
-Se pidió un mapa del porcentaje de hogares con internet por comuna. Como un hogar puede declarar más de una modalidad (fija, móvil, satelital), CensoLab debía contar cada hogar una sola vez y considerar acceso cuando al menos una modalidad tuviera el valor `1`. El juez cuestionó que la respuesta no declarara qué hacía con los valores `-99`, `-66` y `0`. También cuestionó la ausencia de geometrías en el SQL, aunque `show_map` las obtiene por separado y validó las 33 comunas. Sin embargo, la consulta contó correctamente los hogares con acceso: aquellos que tenían al menos una modalidad con valor `1`, sin contar varias veces a quienes declaraban más de una. **La evaluación automática la calificó como parcialmente correcta. La revisión la cambió a correcta.**
+Se pidió un mapa del porcentaje de hogares con internet por comuna. Como un hogar puede declarar más de una modalidad (fija, móvil, satelital), CensoLab debía contar cada hogar una sola vez y considerar acceso cuando al menos una modalidad tuviera el valor `1`. El juez cuestionó que la respuesta no declarara qué hacía con los valores `-99` y `NULL`. También cuestionó la ausencia de geometrías en el SQL, aunque `show_map` las obtiene por separado y validó las 33 comunas. Sin embargo, la consulta contó correctamente los hogares con acceso: aquellos que tenían al menos una modalidad con valor `1`, sin contar varias veces a quienes declaraban más de una. **La evaluación automática la calificó como parcialmente correcta. La revisión la cambió a correcta.**
 
 #### Caso 16 · Personas promedio por hogar en Paine
 

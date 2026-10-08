@@ -1,5 +1,8 @@
 ---
 title: Mirar más allá del resultado
+author:
+  - Matías Parra
+  - Joshua Kunst
 description: Cómo evaluamos un sistema agéntico como CensoLab
 draft: true
 lang: es
@@ -672,6 +675,15 @@ También registramos las herramientas utilizadas, los argumentos enviados y los 
 
 Por ejemplo, ante la solicitud de abrir el informe de Isla de Maipo (caso 03), el agente identificó la comuna y llamó a la herramienta que solicita su informe. La traza permite comprobar ambas acciones, además de leer la confirmación final.
 
+<iframe
+  src="../assets/diagrams/evaluacion-censobot/traza-isla-de-maipo.html"
+  title="Traza del caso 03: informe territorial de Isla de Maipo"
+  width="100%"
+  height="235"
+  style="display: block; border: 0; margin: .5rem 0 .25rem;"
+  loading="lazy">
+</iframe>
+
 <details>
 <summary>Ver un extracto simplificado de la traza de Isla de Maipo</summary>
 
@@ -808,18 +820,40 @@ La evaluación automática permite revisar los casos de manera sistemática y en
 
 Un sistema de evaluación más sistemático también acompaña el desarrollo. Al repetir la batería después de modificar instrucciones, metadatos, herramientas o criterios, podemos ver qué mejora y qué se deteriora. Así evitamos desvestir un santo para vestir otro.
 
+Finalmente, consideramos que esta evaluación produce una métrica útil. No construimos la batería para obtener la mejor calificación posible ni para exhibir un número favorable, sino para poner a CensoLab ante situaciones distintas y observar cómo las resuelve. La métrica importa en la medida en que resume ese conjunto de casos y permite seguir su evolución.
+
+## Cómo citar
+
+Autores: Matías Parra[^autor-parra] y Joshua Kunst[^autor-kunst].
+
+**APA 7**
+
+
+Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab*. https://censolab.cl/evaluacion-censobot/
+
+**BibTeX**
+
+```bibtex
+@online{censolab2026evaluacion,
+  author  = {Parra, Matías and Kunst, Joshua},
+  title   = {Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab},
+  year    = {2026},
+  url     = {https://censolab.cl/evaluacion-censobot/},
+  urldate = {2026-10-08}
+}
+```
+
+[^autor-parra]: Antropólogo.
+[^autor-kunst]: Estadístico.
+
 ## Referencias
 
-- Anthropic (2026). [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents).
-- OpenAI (2026). [A shared playbook for trustworthy third party evaluations](https://openai.com/index/trustworthy-third-party-evaluations-foundations/).
 - `vitals`. [Getting started with vitals](https://vitals.tidyverse.org/articles/vitals.html).
 - `vitals`. [Writing evals for your LLM product](https://vitals.tidyverse.org/articles/writing-evals.html).
 
 ## Anexo. Dataset de evaluación {#anexo-dataset}
 
-La tabla conserva las preguntas y sus referencias junto con las respuestas de CensoLab del 6 de octubre. La columna «Evaluación» muestra la nota automática.
-
-El [CSV de la ejecución](data/censobot-eval-luna-luna-2026-10-06.csv) incluye además las explicaciones del evaluador y la configuración de cada caso. Se conserva una copia fechada para identificar los resultados y las referencias utilizados. Las decisiones humanas se registran por separado: el archivo original no se altera. El registro de trazas y el código de evaluación se consultaron para esta revisión, pero quedan fuera de los materiales publicados en esta entrada.
+Esta tabla reúne las preguntas, las referencias, las respuestas de CensoLab y la calificación automática de la ejecución del 6 de octubre.
 
 ```{r}
 #| label: cases-table

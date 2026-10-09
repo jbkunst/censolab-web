@@ -889,7 +889,7 @@ Modelo del agente <strong>`r solver_model`</strong> · Modelo juez <strong>`r sc
 
 <p id="como-citar-titulo">Cómo citar</p>
 
-**APA 7**
+**APA**
 
 Parra, M., & Kunst, J. (2026). *Mirar más allá del resultado: Cómo evaluamos un sistema agéntico como CensoLab*. https://censolab.cl/evaluacion-censolab/
 

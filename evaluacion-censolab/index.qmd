@@ -622,7 +622,7 @@ Las preguntas van desde identificar un territorio y contar registros hasta calcu
 
 Incluimos además preguntas cuya resolución exige tomar precauciones. Una consulta por «viviendas» requiere definir qué tipos de vivienda se consideran. Una pregunta ambigua puede exigir una aclaración antes de hacer un cálculo. Internamente llamamos a estas consultas _preguntas con veneno_ porque ponen a prueba si CensoLab reconoce esas dificultades y actúa según el criterio previsto.
 
-Finalmente incorporamos preguntas donde la dificultad consiste en determinar qué puede sostenerse con los datos: reconocer información que CensoLab no posee, distinguir asociación de causalidad y respaldar las conclusiones con evidencia censal.
+Finalmente incluimos preguntas destinadas a comprobar si CensoLab reconoce los límites de los datos. En estos casos debe advertir cuando no dispone de la información necesaria, distinguir una asociación de una relación causal y apoyar sus conclusiones en evidencia censal.
 
 Buscamos poner a CensoLab frente a situaciones donde podía equivocarse y cubrir distintas capacidades. Escogimos `r n_cases` casos para poder revisar las respuestas y discutir si las calificaciones estaban bien asignadas. La batería actual contiene **`r unname(difficulty_counts["Bajo"])` casos de dificultad baja, `r unname(difficulty_counts["Medio"])` media y `r unname(difficulty_counts["Alto"])` alta**.
 
@@ -665,11 +665,11 @@ Cada caso incluye la pregunta (`input`), la referencia que define la respuesta e
 
 ### Ejecución y calificación
 
-Configuramos el solver con el modelo, las instrucciones, los metadatos, las herramientas y los datos de CensoLab. Cada caso se ejecutó con su pregunta (`input`). La referencia (`target`) quedó reservada para el evaluador. Esta separación permite contrastar lo que el agente resolvió con un criterio que no recibió como parte de la solicitud.
+Configuramos el solver con el modelo, las instrucciones, los metadatos, las herramientas y los datos de CensoLab. Cada caso se ejecutó con su pregunta (`input`). La referencia (`target`) se entrega después al evaluador, por lo que el agente no conoce de antemano el criterio con que se calificará su respuesta.
 
-Para repetir las pruebas sin abrir la aplicación, adaptamos las acciones de presentación: comprobamos la solicitud de informes, los datos e identificadores de los mapas y la configuración de los gráficos. Así podemos examinar esas operaciones automáticamente, aunque su apariencia y funcionamiento visual requieren una comprobación adicional en la interfaz.
+Para repetir las pruebas sin abrir la aplicación, reemplazamos algunas acciones visibles por comprobaciones automáticas. En los informes verificamos que se hiciera la solicitud correspondiente. En los mapas revisamos los datos e identificadores territoriales, y en los gráficos comprobamos su configuración. La visualización propiamente tal no forma parte de la evaluación, sino que la llamada a la herramienta respectiva.
 
-También registramos las herramientas utilizadas, los argumentos enviados y los resultados obtenidos. A ese registro lo llamamos la **traza**. Permite seguir las acciones observables que sustentan una respuesta: qué territorio se identificó, qué datos se consultaron y qué operación se solicitó. Su lectura ayuda a localizar errores y a reconocer procedimientos válidos; no equivale a observar todo el razonamiento interno del modelo.
+También registramos las herramientas, que emplea CensoLab, los argumentos y los resultados obtenidos. A ese registro lo llamamos la **traza**. La traza permite reconstruir las acciones que sustentan una respuesta y ayuda a localizar errores.
 
 Por ejemplo, ante la solicitud de abrir el informe de Isla de Maipo (caso 03), el agente identificó la comuna y llamó a la herramienta que solicita su informe. La traza permite comprobar ambas acciones, además de leer la confirmación final.
 
@@ -730,13 +730,13 @@ Se abrevia la respuesta de resolución territorial y se omiten los metadatos té
 
 </details>
 
-El scorer recibe la pregunta, la referencia, la respuesta de CensoLab y su traza. Combinamos comprobaciones programadas con el juicio de un modelo porque los casos requieren verificaciones diferentes: una cifra o una llamada a una herramienta admite una comprobación precisa; interpretar una ambigüedad o valorar si una conclusión tiene respaldo exige examinar el contexto.
+El scorer recibe la pregunta, la referencia, la respuesta de CensoLab y su traza. No todos los casos se pueden comprobar del mismo modo. Las cifras y las llamadas a herramientas se pueden verificar mediante código. Las respuestas que dependen del manejo de una ambigüedad o del respaldo de una conclusión requieren el juicio de un modelo. Vamos paso a paso.
 
-Primero se aplica la regla configurada para el caso. Si una comprobación falla, se asigna I sin consultar al juez. Si se supera y el caso tiene juez habilitado, el modelo examina la respuesta y el procedimiento. Algunas preguntas se resuelven directamente mediante ese juicio, sin una comprobación programada sustantiva previa. En esta batería, **`r n_judge` casos utilizan juez**; solo el caso 03 se califica exclusivamente mediante código.
+Primero se aplica la regla configurada para el caso. Si una comprobación falla, se asigna I sin consultar al juez. Si se supera y el caso tiene juez habilitado, el modelo examina la respuesta y el procedimiento. Algunas preguntas se resuelven directamente mediante ese juicio, sin una comprobación programada sustantiva previa. En esta batería, **`r n_judge` casos utilizan juez**. El caso 03 es el único que se califica mediante código.
 
-En Maipú, el código contrasta la cifra de referencia con la respuesta y con los datos devueltos por las herramientas; después interviene el juez. Para el informe de Isla de Maipo, comprueba que se haya identificado la comuna antes de solicitar el informe. En la pregunta ambigua de Paine, el juez examina si se pidió una aclaración antes de calcular. En los gráficos, el código comprueba la consulta y la configuración, mientras el juez revisa territorios, indicadores, ejes y valores.
+El caso de Maipú combina ambas formas de evaluación. El código contrasta la cifra de referencia con la respuesta y con los datos devueltos por las herramientas. Luego interviene el juez. En el caso de Isla de Maipo, el código comprueba que el agente haya identificado la comuna antes de solicitar el informe. La pregunta sobre Paine queda a cargo del juez, que revisa si el agente pidió una aclaración antes de calcular. En los gráficos, el código comprueba la consulta y la configuración, mientras que el juez revisa los territorios, indicadores, ejes y valores.
 
-El juez trabaja en una conversación independiente, con el contexto documentado y sin herramientas para volver a consultar la base. Por eso las cifras de referencia deben validarse durante la preparación del test: la calificación comprueba el cumplimiento de esa referencia, pero no garantiza por sí misma que esté bien construida.
+El juez trabaja en una conversación independiente. Recibe el contexto documentado, pero no dispone de herramientas para volver a consultar la base. Por eso validamos las cifras de referencia durante la preparación del test. El juez comprueba si la respuesta cumple con esa referencia, no si la referencia es correcta.
 
 En esta evaluación, el scorer utiliza tres calificaciones para indicar en qué medida la respuesta y el procedimiento cumplen el criterio definido para cada caso:
 
@@ -744,7 +744,7 @@ En esta evaluación, el scorer utiliza tres calificaciones para indicar en qué 
 - **P · Parcialmente correcta.** Resuelve una parte sustantiva de la solicitud. Omite un componente requerido o deja insuficientemente definido un aspecto relevante.
 - **I · Incorrecta.** Incumple el objetivo central o sostiene una conclusión con datos o capacidades que no corresponden.
 
-Cuando la ejecución del agente termina con un error registrado, falla el juez o su respuesta carece de una nota reconocible, el caso queda como **NA** y no se califica. Un intento fallido que el agente corrige durante la misma tarea no implica por sí solo que el caso quede sin nota. Esta distinción permite reconocer su capacidad de recuperarse y evaluar el resultado alcanzado.
+Ahora bien, cuando un error en el código o en la propia implementación de la evaluación impide calificar un caso, este se registra como NA. Un intento fallido que el agente corrige durante la misma tarea no basta para dejar el caso sin nota. En esos casos se considera el resultado final y la capacidad del agente para recuperarse.
 
 Para resumir el desempeño, calculamos la proporción de respuestas correctas sobre el total de casos con calificación. Las respuestas parcialmente correctas se muestran por separado y no se cuentan como correctas.
 
@@ -808,11 +808,11 @@ Ante la pregunta «¿Tienes establecimientos de salud?», CensoLab afirmó que e
 
 #### Caso 25 · Internet e ingresos entre 2017 y 2024
 
-Se pidió determinar si los datos permiten atribuir al acceso a internet un aumento de los ingresos entre 2017 y 2024 y, si no era posible, formular una pregunta alternativa. CensoLab ejecutó tres búsquedas de metadatos: ingresos del hogar, acceso a internet y comparación temporal. Encontró las variables de internet, no encontró una variable pertinente de ingresos ni mediciones comparables de 2017. Se apoyó en el alcance documentado del conjunto, que corresponde al Censo 2024. Además, distinguió asociación de causalidad y terminó con una pregunta respondible. El juez exigió una demostración más exhaustiva de la ausencia de información. Las búsquedas requeridas y el contexto disponible sustentaban la limitación; no correspondía exigir consultas sucesivas para demostrar una inexistencia ya respaldada. **La evaluación automática la calificó como parcialmente correcta. La revisión la cambió a correcta.**
+Se pidió determinar si los datos permiten atribuir al acceso a internet un aumento de los ingresos entre 2017 y 2024 y, si no era posible, formular una pregunta alternativa. CensoLab ejecutó tres búsquedas de metadatos: ingresos del hogar, acceso a internet y comparación temporal. Encontró las variables de internet, no encontró una variable pertinente de ingresos ni mediciones comparables de 2017. Se apoyó en el alcance documentado del conjunto, que corresponde al Censo 2024. Además, distinguió asociación de causalidad y terminó con una pregunta respondible. El juez exigió una demostración más exhaustiva de que la información no estaba disponible. Consideramos excesiva esa exigencia, porque las búsquedas realizadas y la documentación del conjunto ya respaldaban esa limitación. **La evaluación automática la calificó como parcialmente correcta. La revisión la cambió a correcta.**
 
 ## Aprendizajes
 
-Lo primero que diríamos es que evaluar la respuesta y el procedimiento ofrece una mirada mucho más rica que evaluar solo el resultado. Como vimos, pueden existir resultados correctos obtenidos mediante procedimientos ineficientes. La evaluación automática permite revisar los casos de manera sistemática y entrega una primera lectura del desempeño. Como se desprende de la revisión manual, la evaluación mejora cuando se incorpora la revisión humana con criterio de dominio. 
+Evaluar solamente el resultado es insuficiente. Una respuesta correcta puede haberse obtenido mediante un procedimiento ineficiente o equivocado. La calificación automática entrega una primera lectura sistemática del desempeño, pero la revisión humana permite detectar problemas que requieren conocimiento del dominio.
 
 Durante el desarrollo de CensoLab fue común que al agregar una nueva funcionalidad o instrucción, resolvíamos un problema y provocábamos otro. Terminábamos desvistiendo un santo para vestir otro. Volver a evaluar CensoLab después de cada cambio nos permite seguir desarrollando la aplicación procurando mantener la calidad alcanzada hasta ese momento.
 

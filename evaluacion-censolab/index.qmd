@@ -620,7 +620,7 @@ Construimos el dataset como una batería acotada de preguntas, buscando cubrir d
 
 Las preguntas van desde identificar un territorio y contar registros hasta calcular porcentajes o promedios, comparar, ordenar y combinar información. También ponen a prueba la apertura de informes en distintos niveles territoriales y la construcción de mapas y gráficos.
 
-Incluimos además preguntas cuya resolución exige tomar precauciones. Una consulta por «viviendas» requiere definir qué tipos de vivienda se consideran. Una pregunta ambigua puede exigir una aclaración antes de hacer un cálculo. Internamente llamamos a estas consultas _preguntas con veneno_ porque ponen a prueba si CensoLab reconoce esas dificultades y actúa según el criterio previsto.
+Incluimos además preguntas cuya resolución exige tomar precauciones. Una consulta por "viviendas" requiere definir qué tipos de vivienda se consideran. Una pregunta ambigua puede exigir una aclaración antes de hacer un cálculo. Internamente llamamos a estas consultas _preguntas con veneno_ porque ponen a prueba si CensoLab reconoce esas dificultades y actúa según el criterio previsto.
 
 Finalmente incluimos preguntas destinadas a comprobar si CensoLab reconoce los límites de los datos. En estos casos debe advertir cuando no dispone de la información necesaria, distinguir una asociación de una relación causal y apoyar sus conclusiones en evidencia censal.
 
@@ -771,7 +771,7 @@ Después revisamos todas las respuestas y las razones de sus calificaciones. Coi
     <span class="eval-result-detail">`r n_correct` correctas · `r n_partial` parciales · `r n_incorrect` incorrectas</span>
   </div>
   <div class="eval-result-card" data-result="reviewed">
-    <span class="eval-result-kicker">Tras la revisión humana</span>
+    <span class="eval-result-kicker">Revisión humana</span>
     <span class="eval-result-value">`r reviewed_accuracy_label`</span>
     <span class="eval-result-detail">`r reviewed_correct` correctas · `r reviewed_partial` parciales · `r reviewed_incorrect` incorrectas</span>
   </div>
@@ -804,7 +804,7 @@ Se pidieron las cuatro comunas con mayor proporción de mujeres que viven solas.
 
 #### Caso 18 · Disponibilidad de establecimientos de salud
 
-Ante la pregunta «¿Tienes establecimientos de salud?», CensoLab afirmó que el Censo 2024 contiene esa información y ofreció desagregaciones sin verificar su disponibilidad. CensoLab no dispone de esos datos y la respuesta ofrecía una capacidad que no podía respaldar. El comportamiento esperado era comprobar el alcance de la información disponible y comunicar esa limitación. **La evaluación automática la calificó como incorrecta y la revisión mantuvo esa calificación.**
+Ante la pregunta "¿Tienes establecimientos de salud?", CensoLab afirmó que el Censo 2024 contiene esa información y ofreció desagregaciones sin verificar su disponibilidad. CensoLab no dispone de esos datos y la respuesta ofrecía una capacidad que no podía respaldar. El comportamiento esperado era comprobar el alcance de la información disponible y comunicar esa limitación. **La evaluación automática la calificó como incorrecta y la revisión mantuvo esa calificación.**
 
 #### Caso 25 · Internet e ingresos entre 2017 y 2024
 
